@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class MapLogic : MonoBehaviour, IPointerClickHandler
+public class MapLogic : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public GameObject IngameCamera;
     private IngameCameraScript ingameCameraScript;
@@ -19,12 +19,14 @@ public class MapLogic : MonoBehaviour, IPointerClickHandler
         ingameSceneLogicScript = IngameSceneLogic.GetComponent<IngameSceneLogicScript>();
     }
 
-    public void OnPointerClick(PointerEventData pointerEventData)
+    public void OnPointerDown(PointerEventData pointerEventData)
     {
-        if(ingameCameraScript == null || IngameSceneLogic == null)
+        if (IngameSceneLogic == null || ingameCameraScript == null ||  ingameSceneLogicScript.IsShowingSelectionRectangle || ingameCameraScript.IsDragging)
         {
             return;
         }
+
+        ingameSceneLogicScript.IgnorePointerInput = true;
 
         Vector2 mousePosition = pointerEventData.position;
         RectTransform rectTransform = this.gameObject.GetComponent<RectTransform>();
@@ -40,7 +42,13 @@ public class MapLogic : MonoBehaviour, IPointerClickHandler
         }
         else if (pointerEventData.button == PointerEventData.InputButton.Right)
         {
+            // Handle selected entities navigation to target
             ingameSceneLogicScript.HandleMapNavigation(offset);
         }
+    }
+
+    public void OnPointerUp(PointerEventData pointerEventData)
+    {
+        ingameSceneLogicScript.IgnorePointerInput = false;
     }
 }

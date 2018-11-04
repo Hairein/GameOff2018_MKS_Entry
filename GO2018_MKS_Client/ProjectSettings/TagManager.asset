@@ -3,7 +3,11 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - FoodSource
+  - TechSource
+  - Team1Member
+  - Team2Member
   layers:
   - Default
   - TransparentFX

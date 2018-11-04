@@ -12,9 +12,6 @@ TODO: Credits
 
 Open Game Tasks And Features
 =======================
-- Enable unit selection
-- Show unit selection highlight 
-- Enable selected unit navigation
 - Enable selected unit shortcut assignment
 - Enable food collection mechanism (5 x 1000 Units start)
 - Enable tech collection mechanism (3 x 1000 Units start)
@@ -26,8 +23,11 @@ Open Game Tasks And Features
     barricade build and breaker: Cost T250 F250
     enemy unit resource stealer: Cost T250 F250 
     unit defense turret morph -> absorbs all radius enemy resources: Cost T200 F250
-- Timed game session [on/off] 2:50 to 10:00
 - Death of Breeder causes game loss
 - All units die without food reserves, food usage per unit time and more when acting
 - Make 3 maps (48x48, 56x56, 64x64) initially for jam release
-- Fog of War [on/off]
+- Configuration Options:
+    Fog of War [on/off]
+    Timed game session [on/off] 2:50 to 10:00 per Session
+    Music [on/off/Volume]
+    Sound FX [on/off/Volume]

@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 114241906279769860}
   m_Layer: 0
   m_Name: FoodSource
-  m_TagString: Untagged
+  m_TagString: FoodSource
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -175,14 +175,14 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1292979468078088}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: 0.47401133, z: -0, w: 0.88051873}
+  m_LocalPosition: {x: -7.046585, y: 0, z: -8.004108}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4058049613201766}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 56.59, z: 0}
 --- !u!4 &4752115149624644
 Transform:
   m_ObjectHideFlags: 1
@@ -459,7 +459,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.6
+  m_Radius: 2
   m_Center: {x: 0, y: 0.6, z: 0}
 --- !u!136 &136242216329315056
 CapsuleCollider:
