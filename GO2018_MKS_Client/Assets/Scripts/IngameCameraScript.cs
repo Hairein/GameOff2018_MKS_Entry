@@ -3,44 +3,88 @@ using UnityEngine.AI;
 
 public class IngameCameraScript : MonoBehaviour
 {
-    public GameObject followedEntity;
+    public Vector3 CameraStartPosition = Vector3.zero;   
+    public Vector3 ViewOffset = new Vector3(0.0f, 20.0f, -10.5f);
 
-    public Vector3 viewOffset = new Vector3(0.0f, 17.5f, -10.25f);
+    public bool IsDragging = false;
+    public float DragRelayFactor = 0.1f;
+    private Vector3 dragStartPoint = Vector3.zero;
+    private Vector3 dragStartCameraPosition = Vector3.zero;
+
+    public GameObject IngameSceneLogic;
+    private IngameSceneLogicScript ingameSceneLogicScript;
+
+    void Start()
+    {
+        if (IngameSceneLogic == null)
+        {
+            return;
+        }
+        ingameSceneLogicScript = IngameSceneLogic.GetComponent<IngameSceneLogicScript>();
+
+        Camera.main.transform.position = ingameSceneLogicScript.GetCameraStartPosition() + ViewOffset;
+    }
 
     void Update()
     {
-        if (followedEntity != null)
-        {
-            Vector3 newPosition = new Vector3(followedEntity.transform.position.x + viewOffset.x, followedEntity.transform.position.y + viewOffset.y, followedEntity.transform.position.z + viewOffset.z);
-            this.gameObject.transform.position = newPosition;
-        }
+        float deltaTime = Time.deltaTime;
+        Vector3 mousePosition = Input.mousePosition;
 
         if (Input.GetMouseButtonUp(0))
         {
-            //Debug.Log("Pressed left click.");
         }
+
         if (Input.GetMouseButtonUp(1))
         {
-            //Debug.Log("Pressed right click.");
+        }
 
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, 1000.0f))
+        if (Input.GetMouseButtonDown(2))
+        {
+            if (!IsDragging)
             {
-                print("Hit something!");
+                IsDragging = true;
 
-                NavMeshAgent agent = followedEntity.GetComponent<NavMeshAgent>();
-                if(agent != null)
-                {
-                    agent.destination = hit.point;
-                    agent.isStopped = false;
-                }
+                dragStartPoint = mousePosition;
+                dragStartCameraPosition = Camera.main.transform.position;
+            }
+        }
+        else if (Input.GetMouseButtonUp(2))
+        {
+            if (IsDragging)
+            {
+                IsDragging = false;
             }
         }
 
-        if (Input.GetMouseButtonUp(2))
+        // Handle mouse panning
+        if (IsDragging)
         {
-            //Debug.Log("Pressed middle click.");
+            Vector3 dragOffset = dragStartPoint - mousePosition;
+            float xOffset = dragStartCameraPosition.x + (dragOffset.x * DragRelayFactor);
+            float yOffset = dragStartCameraPosition.y;
+            float zOffset = dragStartCameraPosition.z + (dragOffset.y * DragRelayFactor);
+
+            Vector3 dragOffsetCameraPosition = new Vector3(xOffset, yOffset, zOffset);
+            Camera.main.transform.position = dragOffsetCameraPosition;
         }
+    }
+
+    private Vector3 CalculateWorldPositionFromMapOffsets(Vector2 offset)
+    {
+        float xOffset = (offset.x - 0.5f) * ingameSceneLogicScript.MapDimensions.x;
+        float zOffset = (offset.y - 0.5f) * ingameSceneLogicScript.MapDimensions.y;
+
+        Vector3 position = new Vector3(xOffset, 0.0f, zOffset);
+        return position;
+    }
+
+    public void HandleMapRecenter(Vector2 offset)
+    {
+        Vector3 cameraOffset = CalculateWorldPositionFromMapOffsets(offset);
+        cameraOffset.x += ViewOffset.x;
+        cameraOffset.z += ViewOffset.z;
+
+        Vector3 newCameraPosition = new Vector3(cameraOffset.x, ViewOffset.y, cameraOffset.z);
+        Camera.main.transform.position = newCameraPosition;
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class TitleSceneLogicScript : MonoBehaviour
 {
-    GameLogicScript gameLogicScriptComponent = null;
+    private GameLogicScript gameLogicScriptComponent = null;
 
     void Start()
     {
@@ -30,5 +30,11 @@ public class TitleSceneLogicScript : MonoBehaviour
         {
             welcomeText.GetComponent<Text>().text = gameLogicScriptComponent.GetWelcomeText();
         }
+    }
+
+    // Dev Shortcuts
+    public void OnClickTestMapButton()
+    {
+        SceneManager.LoadScene("TestMap1Scene", LoadSceneMode.Single);
     }
 }
