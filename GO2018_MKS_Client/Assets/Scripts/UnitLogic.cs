@@ -7,6 +7,12 @@ public class UnitLogic : MonoBehaviour
     
     public GameObject SelectionEffect;
 
+    public float FoodResourceCount = 0.0f;
+    public float MaxFoodResourceCount = 300.0f;
+
+    public float TechResourceCount = 0.0f;
+    public float TechFoodResourceCount = 300.0f;
+
     void Start()
     {
         SetSelection(IsSelected);

@@ -31,3 +31,5 @@ Open Game Tasks And Features
     Timed game session [on/off] 2:50 to 10:00 per Session
     Music [on/off/Volume]
     Sound FX [on/off/Volume]
+- Replace placeholder art!
+- End round when timer runs out
