@@ -1318,6 +1318,10 @@ MonoBehaviour:
   TeamNumber: 2
   IsSelected: 0
   SelectionEffect: {fileID: 1415252600750754}
+  FoodResourceCount: 0
+  MaxFoodResourceCount: 300
+  TechResourceCount: 0
+  MaxTechResourceCount: 300
 --- !u!114 &114071988231450030
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1332,6 +1336,10 @@ MonoBehaviour:
   TeamNumber: 2
   IsSelected: 0
   SelectionEffect: {fileID: 1955897921613668}
+  FoodResourceCount: 0
+  MaxFoodResourceCount: 300
+  TechResourceCount: 0
+  MaxTechResourceCount: 300
 --- !u!114 &114078294476735262
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1346,6 +1354,10 @@ MonoBehaviour:
   TeamNumber: 2
   IsSelected: 0
   SelectionEffect: {fileID: 1865786805641522}
+  FoodResourceCount: 0
+  MaxFoodResourceCount: 300
+  TechResourceCount: 0
+  MaxTechResourceCount: 300
 --- !u!114 &114090216987360064
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1360,6 +1372,10 @@ MonoBehaviour:
   TeamNumber: 2
   IsSelected: 0
   SelectionEffect: {fileID: 1081043753591256}
+  FoodResourceCount: 0
+  MaxFoodResourceCount: 300
+  TechResourceCount: 0
+  MaxTechResourceCount: 300
 --- !u!114 &114094078952289116
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1404,9 +1420,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e79253eb7b3a5d948bff4698f90e944c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TeamNumber: 2
+  TeamNumber: 1
   IsSelected: 0
   SelectionEffect: {fileID: 1134201277639374}
+  FoodResourceCount: 0
+  MaxFoodResourceCount: 3000
+  TechResourceCount: 0
+  MaxTechResourceCount: 3000
 --- !u!114 &114740362000534976
 MonoBehaviour:
   m_ObjectHideFlags: 1

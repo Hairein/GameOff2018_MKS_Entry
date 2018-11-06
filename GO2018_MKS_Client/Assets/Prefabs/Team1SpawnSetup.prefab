@@ -1329,6 +1329,10 @@ MonoBehaviour:
   TeamNumber: 1
   IsSelected: 0
   SelectionEffect: {fileID: 1504553327506088}
+  FoodResourceCount: 0
+  MaxFoodResourceCount: 3000
+  TechResourceCount: 0
+  MaxTechResourceCount: 3000
 --- !u!114 &114210594731058606
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1376,6 +1380,10 @@ MonoBehaviour:
   TeamNumber: 1
   IsSelected: 0
   SelectionEffect: {fileID: 1635008323971704}
+  FoodResourceCount: 0
+  MaxFoodResourceCount: 300
+  TechResourceCount: 0
+  MaxTechResourceCount: 300
 --- !u!114 &114572257762191534
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1390,6 +1398,10 @@ MonoBehaviour:
   TeamNumber: 1
   IsSelected: 0
   SelectionEffect: {fileID: 1391738631314824}
+  FoodResourceCount: 0
+  MaxFoodResourceCount: 300
+  TechResourceCount: 0
+  MaxTechResourceCount: 300
 --- !u!114 &114809196965239564
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1415,6 +1427,10 @@ MonoBehaviour:
   TeamNumber: 1
   IsSelected: 0
   SelectionEffect: {fileID: 1768109553592176}
+  FoodResourceCount: 0
+  MaxFoodResourceCount: 300
+  TechResourceCount: 0
+  MaxTechResourceCount: 300
 --- !u!114 &114901330688298314
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1429,6 +1445,10 @@ MonoBehaviour:
   TeamNumber: 1
   IsSelected: 0
   SelectionEffect: {fileID: 1548594287789094}
+  FoodResourceCount: 0
+  MaxFoodResourceCount: 300
+  TechResourceCount: 0
+  MaxTechResourceCount: 300
 --- !u!135 &135063679601880162
 SphereCollider:
   m_ObjectHideFlags: 1

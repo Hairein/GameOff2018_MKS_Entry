@@ -11,7 +11,7 @@ public class UnitLogic : MonoBehaviour
     public float MaxFoodResourceCount = 300.0f;
 
     public float TechResourceCount = 0.0f;
-    public float TechFoodResourceCount = 300.0f;
+    public float MaxTechResourceCount = 300.0f;
 
     void Start()
     {
