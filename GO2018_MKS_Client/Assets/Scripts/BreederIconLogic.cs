@@ -56,7 +56,7 @@ public class BreederIconLogic : MonoBehaviour
         }
 
         // Food
-        float foodValue = unitLogicScript.FoodResourceCount;
+        float foodValue = (int)unitLogicScript.FoodResourceCount;
         if (foodValue != previousFoodValue)
         {
             float foodRatio = unitLogicScript.FoodResourceCount / unitLogicScript.MaxFoodResourceCount;
@@ -78,7 +78,7 @@ public class BreederIconLogic : MonoBehaviour
                 }
             }
 
-            string foodValueText = foodValue.ToString();
+            string foodValueText = ((int)foodValue).ToString();
             FoodText.text = foodValueText;
             FoodShadowText.text = foodValueText;
 
@@ -86,7 +86,7 @@ public class BreederIconLogic : MonoBehaviour
         }
 
         // Tech
-        float techValue = unitLogicScript.TechResourceCount;
+        float techValue = (int)unitLogicScript.TechResourceCount;
         if (techValue != previousTechValue)
         {
             float techRatio = unitLogicScript.TechResourceCount / unitLogicScript.MaxTechResourceCount;
@@ -108,7 +108,7 @@ public class BreederIconLogic : MonoBehaviour
                 }
             }
 
-            string techValueText = techValue.ToString();
+            string techValueText = ((int)techValue).ToString();
             TechText.text = techValueText;
             TechShadowText.text = techValueText;
 

@@ -24,6 +24,13 @@ public class IngameSceneLogicScript : MonoBehaviour
     public GameObject teamBreeder;
     public GameObject[] teamDrones;
 
+    public GameObject team1SpawnParent;
+    public GameObject team2SpawnParent;
+
+    public bool EnableFoodDrain = true;
+    public float FoodDrainPerSec = 5.0f;
+    public float HungerDeathFoodLevel = -10.0f;
+
     public bool IgnorePointerInput = false;
 
     public Vector2 MapDimensions = new Vector2(48.0f, 48.0f);
@@ -119,6 +126,7 @@ public class IngameSceneLogicScript : MonoBehaviour
         }
 
         HandleRoundTime(deltaTime);
+        HandleUnits(deltaTime);
     }
 
     private void OnGUI()
@@ -285,7 +293,7 @@ public class IngameSceneLogicScript : MonoBehaviour
     public void UpdateUnitIcons()
     {
         UnitLogic breederUnitLogic = teamBreeder.GetComponent<UnitLogic>();
-        if(breederUnitLogic != null)
+        if(breederUnitLogic != null && breederUnitLogic.gameObject.activeSelf)
         {
             if(breederUnitLogic.IsSelected)
             {
@@ -299,7 +307,7 @@ public class IngameSceneLogicScript : MonoBehaviour
 
         for (int index = 0; index < DroneIcons.Length; index++)
         {
-            if (index < teamDrones.Length)
+            if (index < teamDrones.Length && teamDrones[index].activeSelf)
             {
                 DroneIcons[index].gameObject.SetActive(true);
 
@@ -307,10 +315,9 @@ public class IngameSceneLogicScript : MonoBehaviour
                 GameObject indexedDroneUnit = teamDrones[index];
                 foreach(GameObject selectedUnit in SelectedUnits)
                 {
-                    //if (indexedDroneUnit.name == selectedUnit.name)
                     if (indexedDroneUnit == selectedUnit)
-                        {
-                            DroneIcons[index].texture = SelectedDroneIcon;
+                    {
+                        DroneIcons[index].texture = SelectedDroneIcon;
                         break;
                     }
                 }
@@ -343,14 +350,14 @@ public class IngameSceneLogicScript : MonoBehaviour
         foreach (GameObject unit in teamMembers)
         {
             BreederLogic breederLogic = unit.GetComponent<BreederLogic>();
-            if (breederLogic != null)
+            if (breederLogic != null && breederLogic.gameObject.activeSelf)
             {
                 teamBreeder = unit;
             }
             else
             {
                 DroneLogic droneLogic = unit.GetComponent<DroneLogic>();
-                if (droneLogic != null)
+                if (droneLogic != null && droneLogic.gameObject.activeSelf)
                 {
                     drones.Add(unit);
                 }
@@ -379,5 +386,73 @@ public class IngameSceneLogicScript : MonoBehaviour
         string timeText = string.Format(minutesText + ":" + secondsText);
         TimeText.text = timeText;
         TimeTextShadow.text = timeText;
+    }
+
+    private void HandleUnits(float deltaTime)
+    {
+
+        // Food drain teams
+        HandleTeam("Team1Member", deltaTime);
+        HandleTeam("Team2Member", deltaTime);
+    }
+
+    private void HandleTeam(string teamName, float deltaTime)
+    {
+        bool unitDidDie = false;
+
+        // Handle food drain
+
+        float foodDrainPerFrame = FoodDrainPerSec * deltaTime;
+
+        GameObject[] teamMembers = GameObject.FindGameObjectsWithTag(teamName);
+        foreach (GameObject unit in teamMembers)
+        {
+            UnitLogic unitLogic = unit.GetComponent<UnitLogic>();
+
+            if (unitLogic.FoodResourceCount < HungerDeathFoodLevel)
+            {
+                // Die...
+                RemoveDeadUnitFromWorld(unitLogic.gameObject);
+
+                unitDidDie |= true;
+                continue;
+            }
+
+            if (unitLogic == null)
+            {
+                continue;
+            }
+
+            if (EnableFoodDrain)
+            {
+                unitLogic.FoodResourceCount -= foodDrainPerFrame;
+            }
+        }
+
+        if(unitDidDie)
+        {
+            BuildTeamMembers();
+            UpdateUnitIcons();
+        }
+    }
+
+
+    private void RemoveDeadUnitFromWorld(GameObject deadMember)
+    {
+        List<GameObject> listoFSelectedGameObjects = new List<GameObject>();
+
+        foreach(GameObject member in SelectedUnits)
+        {
+            if(member != deadMember)
+            {
+                listoFSelectedGameObjects.Add(member);
+            }
+        }
+
+        SelectedUnits = listoFSelectedGameObjects.ToArray();
+
+        deadMember.SetActive(false);
+        Destroy(deadMember);
+
     }
 }

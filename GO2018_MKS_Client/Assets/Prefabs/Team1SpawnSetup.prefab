@@ -1329,7 +1329,7 @@ MonoBehaviour:
   TeamNumber: 1
   IsSelected: 0
   SelectionEffect: {fileID: 1504553327506088}
-  FoodResourceCount: 0
+  FoodResourceCount: 300
   MaxFoodResourceCount: 3000
   TechResourceCount: 0
   MaxTechResourceCount: 3000
@@ -1380,7 +1380,7 @@ MonoBehaviour:
   TeamNumber: 1
   IsSelected: 0
   SelectionEffect: {fileID: 1635008323971704}
-  FoodResourceCount: 0
+  FoodResourceCount: 100
   MaxFoodResourceCount: 300
   TechResourceCount: 0
   MaxTechResourceCount: 300
@@ -1398,7 +1398,7 @@ MonoBehaviour:
   TeamNumber: 1
   IsSelected: 0
   SelectionEffect: {fileID: 1391738631314824}
-  FoodResourceCount: 0
+  FoodResourceCount: 100
   MaxFoodResourceCount: 300
   TechResourceCount: 0
   MaxTechResourceCount: 300
@@ -1427,7 +1427,7 @@ MonoBehaviour:
   TeamNumber: 1
   IsSelected: 0
   SelectionEffect: {fileID: 1768109553592176}
-  FoodResourceCount: 0
+  FoodResourceCount: 100
   MaxFoodResourceCount: 300
   TechResourceCount: 0
   MaxTechResourceCount: 300
@@ -1445,7 +1445,7 @@ MonoBehaviour:
   TeamNumber: 1
   IsSelected: 0
   SelectionEffect: {fileID: 1548594287789094}
-  FoodResourceCount: 0
+  FoodResourceCount: 100
   MaxFoodResourceCount: 300
   TechResourceCount: 0
   MaxTechResourceCount: 300

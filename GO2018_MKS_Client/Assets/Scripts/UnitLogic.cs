@@ -20,7 +20,6 @@ public class UnitLogic : MonoBehaviour
 
     void Update()
     {
-
     }
 
     public void SetSelection(bool flag)

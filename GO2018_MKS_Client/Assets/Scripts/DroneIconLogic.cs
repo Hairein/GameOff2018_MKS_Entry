@@ -85,7 +85,7 @@ public class DroneIconLogic : MonoBehaviour
                 }
             }
 
-            string foodValueText = foodValue.ToString();
+            string foodValueText = ((int)foodValue).ToString();
             FoodText.text = foodValueText;
             FoodShadowText.text = foodValueText;
 
@@ -115,7 +115,7 @@ public class DroneIconLogic : MonoBehaviour
                 }
             }
 
-            string techValueText = techValue.ToString();
+            string techValueText = ((int)techValue).ToString();
             TechText.text = techValueText;
             TechShadowText.text = techValueText;
 

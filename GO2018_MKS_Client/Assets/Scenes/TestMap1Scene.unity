@@ -124,6 +124,11 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 1857307496}
   m_Script: {fileID: -98529514, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+--- !u!1 &160222393 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1240919971938782, guid: de984fe42f3e9b94dbc7a06b26616f87,
+    type: 2}
+  m_PrefabInternal: {fileID: 1104376104}
 --- !u!1001 &162232462
 Prefab:
   m_ObjectHideFlags: 0
@@ -174,6 +179,11 @@ Prefab:
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 883f7f1a6621335498a1a27fa1c3b0c3, type: 3}
   m_IsPrefabAsset: 0
+--- !u!1 &175591980 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1915291549581854, guid: 14bf56b5b8e8f2240a0e3d4d2f65e5fb,
+    type: 2}
+  m_PrefabInternal: {fileID: 1053918690}
 --- !u!4 &191923432 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4618736668939170, guid: e72906e1c79025e43b882ea417ef2988,
@@ -1946,6 +1956,11 @@ MonoBehaviour:
   SelectedUnits: []
   teamBreeder: {fileID: 0}
   teamDrones: []
+  team1SpawnParent: {fileID: 160222393}
+  team2SpawnParent: {fileID: 175591980}
+  EnableFoodDrain: 0
+  FoodDrainPerSec: 5
+  HungerDeathFoodLevel: -10
   IgnorePointerInput: 0
   MapDimensions: {x: 48, y: 48}
   BreederIcon: {fileID: 1169124963}
