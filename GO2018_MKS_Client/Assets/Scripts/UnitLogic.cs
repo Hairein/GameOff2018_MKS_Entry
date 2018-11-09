@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.AI;
 
 public class UnitLogic : MonoBehaviour
 {
@@ -26,6 +27,15 @@ public class UnitLogic : MonoBehaviour
         if (SelectionEffect != null)
         {
             SelectionEffect.SetActive(IsSelected);
+        }
+    }
+
+    public void UpgradeSpeed(float increaseSpeedFactor)
+    {
+        NavMeshAgent navMeshAgent = this.gameObject.GetComponent<NavMeshAgent>();
+        if(navMeshAgent != null)
+        {
+            navMeshAgent.speed *= increaseSpeedFactor;
         }
     }
 }

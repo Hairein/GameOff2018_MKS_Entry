@@ -55,16 +55,40 @@ public class IngameSceneLogicScript : MonoBehaviour
     public float Team1BreederMaxTechResourceCount = 3000.0f;
     public float Team1DroneMaxFoodResourceCount = 300.0f;
     public float Team1DroneMaxTechResourceCount = 300.0f;
+    public bool Team1HasUpgradedSpeed = false;
+    public bool Team1HasUpgradedFoodDrain = false;
+    public bool Team1HasUpgradedFoodCollect = false;
+    public bool Team1HasUpgradedTechCollect = false;
+    public bool Team1HasUpgradedBarricadeBuild = false;
+    public bool Team1HasUpgradedBarricadeBreak = false;
+    public bool Team1HasUpgradedFoodSteal = false;
+    public bool Team1HasUpgradedTechSteal = false;
 
     public int Team2UpgradeLevel = 0;
     public float Team2BreederMaxFoodResourceCount = 3000.0f;
     public float Team2BreederMaxTechResourceCount = 3000.0f;
     public float Team2DroneMaxFoodResourceCount = 300.0f;
     public float Team2DroneMaxTechResourceCount = 300.0f;
+    public bool Team2HasUpgradedSpeed = false;
+    public bool Team2HasUpgradedFoodDrain = false;
+    public bool Team2HasUpgradedFoodCollect = false;
+    public bool Team2HasUpgradedTechCollect = false;
+    public bool Team2HasUpgradedBarricadeBuild = false;
+    public bool Team2HasUpgradedBarricadeBreak = false;
+    public bool Team2HasUpgradedFoodSteal = false;
+    public bool Team2HasUpgradedTechSteal = false;
 
-    private int maxUpgradeLevel = 3;
+    // ---
     public float[] FoodUpgradeCosts = { 1000.0f, 1500.0f, 2000.0f, 2500.0f };
-    public float[] techUpgradeCosts = { 1125.0f, 1125.0f, 1125.0f, 1125.0f };
+    public float[] TechUpgradeCosts = { 1125.0f, 1125.0f, 1125.0f, 1125.0f };
+    public bool ShowingTeamUpgradeChoice = false;
+    public RawImage[] TeamUpgradeAChoices;
+    public RawImage[] TeamUpgradeBChoices;
+    public RawImage[] TeamUpgradeCChoices;
+    public RawImage[] TeamUpgradeDChoices;
+    public float TeamSpeedUpgradeFactor = 1.25f;
+
+    // ~~~
 
     void Start()
     {
@@ -79,9 +103,10 @@ public class IngameSceneLogicScript : MonoBehaviour
         BuildTeamMembers();
         UpdateUnitIcons();
 
+        bool oldCountdownRoundTime = CountdownRoundTime;
         CountdownRoundTime = false;
         HandleRoundTime(0.0f);
-        CountdownRoundTime = true;
+        CountdownRoundTime = oldCountdownRoundTime;
     }
 
     void Update()
@@ -144,6 +169,8 @@ public class IngameSceneLogicScript : MonoBehaviour
 
         HandleRoundTime(deltaTime);
         HandleUnits(deltaTime);
+
+        HandleTeamUpgradingCapability();
     }
 
     private void OnGUI()
@@ -521,20 +548,197 @@ public class IngameSceneLogicScript : MonoBehaviour
         }
     }
 
-    private void UpgradeTeam(int teamNumber, int newLevel)
+    private void HandleTeamUpgradingCapability()
     {
-        switch(newLevel)
+        if(Team1UpgradeLevel > 3)
+        {
+            return;
+        }
+
+        if (!ShowingTeamUpgradeChoice)
+        {
+            float nextFoodUpgradeCost = float.MaxValue;
+            float nextTechUpgradeCost = float.MaxValue;
+            int nextUpgradeLevel = 0;
+
+            if (TeamNumber == 1)
+            {
+                nextFoodUpgradeCost = FoodUpgradeCosts[Team1UpgradeLevel];
+                nextTechUpgradeCost = TechUpgradeCosts[Team1UpgradeLevel];
+
+                nextUpgradeLevel = Team1UpgradeLevel + 1;
+            }
+            else
+            {
+                nextFoodUpgradeCost = FoodUpgradeCosts[Team2UpgradeLevel];
+                nextTechUpgradeCost = TechUpgradeCosts[Team2UpgradeLevel];
+
+                nextUpgradeLevel = Team2UpgradeLevel + 1;
+            }
+
+            UnitLogic breederUnitLogic = teamBreeder.GetComponent<UnitLogic>();
+            if(breederUnitLogic != null)
+            {
+                if(breederUnitLogic.FoodResourceCount >= nextFoodUpgradeCost && breederUnitLogic.TechResourceCount >= nextTechUpgradeCost)
+                {
+                    ShowingTeamUpgradeChoice = true;
+                    ShowUpgradeChoices(nextUpgradeLevel);
+                }
+            }
+        }
+    }
+
+    private void ShowUpgradeChoices(int level)
+    {
+        switch(level)
         {
             case 1:
+                TeamUpgradeAChoices[0].gameObject.SetActive(true);
+                TeamUpgradeAChoices[1].gameObject.SetActive(true);
+
+                TeamUpgradeBChoices[0].gameObject.SetActive(false);
+                TeamUpgradeBChoices[1].gameObject.SetActive(false);
+                TeamUpgradeCChoices[0].gameObject.SetActive(false);
+                TeamUpgradeCChoices[1].gameObject.SetActive(false);
+                TeamUpgradeDChoices[0].gameObject.SetActive(false);
+                TeamUpgradeDChoices[1].gameObject.SetActive(false);
                 break;
             case 2:
+                TeamUpgradeAChoices[0].gameObject.SetActive(false);
+                TeamUpgradeAChoices[1].gameObject.SetActive(false);
+
+                TeamUpgradeBChoices[0].gameObject.SetActive(true);
+                TeamUpgradeBChoices[1].gameObject.SetActive(true);
+
+                TeamUpgradeCChoices[0].gameObject.SetActive(false);
+                TeamUpgradeCChoices[1].gameObject.SetActive(false);
+                TeamUpgradeDChoices[0].gameObject.SetActive(false);
+                TeamUpgradeDChoices[1].gameObject.SetActive(false);
                 break;
             case 3:
+                TeamUpgradeAChoices[0].gameObject.SetActive(false);
+                TeamUpgradeAChoices[1].gameObject.SetActive(false);
+                TeamUpgradeBChoices[0].gameObject.SetActive(false);
+                TeamUpgradeBChoices[1].gameObject.SetActive(false);
+
+                TeamUpgradeCChoices[0].gameObject.SetActive(true);
+                TeamUpgradeCChoices[1].gameObject.SetActive(true);
+
+                TeamUpgradeDChoices[0].gameObject.SetActive(false);
+                TeamUpgradeDChoices[1].gameObject.SetActive(false);
                 break;
             case 4:
-                break;
+                TeamUpgradeAChoices[0].gameObject.SetActive(false);
+                TeamUpgradeAChoices[1].gameObject.SetActive(false);
+                TeamUpgradeBChoices[0].gameObject.SetActive(false);
+                TeamUpgradeBChoices[1].gameObject.SetActive(false);
+                TeamUpgradeCChoices[0].gameObject.SetActive(false);
+                TeamUpgradeCChoices[1].gameObject.SetActive(false);
+
+                TeamUpgradeDChoices[0].gameObject.SetActive(true);
+                TeamUpgradeDChoices[1].gameObject.SetActive(true);
+               break;
             default:
+                TeamUpgradeAChoices[0].gameObject.SetActive(false);
+                TeamUpgradeAChoices[1].gameObject.SetActive(false);
+                TeamUpgradeBChoices[0].gameObject.SetActive(false);
+                TeamUpgradeBChoices[1].gameObject.SetActive(false);
+                TeamUpgradeCChoices[0].gameObject.SetActive(false);
+                TeamUpgradeCChoices[1].gameObject.SetActive(false);
+                TeamUpgradeDChoices[0].gameObject.SetActive(false);
+                TeamUpgradeDChoices[1].gameObject.SetActive(false);
                 break;
         }
+    }
+
+    public void MoveTeamToNextUpgradeLevel()
+    {
+        UnitLogic breederUnitLogic = teamBreeder.GetComponent<UnitLogic>();
+        if (breederUnitLogic != null)
+        {
+            // Set team to next upgrade level
+            if (TeamNumber == 1)
+            {
+                breederUnitLogic.FoodResourceCount -= FoodUpgradeCosts[Team1UpgradeLevel];
+                breederUnitLogic.TechResourceCount -= TechUpgradeCosts[Team1UpgradeLevel];
+
+                Team1UpgradeLevel++;
+            }
+            else
+            {
+                breederUnitLogic.FoodResourceCount -= FoodUpgradeCosts[Team2UpgradeLevel];
+                breederUnitLogic.TechResourceCount -= TechUpgradeCosts[Team2UpgradeLevel];
+
+                Team2UpgradeLevel++;
+            }
+        }
+
+        // Hide upgrade icons
+        ShowingTeamUpgradeChoice = false;
+        ShowUpgradeChoices(0);
+    }
+
+    public void UpgradeSpeedPlus()
+    {
+        if (TeamNumber == 1)
+        {
+            Team1HasUpgradedSpeed = true;
+        }
+        else
+        {
+            Team2HasUpgradedSpeed = true;
+        }
+
+        UnitLogic breederUnitLogic = teamBreeder.GetComponent<UnitLogic>();
+        if (breederUnitLogic != null)
+        {
+            breederUnitLogic.UpgradeSpeed(TeamSpeedUpgradeFactor);
+        }
+
+        foreach (GameObject droneUnit in teamDrones)
+        {
+            UnitLogic droneUnitLogic = droneUnit.GetComponent<UnitLogic>();
+            if (droneUnitLogic != null)
+            {
+                droneUnitLogic.UpgradeSpeed(TeamSpeedUpgradeFactor);
+            }
+        }
+
+        MoveTeamToNextUpgradeLevel();
+    }
+
+    public void UpgradeFoodDrainMinus()
+    {
+        MoveTeamToNextUpgradeLevel();
+    }
+
+    public void UpgradeFoodCollectPlus()
+    {
+        MoveTeamToNextUpgradeLevel();
+    }
+
+    public void UpgradeTechCollectPlus()
+    {
+        MoveTeamToNextUpgradeLevel();
+    }
+
+    public void UpgradeBarricadeBuild()
+    {
+        MoveTeamToNextUpgradeLevel();
+    }
+
+    public void UpgradeBarricadeBreak()
+    {
+        MoveTeamToNextUpgradeLevel();
+    }
+
+    public void UpgradeFoodSteal()
+    {
+        MoveTeamToNextUpgradeLevel();
+    }
+
+    public void UpgradeTechSteal()
+    {
+        MoveTeamToNextUpgradeLevel();
     }
 }

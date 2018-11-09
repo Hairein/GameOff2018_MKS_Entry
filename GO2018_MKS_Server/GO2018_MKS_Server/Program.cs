@@ -60,7 +60,7 @@ namespace GO2018_MKS_Server
             Console.WriteLine("Commands [help, quit, exit]");
         }
 
-        void TcpHandlerThreadProc()
+        private void TcpHandlerThreadProc()
         {
             int port = 13000;
             TcpListener server = new TcpListener(IPAddress.Any, port);

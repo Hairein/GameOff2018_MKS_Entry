@@ -21,7 +21,7 @@ public class MapLogic : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     public void OnPointerDown(PointerEventData pointerEventData)
     {
-        if (IngameSceneLogic == null || ingameCameraScript == null ||  ingameSceneLogicScript.IsShowingSelectionRectangle || ingameCameraScript.IsDragging)
+        if (ingameSceneLogicScript == null || ingameCameraScript == null ||  ingameSceneLogicScript.IsShowingSelectionRectangle || ingameCameraScript.IsDragging)
         {
             return;
         }
@@ -49,6 +49,11 @@ public class MapLogic : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     public void OnPointerUp(PointerEventData pointerEventData)
     {
+        if (ingameSceneLogicScript == null)
+        {
+            return;
+        }
+
         ingameSceneLogicScript.IgnorePointerInput = false;
     }
 }
