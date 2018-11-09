@@ -66,7 +66,7 @@ public class DroneIconLogic : MonoBehaviour
         float foodValue = unitLogicScript.FoodResourceCount;
         if (foodValue != previousFoodValue)
         {
-            float foodRatio = unitLogicScript.FoodResourceCount / unitLogicScript.MaxFoodResourceCount;
+            float foodRatio = unitLogicScript.FoodResourceCount / ingameLogicScript.GetDroneMaxFoodResource(unitLogicScript.TeamNumber); ;
 
             if (foodValue > 0.0f)
             {
@@ -96,7 +96,7 @@ public class DroneIconLogic : MonoBehaviour
         float techValue = unitLogicScript.TechResourceCount;
         if (techValue != previousTechValue)
         {
-            float techRatio = unitLogicScript.TechResourceCount / unitLogicScript.MaxTechResourceCount;
+            float techRatio = unitLogicScript.TechResourceCount / ingameLogicScript.GetDroneMaxTechResource(unitLogicScript.TeamNumber);
 
             if (techValue > 0.0f)
             {

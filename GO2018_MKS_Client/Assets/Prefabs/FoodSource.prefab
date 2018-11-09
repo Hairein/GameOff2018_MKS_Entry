@@ -550,8 +550,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46a32a2f2c0803f4ea2492d9c772cdc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ResourceCount: 5000
-  MaxResourceCount: 5000
+  ResourceCount: 2000
+  MaxResourceCount: 2000
   ResourceUnitsText: {fileID: 102758644119244174}
   influencingUnits: []
   tapRatePerSec: 25

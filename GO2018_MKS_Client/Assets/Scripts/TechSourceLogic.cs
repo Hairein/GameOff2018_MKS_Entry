@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class TechSourceLogic : MonoBehaviour
 {
+    private IngameSceneLogicScript ingameLogicScript = null;
+
     public float ResourceCount = 444.0f;
     public float MaxResourceCount = 3000.0f;
 
@@ -15,6 +17,13 @@ public class TechSourceLogic : MonoBehaviour
 
     void Start()
     {
+        GameObject ingameLogic = GameObject.Find("IngameLogic");
+        if (ingameLogic == null)
+        {
+            return;
+        }
+
+        ingameLogicScript = ingameLogic.GetComponent<IngameSceneLogicScript>();
     }
 
     void Update()
@@ -44,12 +53,25 @@ public class TechSourceLogic : MonoBehaviour
 
         foreach (UnitLogic unit in influencingUnits)
         {
-            if (unit.TechResourceCount < unit.MaxTechResourceCount)
+            BreederLogic breederLogic = unit.gameObject.GetComponent<BreederLogic>();
+            DroneLogic droneLogic = unit.GetComponent<DroneLogic>();
+
+            float maxTechResourceCount = 0;
+            if(breederLogic != null)
+            {
+                maxTechResourceCount = ingameLogicScript.GetBreederMaxTechResource(unit.TeamNumber);
+            }
+            else if (droneLogic != null)
+            {
+                maxTechResourceCount = ingameLogicScript.GetDroneMaxTechResource(unit.TeamNumber);
+            }
+
+            if (unit.TechResourceCount < maxTechResourceCount)
             {
                 float newTechValue = tappedValue;
-                if (unit.TechResourceCount + newTechValue > unit.MaxTechResourceCount)
+                if (unit.TechResourceCount + newTechValue > maxTechResourceCount)
                 {
-                    newTechValue = unit.MaxTechResourceCount - unit.TechResourceCount;
+                    newTechValue = maxTechResourceCount - unit.TechResourceCount;
                 }
 
                 unit.TechResourceCount += newTechValue;

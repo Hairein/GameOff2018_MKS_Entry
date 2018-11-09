@@ -13,15 +13,19 @@ TODO: Credits
 Open Game Tasks And Features
 =======================
 - Enable selected unit shortcut assignment
-- Enable drone upgrade path (food, tech):
-    faster speed: Cost T250 F0
-    more food collection max volume: Cost T50 F250
-    more tech collection max volume: Cost T250 F50
-    reduce food usage: Cost T100 F150
-    barricade build and breaker: Cost T250 F250
-    enemy unit resource stealer: Cost T250 F250 
-    unit defense turret morph -> absorbs all radius enemy resources: Cost T200 F250
-- Breed new improved drones, max. 8
+- Enable drone upgrade path (food, tech):    
+    * 4 Upgrade optional/choice levels 
+    * Food upgrade costs: 1000, 1500, 2000, 2500
+    * Tech upgrade costs: 1125, 1125, 1125, 1125
+    A - Faster drone speed:                 
+    A - Reduce unit food usage:             
+    B - More food collection max volume:    
+    B - More tech collection max volume:    
+    C - Barricade build and breaker:        
+    C - Barricade build and breaker:        
+    D - Enemy unit food resource stealer:   
+    D - Enemy unit tech resource stealer:   
+- Breed new drones, max. 8. Keep upgrades for old and new drones
 - Death of Breeder causes game loss
 - Make 3 maps (48x48, 56x56, 64x64) initially for jam release
 - Configuration Options:

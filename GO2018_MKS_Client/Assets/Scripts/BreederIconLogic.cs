@@ -59,7 +59,7 @@ public class BreederIconLogic : MonoBehaviour
         float foodValue = (int)unitLogicScript.FoodResourceCount;
         if (foodValue != previousFoodValue)
         {
-            float foodRatio = unitLogicScript.FoodResourceCount / unitLogicScript.MaxFoodResourceCount;
+            float foodRatio = unitLogicScript.FoodResourceCount / ingameLogicScript.GetBreederMaxFoodResource(unitLogicScript.TeamNumber);
 
             if (foodValue > 0.0f)
             {
@@ -89,7 +89,7 @@ public class BreederIconLogic : MonoBehaviour
         float techValue = (int)unitLogicScript.TechResourceCount;
         if (techValue != previousTechValue)
         {
-            float techRatio = unitLogicScript.TechResourceCount / unitLogicScript.MaxTechResourceCount;
+            float techRatio = unitLogicScript.TechResourceCount / ingameLogicScript.GetBreederMaxTechResource(unitLogicScript.TeamNumber);
 
             if (techValue > 0.0f)
             {

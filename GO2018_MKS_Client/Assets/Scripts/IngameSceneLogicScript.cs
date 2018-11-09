@@ -49,6 +49,23 @@ public class IngameSceneLogicScript : MonoBehaviour
     public Text TimeText;
     public Text TimeTextShadow;
 
+    // Upgrading 
+    public int Team1UpgradeLevel = 0;
+    public float Team1BreederMaxFoodResourceCount = 3000.0f;
+    public float Team1BreederMaxTechResourceCount = 3000.0f;
+    public float Team1DroneMaxFoodResourceCount = 300.0f;
+    public float Team1DroneMaxTechResourceCount = 300.0f;
+
+    public int Team2UpgradeLevel = 0;
+    public float Team2BreederMaxFoodResourceCount = 3000.0f;
+    public float Team2BreederMaxTechResourceCount = 3000.0f;
+    public float Team2DroneMaxFoodResourceCount = 300.0f;
+    public float Team2DroneMaxTechResourceCount = 300.0f;
+
+    private int maxUpgradeLevel = 3;
+    public float[] FoodUpgradeCosts = { 1000.0f, 1500.0f, 2000.0f, 2500.0f };
+    public float[] techUpgradeCosts = { 1125.0f, 1125.0f, 1125.0f, 1125.0f };
+
     void Start()
     {
         GameObject gameLogic = GameObject.Find("GameLogic");
@@ -454,5 +471,70 @@ public class IngameSceneLogicScript : MonoBehaviour
         deadMember.SetActive(false);
         Destroy(deadMember);
 
+    }
+
+    public float GetBreederMaxFoodResource(int teamNumber)
+    {
+        if(teamNumber == 1)
+        {
+            return Team1BreederMaxFoodResourceCount;
+        }
+        else
+        {
+            return Team2BreederMaxFoodResourceCount;
+        }
+    }
+
+    public float GetBreederMaxTechResource(int teamNumber)
+    {
+        if (teamNumber == 1)
+        {
+            return Team1BreederMaxFoodResourceCount;
+        }
+        else
+        {
+            return Team2BreederMaxFoodResourceCount;
+        }
+    }
+
+    public float GetDroneMaxFoodResource(int teamNumber)
+    {
+        if (teamNumber == 1)
+        {
+            return Team1DroneMaxFoodResourceCount;
+        }
+        else
+        {
+            return Team2DroneMaxFoodResourceCount;
+        }
+    }
+
+    public float GetDroneMaxTechResource(int teamNumber)
+    {
+        if (teamNumber == 1)
+        {
+            return Team1DroneMaxFoodResourceCount;
+        }
+        else
+        {
+            return Team2DroneMaxFoodResourceCount;
+        }
+    }
+
+    private void UpgradeTeam(int teamNumber, int newLevel)
+    {
+        switch(newLevel)
+        {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            default:
+                break;
+        }
     }
 }

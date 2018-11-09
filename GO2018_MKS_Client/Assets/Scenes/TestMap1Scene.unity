@@ -1982,6 +1982,18 @@ MonoBehaviour:
   RoundTimeInSeconds: 210
   TimeText: {fileID: 244744582}
   TimeTextShadow: {fileID: 208327068}
+  Team1UpgradeLevel: 0
+  Team2UpgradeLevel: 0
+  FoodUpgradeCosts:
+  - 1000
+  - 1500
+  - 2000
+  - 2500
+  techUpgradeCosts:
+  - 1125
+  - 1125
+  - 1125
+  - 1125
 --- !u!4 &1415268402
 Transform:
   m_ObjectHideFlags: 0

@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class FoodSourceLogic : MonoBehaviour
 {
+    private IngameSceneLogicScript ingameLogicScript = null;
+
     public float ResourceCount = 5000.0f;
     public float MaxResourceCount = 5000.0f;
 
@@ -15,6 +17,13 @@ public class FoodSourceLogic : MonoBehaviour
 
     void Start()
     {
+        GameObject ingameLogic = GameObject.Find("IngameLogic");
+        if (ingameLogic == null)
+        {
+            return;
+        }
+
+        ingameLogicScript = ingameLogic.GetComponent<IngameSceneLogicScript>();
     }
 
     void Update()
@@ -44,12 +53,25 @@ public class FoodSourceLogic : MonoBehaviour
 
         foreach(UnitLogic unit in influencingUnits)
         {
-            if(unit.FoodResourceCount < unit.MaxFoodResourceCount)
+            BreederLogic breederLogic = unit.gameObject.GetComponent<BreederLogic>();
+            DroneLogic droneLogic = unit.GetComponent<DroneLogic>();
+
+            float maxFoodResourceCount = 0;
+            if (breederLogic != null)
+            {
+                maxFoodResourceCount = ingameLogicScript.GetBreederMaxFoodResource(unit.TeamNumber);
+            }
+            else if (droneLogic != null)
+            {
+                maxFoodResourceCount = ingameLogicScript.GetDroneMaxFoodResource(unit.TeamNumber);
+            }
+
+            if (unit.FoodResourceCount < maxFoodResourceCount)
             {
                 float newFoodValue = tappedValue;
-                if(unit.FoodResourceCount +  newFoodValue > unit.MaxFoodResourceCount)
+                if(unit.FoodResourceCount +  newFoodValue > maxFoodResourceCount)
                 {
-                    newFoodValue = unit.MaxFoodResourceCount - unit.FoodResourceCount;
+                    newFoodValue = maxFoodResourceCount - unit.FoodResourceCount;
                 }
 
                 unit.FoodResourceCount += newFoodValue;
