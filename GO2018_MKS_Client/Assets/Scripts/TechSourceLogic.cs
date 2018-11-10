@@ -53,6 +53,8 @@ public class TechSourceLogic : MonoBehaviour
 
         foreach (UnitLogic unit in influencingUnits)
         {
+            tappedValue *= ingameLogicScript.GetTeamTechCollectFactor(unit.TeamNumber);
+
             BreederLogic breederLogic = unit.gameObject.GetComponent<BreederLogic>();
             DroneLogic droneLogic = unit.GetComponent<DroneLogic>();
 

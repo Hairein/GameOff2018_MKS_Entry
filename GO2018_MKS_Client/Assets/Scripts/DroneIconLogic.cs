@@ -45,12 +45,12 @@ public class DroneIconLogic : MonoBehaviour
             return;
         }
 
-        if(droneIndex >= ingameLogicScript.teamDrones.Length)
+        if(droneIndex >= ingameLogicScript.TeamDrones.Length)
         {
             return;
         }
 
-        GameObject drone = ingameLogicScript.teamDrones[droneIndex];
+        GameObject drone = ingameLogicScript.TeamDrones[droneIndex];
         if (drone == null)
         {
             return;

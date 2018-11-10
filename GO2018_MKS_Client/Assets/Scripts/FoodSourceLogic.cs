@@ -49,10 +49,12 @@ public class FoodSourceLogic : MonoBehaviour
             tapRateThisFrame = ResourceCount;
         }
 
-        float tappedValue = tapRateThisFrame / influencingUnits.Length;
+        float tappedValue = (tapRateThisFrame) / influencingUnits.Length;
 
         foreach(UnitLogic unit in influencingUnits)
         {
+            tappedValue *= ingameLogicScript.GetTeamFoodCollectFactor(unit.TeamNumber);
+
             BreederLogic breederLogic = unit.gameObject.GetComponent<BreederLogic>();
             DroneLogic droneLogic = unit.GetComponent<DroneLogic>();
 
@@ -68,8 +70,9 @@ public class FoodSourceLogic : MonoBehaviour
 
             if (unit.FoodResourceCount < maxFoodResourceCount)
             {
-                float newFoodValue = tappedValue;
-                if(unit.FoodResourceCount +  newFoodValue > maxFoodResourceCount)
+                float newFoodValue = tappedValue; 
+                
+                if (unit.FoodResourceCount +  newFoodValue > maxFoodResourceCount)
                 {
                     newFoodValue = maxFoodResourceCount - unit.FoodResourceCount;
                 }

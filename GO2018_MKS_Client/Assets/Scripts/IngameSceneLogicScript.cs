@@ -21,11 +21,12 @@ public class IngameSceneLogicScript : MonoBehaviour
     public int TeamNumber = 1;
     public GameObject[] SelectedUnits;
 
-    public GameObject teamBreeder;
-    public GameObject[] teamDrones;
+    public GameObject TeamBreeder;
+    public GameObject[] TeamDrones;
+    public bool TeamInBarricadeBuildMode = false;
 
-    public GameObject team1SpawnParent;
-    public GameObject team2SpawnParent;
+    public GameObject Team1SpawnParent;
+    public GameObject Team2SpawnParent;
 
     public bool EnableFoodDrain = true;
     public float FoodDrainPerSec = 5.0f;
@@ -57,8 +58,11 @@ public class IngameSceneLogicScript : MonoBehaviour
     public float Team1DroneMaxTechResourceCount = 300.0f;
     public bool Team1HasUpgradedSpeed = false;
     public bool Team1HasUpgradedFoodDrain = false;
+    public float Team1FoodDrainFactor = 1.0f;
     public bool Team1HasUpgradedFoodCollect = false;
+    public float Team1FoodCollectFactor = 1.0f;
     public bool Team1HasUpgradedTechCollect = false;
+    public float Team1TechCollectFactor = 1.0f;
     public bool Team1HasUpgradedBarricadeBuild = false;
     public bool Team1HasUpgradedBarricadeBreak = false;
     public bool Team1HasUpgradedFoodSteal = false;
@@ -71,14 +75,18 @@ public class IngameSceneLogicScript : MonoBehaviour
     public float Team2DroneMaxTechResourceCount = 300.0f;
     public bool Team2HasUpgradedSpeed = false;
     public bool Team2HasUpgradedFoodDrain = false;
+    public float Team2FoodDrainFactor = 1.0f;
     public bool Team2HasUpgradedFoodCollect = false;
+    public float Team2FoodCollectFactor = 1.0f;
     public bool Team2HasUpgradedTechCollect = false;
+    public float Team2TechCollectFactor = 1.0f;
     public bool Team2HasUpgradedBarricadeBuild = false;
     public bool Team2HasUpgradedBarricadeBreak = false;
     public bool Team2HasUpgradedFoodSteal = false;
     public bool Team2HasUpgradedTechSteal = false;
 
     // ---
+    private int maxTeamUpgradeLevel = 3;
     public float[] FoodUpgradeCosts = { 1000.0f, 1500.0f, 2000.0f, 2500.0f };
     public float[] TechUpgradeCosts = { 1125.0f, 1125.0f, 1125.0f, 1125.0f };
     public bool ShowingTeamUpgradeChoice = false;
@@ -87,9 +95,21 @@ public class IngameSceneLogicScript : MonoBehaviour
     public RawImage[] TeamUpgradeCChoices;
     public RawImage[] TeamUpgradeDChoices;
     public float TeamSpeedUpgradeFactor = 1.25f;
+    public float TeamFoodDrainUpgradeFactor = 0.75f;
+    public float TeamFoodCollectUpgradeFactor = 1.25f;
+    public float TeamTechCollectUpgradeFactor = 1.25f;
+    public float TeamFoodStealRatePerSec = 5.0f;
+    public float TeamTechStealRatePerSec = 2.5f;
+
+    // ---
+    public GameObject barricadePreview;
+    public GameObject barricadeReal;
+    public float BarricadeFoodCost = 100.0f;
+    public float BarricadeTechCost = 250.0f;
+    public GameObject BarricadeSpawnParent;
+    public float ManhattanDistanceAroundTeamUnits = 3.0f;
 
     // ~~~
-
     void Start()
     {
         GameObject gameLogic = GameObject.Find("GameLogic");
@@ -123,35 +143,100 @@ public class IngameSceneLogicScript : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                if (!IsSelecting)
+                if (TeamInBarricadeBuildMode)
                 {
-                    IsSelecting = true;
-                    selectionStartPosition = mousePosition;
+                    // TODO - Place preview barricade if resources available
+                }
+                else
+                {
+                    if (!IsSelecting)
+                    {
+                        IsSelecting = true;
+                        selectionStartPosition = mousePosition;
+                    }
                 }
             }
             else if (Input.GetMouseButtonUp(0))
             {
-                if (IsSelecting)
+                if (TeamInBarricadeBuildMode)
                 {
-                    FindTeamUnitsWithinSelectionRectangle();
+                    // Finalize barricade placement if resource are sufficient
+                    UnitLogic breederUnitLogic = TeamBreeder.GetComponent<UnitLogic>();
+                    if (breederUnitLogic != null)
+                    {
+                        if (breederUnitLogic.FoodResourceCount >= BarricadeFoodCost && breederUnitLogic.TechResourceCount >= BarricadeTechCost)
+                        {
+                            breederUnitLogic.FoodResourceCount -= BarricadeFoodCost;
+                            breederUnitLogic.TechResourceCount -= BarricadeTechCost;
 
-                    IsSelecting = false;
-                    IsShowingSelectionRectangle = false;
+                            RaycastHit clickHit;
+                            if (GetScreenHitResultInWorld(mousePosition, out clickHit))
+                            {
+                                Vector3 griddedPosition = CalculateGridForBarricadePlacement(clickHit.point);
+                                if (IsPointNearTeamUnits(griddedPosition))
+                                {
+                                    GameObject newBarricade = Instantiate(barricadeReal, BarricadeSpawnParent.transform);
+                                    newBarricade.transform.position = griddedPosition;
+                                    newBarricade.SetActive(true);
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                { 
+                    if (IsSelecting)
+                    {
+                        FindTeamUnitsWithinSelectionRectangle();
+
+                        IsSelecting = false;
+                        IsShowingSelectionRectangle = false;
+                    }
                 }
             }
 
             if (Input.GetMouseButtonUp(1))
             {
                 Vector3 clickHitPosition = Vector3.zero;
-                if (GetScreenHitInWorld(mousePosition, out clickHitPosition))
+                if (GetScreenHitPositionInWorld(mousePosition, out clickHitPosition))
                 {
                     SetNavigationTarget(clickHitPosition);
+                }
+            }
+
+            // Check special keys for actions
+            if (Input.GetKeyUp(KeyCode.S))
+            {
+                CancelNavigation();
+            }
+
+            if (Input.GetKeyUp(KeyCode.Escape))
+            {
+                CancelActions();
+            }
+
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                if (!TeamInBarricadeBuildMode)
+                {
+                    StartBuildingBarricadeMode();
+
+                    Debug.Log("Starting barricade build mode");
+                }
+            }
+            else if (Input.GetKeyUp(KeyCode.P))
+            {
+                if (TeamInBarricadeBuildMode)
+                {
+                    StopBuildingBarricadeMode();
+
+                    Debug.Log("Ending barricade build mode");
                 }
             }
         }
 
         // Check if need to show selection rectangle (4 px drag minimum)
-        if(IsSelecting)
+        if (IsSelecting)
         {
             selectionDragPosition = mousePosition;
 
@@ -165,6 +250,17 @@ public class IngameSceneLogicScript : MonoBehaviour
             float maxY = Mathf.Max(Screen.height - selectionStartPosition.y, Screen.height - selectionDragPosition.y);
 
             selectionRect.Set(minX, minY, maxX - minX, maxY - minY);
+        }
+
+        if(TeamInBarricadeBuildMode)
+        {
+            RaycastHit clickHit;
+            if (GetScreenHitResultInWorld(mousePosition, out clickHit))
+            {
+                Vector3 griddedPosition = CalculateGridForBarricadePlacement(clickHit.point);
+                barricadePreview.SetActive(IsPointNearTeamUnits(griddedPosition));
+                barricadePreview.transform.position = griddedPosition;
+            }
         }
 
         HandleRoundTime(deltaTime);
@@ -204,7 +300,7 @@ public class IngameSceneLogicScript : MonoBehaviour
         }
     }
 
-    private bool GetScreenHitInWorld(Vector3 screenPosition, out Vector3 hitPosition)
+    private bool GetScreenHitPositionInWorld(Vector3 screenPosition, out Vector3 hitPosition)
     {
         hitPosition = Vector3.zero;
 
@@ -216,6 +312,21 @@ public class IngameSceneLogicScript : MonoBehaviour
         }
 
         hitPosition = hit.point;
+        return true;
+    }
+
+    private bool GetScreenHitResultInWorld(Vector3 screenPosition, out RaycastHit hitResult)
+    {
+        hitResult = new RaycastHit();
+
+        Ray ray = Camera.main.ScreenPointToRay(screenPosition);
+        RaycastHit hit;
+        if (!Physics.Raycast(ray, out hit, 1000.0f))
+        {
+            return false;
+        }
+
+        hitResult = hit;
         return true;
     }
 
@@ -295,6 +406,21 @@ public class IngameSceneLogicScript : MonoBehaviour
 
         Vector3 bound1 = new Vector3(selectionRect.x, Screen.height - selectionRect.y);
         Vector3 bound2 = new Vector3(selectionRect.x + selectionRect.width, Screen.height - (selectionRect.y + selectionRect.height));
+
+        // Enlarge search rect if it's too small, e.g. when clicking to select instead of dragging
+        if (Math.Abs(bound2.x - bound1.x) < 16.0f)
+        {
+            bound1.x -= 32.0f;
+            bound2.x += 32.0f;
+        }
+
+        if (Math.Abs(bound2.y - bound1.y) < 16.0f)
+        {
+            bound1.y -= 32.0f;
+            bound2.y += 32.0f;
+        }
+         
+        // ---
         var viewportBounds = GetViewportBounds(bound1, bound2);
 
         GameObject[] teamUnits;
@@ -336,7 +462,7 @@ public class IngameSceneLogicScript : MonoBehaviour
 
     public void UpdateUnitIcons()
     {
-        UnitLogic breederUnitLogic = teamBreeder.GetComponent<UnitLogic>();
+        UnitLogic breederUnitLogic = TeamBreeder.GetComponent<UnitLogic>();
         if(breederUnitLogic != null && breederUnitLogic.gameObject.activeSelf)
         {
             if(breederUnitLogic.IsSelected)
@@ -351,12 +477,12 @@ public class IngameSceneLogicScript : MonoBehaviour
 
         for (int index = 0; index < DroneIcons.Length; index++)
         {
-            if (index < teamDrones.Length && teamDrones[index].activeSelf)
+            if (index < TeamDrones.Length && TeamDrones[index].activeSelf)
             {
                 DroneIcons[index].gameObject.SetActive(true);
 
                 DroneIcons[index].texture = UnselectedDroneIcon;
-                GameObject indexedDroneUnit = teamDrones[index];
+                GameObject indexedDroneUnit = TeamDrones[index];
                 foreach(GameObject selectedUnit in SelectedUnits)
                 {
                     if (indexedDroneUnit == selectedUnit)
@@ -396,7 +522,7 @@ public class IngameSceneLogicScript : MonoBehaviour
             BreederLogic breederLogic = unit.GetComponent<BreederLogic>();
             if (breederLogic != null && breederLogic.gameObject.activeSelf)
             {
-                teamBreeder = unit;
+                TeamBreeder = unit;
             }
             else
             {
@@ -407,7 +533,7 @@ public class IngameSceneLogicScript : MonoBehaviour
                 }
             }
         }
-        teamDrones = drones.ToArray();
+        TeamDrones = drones.ToArray();
     }
 
     private void HandleRoundTime(float deltaTime)
@@ -434,7 +560,6 @@ public class IngameSceneLogicScript : MonoBehaviour
 
     private void HandleUnits(float deltaTime)
     {
-
         // Food drain teams
         HandleTeam("Team1Member", deltaTime);
         HandleTeam("Team2Member", deltaTime);
@@ -444,9 +569,17 @@ public class IngameSceneLogicScript : MonoBehaviour
     {
         bool unitDidDie = false;
 
-        // Handle food drain
+        // Handle Team food drain
+        float foodDrainPerFrame = 0.0f;
 
-        float foodDrainPerFrame = FoodDrainPerSec * deltaTime;
+        if (TeamNumber == 1)
+        {
+            foodDrainPerFrame = (FoodDrainPerSec * Team1FoodDrainFactor) * deltaTime;
+        }
+        else
+        {
+            foodDrainPerFrame = (FoodDrainPerSec * Team2FoodDrainFactor) * deltaTime;
+        }
 
         GameObject[] teamMembers = GameObject.FindGameObjectsWithTag(teamName);
         foreach (GameObject unit in teamMembers)
@@ -478,8 +611,11 @@ public class IngameSceneLogicScript : MonoBehaviour
             BuildTeamMembers();
             UpdateUnitIcons();
         }
-    }
 
+        // Units can steal other units resources
+        HandleTeamFoodSteal(deltaTime);
+        HandleTeamTechSteal(deltaTime);
+    }
 
     private void RemoveDeadUnitFromWorld(GameObject deadMember)
     {
@@ -548,9 +684,33 @@ public class IngameSceneLogicScript : MonoBehaviour
         }
     }
 
+    public float GetTeamFoodCollectFactor(int teamNumber)
+    {
+        if (TeamNumber == 1)
+        {
+            return Team1FoodCollectFactor;
+        }
+        else
+        {
+            return Team2FoodCollectFactor;
+        }
+    }
+
+    public float GetTeamTechCollectFactor(int teamNumber)
+    {
+        if (TeamNumber == 1)
+        {
+            return Team1TechCollectFactor;
+        }
+        else
+        {
+            return Team2TechCollectFactor;
+        }
+    }
+
     private void HandleTeamUpgradingCapability()
     {
-        if(Team1UpgradeLevel > 3)
+        if(Team1UpgradeLevel > maxTeamUpgradeLevel)
         {
             return;
         }
@@ -576,7 +736,7 @@ public class IngameSceneLogicScript : MonoBehaviour
                 nextUpgradeLevel = Team2UpgradeLevel + 1;
             }
 
-            UnitLogic breederUnitLogic = teamBreeder.GetComponent<UnitLogic>();
+            UnitLogic breederUnitLogic = TeamBreeder.GetComponent<UnitLogic>();
             if(breederUnitLogic != null)
             {
                 if(breederUnitLogic.FoodResourceCount >= nextFoodUpgradeCost && breederUnitLogic.TechResourceCount >= nextTechUpgradeCost)
@@ -653,7 +813,7 @@ public class IngameSceneLogicScript : MonoBehaviour
 
     public void MoveTeamToNextUpgradeLevel()
     {
-        UnitLogic breederUnitLogic = teamBreeder.GetComponent<UnitLogic>();
+        UnitLogic breederUnitLogic = TeamBreeder.GetComponent<UnitLogic>();
         if (breederUnitLogic != null)
         {
             // Set team to next upgrade level
@@ -689,13 +849,13 @@ public class IngameSceneLogicScript : MonoBehaviour
             Team2HasUpgradedSpeed = true;
         }
 
-        UnitLogic breederUnitLogic = teamBreeder.GetComponent<UnitLogic>();
+        UnitLogic breederUnitLogic = TeamBreeder.GetComponent<UnitLogic>();
         if (breederUnitLogic != null)
         {
             breederUnitLogic.UpgradeSpeed(TeamSpeedUpgradeFactor);
         }
 
-        foreach (GameObject droneUnit in teamDrones)
+        foreach (GameObject droneUnit in TeamDrones)
         {
             UnitLogic droneUnitLogic = droneUnit.GetComponent<UnitLogic>();
             if (droneUnitLogic != null)
@@ -709,36 +869,389 @@ public class IngameSceneLogicScript : MonoBehaviour
 
     public void UpgradeFoodDrainMinus()
     {
+        if (TeamNumber == 1)
+        {
+            Team1HasUpgradedFoodDrain = true;
+
+            Team1FoodDrainFactor = TeamFoodDrainUpgradeFactor;
+        }
+        else
+        {
+            Team1HasUpgradedFoodDrain = true;
+
+            Team2FoodDrainFactor = TeamFoodDrainUpgradeFactor;
+        }
+
         MoveTeamToNextUpgradeLevel();
     }
 
     public void UpgradeFoodCollectPlus()
     {
+        if (TeamNumber == 1)
+        {
+            Team1HasUpgradedFoodCollect = true;
+
+            Team1FoodCollectFactor = TeamFoodCollectUpgradeFactor;
+        }
+        else
+        {
+            Team2HasUpgradedFoodCollect = true;
+
+            Team2FoodCollectFactor = TeamFoodCollectUpgradeFactor;
+        }
+
         MoveTeamToNextUpgradeLevel();
     }
 
     public void UpgradeTechCollectPlus()
     {
+        if (TeamNumber == 1)
+        {
+            Team1HasUpgradedTechCollect = true;
+
+            Team1TechCollectFactor = TeamTechCollectUpgradeFactor;
+        }
+        else
+        {
+            Team2HasUpgradedTechCollect = true;
+
+            Team2TechCollectFactor = TeamTechCollectUpgradeFactor;
+        }
+
         MoveTeamToNextUpgradeLevel();
     }
 
     public void UpgradeBarricadeBuild()
     {
+        if (TeamNumber == 1)
+        {
+            Team1HasUpgradedBarricadeBuild = true;
+        }
+        else
+        {
+            Team2HasUpgradedBarricadeBuild = true;
+        }
+        
         MoveTeamToNextUpgradeLevel();
     }
 
     public void UpgradeBarricadeBreak()
     {
+        if (TeamNumber == 1)
+        {
+            Team1HasUpgradedBarricadeBreak = true;
+        }
+        else
+        {
+            Team2HasUpgradedBarricadeBreak = true;
+        }
+        
         MoveTeamToNextUpgradeLevel();
     }
 
     public void UpgradeFoodSteal()
     {
+        if (TeamNumber == 1)
+        {
+            Team1HasUpgradedFoodSteal = true;
+        }
+        else
+        {
+            Team2HasUpgradedFoodSteal = true;
+        }
+
         MoveTeamToNextUpgradeLevel();
     }
 
     public void UpgradeTechSteal()
     {
+        if (TeamNumber == 1)
+        {
+            Team1HasUpgradedTechSteal = true;
+        }
+        else
+        {
+            Team2HasUpgradedTechSteal = true;
+        }
+
         MoveTeamToNextUpgradeLevel();
+    }
+
+    private void HandleTeamFoodSteal(float deltaTime)
+    {
+        bool canFoodSteal = false;
+
+        if(TeamNumber == 1)
+        {
+            canFoodSteal = Team1HasUpgradedFoodSteal;
+        }
+        else
+        {
+            canFoodSteal = Team2HasUpgradedFoodSteal;
+        }
+
+        if(!canFoodSteal)
+        {
+            return;
+        }
+
+        float baseStolenFoodValue = TeamFoodStealRatePerSec * deltaTime;
+
+        // Only drain opponent units if stopped
+        NavMeshAgent navMeshAgentBreeder = TeamBreeder.GetComponent<NavMeshAgent>();
+        if (navMeshAgentBreeder.isStopped)
+        {
+            UnitLogic teamBreederUnitLogic = TeamBreeder.GetComponent<UnitLogic>();
+            if(teamBreederUnitLogic != null)
+            {
+                foreach (UnitLogic opponentUnitLogic in teamBreederUnitLogic.influencingOpponentUnits)
+                {
+                    if (opponentUnitLogic.FoodResourceCount <= 0.0f)
+                    {
+                        continue;
+                    }
+
+                    if (opponentUnitLogic.FoodResourceCount < baseStolenFoodValue)
+                    {
+                        baseStolenFoodValue = opponentUnitLogic.FoodResourceCount;
+                    }
+
+                    opponentUnitLogic.FoodResourceCount -= baseStolenFoodValue;
+                    teamBreederUnitLogic.FoodResourceCount += baseStolenFoodValue;
+                }
+            }
+        }
+
+        foreach (GameObject teamDrone in TeamDrones)
+        {
+            // Only drain opponent units if stopped
+            NavMeshAgent navMeshAgentDrone = teamDrone.GetComponent<NavMeshAgent>();
+            if (navMeshAgentDrone.isStopped)
+            {
+                UnitLogic teamDroneUnitLogic = teamDrone.GetComponent<UnitLogic>();
+                if (teamDroneUnitLogic != null)
+                {
+                    foreach (UnitLogic opponentUnitLogic in teamDroneUnitLogic.influencingOpponentUnits)
+                    {
+                        if (opponentUnitLogic.FoodResourceCount <= 0.0f)
+                        {
+                            continue;
+                        }
+
+                        if (opponentUnitLogic.FoodResourceCount < baseStolenFoodValue)
+                        {
+                            baseStolenFoodValue = opponentUnitLogic.FoodResourceCount;
+                        }
+
+                        opponentUnitLogic.FoodResourceCount -= baseStolenFoodValue;
+                        teamDroneUnitLogic.FoodResourceCount += baseStolenFoodValue;
+                    }
+                }
+            }
+        }
+    }
+
+    private void HandleTeamTechSteal(float deltaTime)
+    {
+        bool canTechSteal = false;
+
+        if(TeamNumber == 1)
+        {
+            canTechSteal = Team1HasUpgradedTechSteal;
+        }
+        else
+        {
+            canTechSteal = Team2HasUpgradedTechSteal;
+        }
+
+        if(!canTechSteal)
+        {
+            return;
+        }
+
+        float baseStolenTechValue = TeamTechStealRatePerSec * deltaTime;
+
+        // Only drain opponent units if stopped
+        NavMeshAgent navMeshAgentBreeder = TeamBreeder.GetComponent<NavMeshAgent>();
+        if (navMeshAgentBreeder.isStopped)
+        {
+            UnitLogic teamBreederUnitLogic = TeamBreeder.GetComponent<UnitLogic>();
+            if (teamBreederUnitLogic != null)
+            {
+                foreach (UnitLogic opponentUnitLogic in teamBreederUnitLogic.influencingOpponentUnits)
+                {
+                    if (opponentUnitLogic.TechResourceCount <= 0.0f)
+                    {
+                        continue;
+                    }
+
+                    if (opponentUnitLogic.TechResourceCount < baseStolenTechValue)
+                    {
+                        baseStolenTechValue = opponentUnitLogic.TechResourceCount;
+                    }
+
+                    opponentUnitLogic.TechResourceCount -= baseStolenTechValue;
+                    teamBreederUnitLogic.TechResourceCount += baseStolenTechValue;
+                }
+            }
+        }
+
+        foreach (GameObject teamDrone in TeamDrones)
+        {
+            NavMeshAgent navMeshAgentDrone = teamDrone.GetComponent<NavMeshAgent>();
+            if (navMeshAgentDrone.isStopped)
+            {
+                UnitLogic teamDroneUnitLogic = teamDrone.GetComponent<UnitLogic>();
+                if (teamDroneUnitLogic != null)
+                {
+                    foreach (UnitLogic opponentUnitLogic in teamDroneUnitLogic.influencingOpponentUnits)
+                    {
+                        if (opponentUnitLogic.TechResourceCount <= 0.0f)
+                        {
+                            continue;
+                        }
+
+                        if (opponentUnitLogic.TechResourceCount < baseStolenTechValue)
+                        {
+                            baseStolenTechValue = opponentUnitLogic.TechResourceCount;
+                        }
+
+                        opponentUnitLogic.TechResourceCount -= baseStolenTechValue;
+                        teamDroneUnitLogic.TechResourceCount += baseStolenTechValue;
+                    }
+                }
+            }
+        }
+    }
+
+    private void CancelNavigation()
+    {
+        foreach (GameObject unit in SelectedUnits)
+        {
+            // Stop navigation
+            NavMeshAgent navMeshAgent = unit.GetComponent<NavMeshAgent>();
+            if (navMeshAgent != null)
+            {
+                navMeshAgent.isStopped = true;
+            }
+        }
+    }
+
+    private void CancelActions()
+    {
+        StopBuildingBarricadeMode();
+    }
+
+    private void StartBuildingBarricadeMode()
+    {
+        UnitLogic breederUnitLogic = TeamBreeder.GetComponent<UnitLogic>();
+        if (breederUnitLogic != null)
+        {
+            if (breederUnitLogic.TeamNumber == 1)
+            {
+                if (Team1HasUpgradedBarricadeBuild)
+                {
+                    TeamInBarricadeBuildMode = true;
+
+                    barricadePreview.SetActive(true);
+                }
+            }
+            else
+            {
+                if (Team2HasUpgradedBarricadeBuild)
+                {
+                    TeamInBarricadeBuildMode = true;
+
+                    barricadePreview.SetActive(true);
+                }
+            }
+        }
+    }
+
+    private void StopBuildingBarricadeMode()
+    {
+        UnitLogic breederUnitLogic = TeamBreeder.GetComponent<UnitLogic>();
+        if (breederUnitLogic != null)
+        {
+            if (breederUnitLogic.TeamNumber == 1)
+            {
+                if (Team1HasUpgradedBarricadeBuild)
+                {
+                    TeamInBarricadeBuildMode = false;
+
+                    barricadePreview.SetActive(false);
+                }
+            }
+            else
+            {
+                if (Team2HasUpgradedBarricadeBuild)
+                {
+                    TeamInBarricadeBuildMode = false;
+
+                    barricadePreview.SetActive(false);
+                }
+            }
+        }
+    }
+
+    private Vector3 CalculateGridForBarricadePlacement(Vector3 inputPosition)
+    {
+        Vector3 outputPosition = new Vector3(inputPosition.x, inputPosition.y, inputPosition.z);
+
+        int flatX = (int)outputPosition.x;
+        float restX = outputPosition.x - flatX;
+
+        int flatZ = (int)outputPosition.z;
+        float restZ = outputPosition.z - flatX;
+
+        if (restX < 0.25f)
+        {
+            outputPosition.x = flatX;
+        }
+        else if (restX >= 0.25f && restX < 0.75f)
+        {
+            outputPosition.x = flatX + 0.5f;
+        }
+        else
+        {
+            outputPosition.x = flatX + 1.0f;
+        }
+
+        if (restZ < 0.25f)
+        {
+            outputPosition.z = flatZ;
+        }
+        else if (restZ >= 0.25f && restZ < 0.75f)
+        {
+            outputPosition.z = flatZ + 0.5f;
+        }
+        else
+        {
+            outputPosition.z = flatZ + 1.0f;
+        }
+
+        return outputPosition;
+    }
+
+    private bool IsPointNearTeamUnits(Vector3 point)
+    {
+        float breederManhattanDistanceX = Math.Abs(TeamBreeder.transform.position.x - point.x);
+        float breederManhattanDistanceZ = Math.Abs(TeamBreeder.transform.position.z - point.z);
+        if(breederManhattanDistanceX <= ManhattanDistanceAroundTeamUnits && breederManhattanDistanceZ <= ManhattanDistanceAroundTeamUnits)
+        {
+            return true;
+        }
+
+        foreach(GameObject drone in TeamDrones)
+        {
+            float droneManhattanDistanceX = Math.Abs(drone.transform.position.x - point.x);
+            float droneManhattanDistanceZ = Math.Abs(drone.transform.position.z - point.z);
+            if (droneManhattanDistanceX <= ManhattanDistanceAroundTeamUnits && droneManhattanDistanceZ <= ManhattanDistanceAroundTeamUnits)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

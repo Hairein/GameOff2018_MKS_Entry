@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.AI;
 
 public class UnitLogic : MonoBehaviour
@@ -10,6 +11,8 @@ public class UnitLogic : MonoBehaviour
 
     public float FoodResourceCount = 0.0f;
     public float TechResourceCount = 0.0f;
+
+    public UnitLogic[] influencingOpponentUnits;
 
     void Start()
     {
@@ -36,6 +39,43 @@ public class UnitLogic : MonoBehaviour
         if(navMeshAgent != null)
         {
             navMeshAgent.speed *= increaseSpeedFactor;
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        UnitLogic unitLogicScript = other.gameObject.GetComponent<UnitLogic>();
+        if (unitLogicScript != null && TeamNumber != unitLogicScript.TeamNumber)
+        {
+            List<UnitLogic> listOfUnitsInfluencing = new List<UnitLogic>();
+            foreach (UnitLogic unit in influencingOpponentUnits)
+            {
+                listOfUnitsInfluencing.Add(unit);
+            }
+
+            listOfUnitsInfluencing.Add(unitLogicScript);
+
+            influencingOpponentUnits = listOfUnitsInfluencing.ToArray();
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        UnitLogic unitLogicScript = other.gameObject.GetComponent<UnitLogic>();
+        if (unitLogicScript != null && TeamNumber != unitLogicScript.TeamNumber)
+        {
+            List<UnitLogic> listOfUnitsInfluencing = new List<UnitLogic>();
+            foreach (UnitLogic unit in influencingOpponentUnits)
+            {
+                if (unitLogicScript == unit)
+                {
+                    continue;
+                }
+
+                listOfUnitsInfluencing.Add(unit);
+            }
+
+            influencingOpponentUnits = listOfUnitsInfluencing.ToArray();
         }
     }
 }

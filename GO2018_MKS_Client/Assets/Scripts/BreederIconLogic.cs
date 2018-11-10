@@ -43,7 +43,7 @@ public class BreederIconLogic : MonoBehaviour
             return;
         }
 
-        GameObject breeder = ingameLogicScript.teamBreeder;
+        GameObject breeder = ingameLogicScript.TeamBreeder;
         if(breeder == null)
         {
             return;

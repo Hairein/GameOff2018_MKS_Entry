@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4805719770816996}
   - component: {fileID: 135235929255119054}
+  - component: {fileID: 135332748680148116}
   - component: {fileID: 195263053035201334}
   - component: {fileID: 114071988231450030}
   - component: {fileID: 114102208662962850}
@@ -109,6 +110,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4201623824262640}
   - component: {fileID: 135048774681893332}
+  - component: {fileID: 135447025690044646}
   - component: {fileID: 195005315728519678}
   - component: {fileID: 114078294476735262}
   - component: {fileID: 114740362000534976}
@@ -145,6 +147,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4959342955935116}
   - component: {fileID: 135476227856521206}
+  - component: {fileID: 135197808209231076}
   - component: {fileID: 195353191393838850}
   - component: {fileID: 114587782836593398}
   - component: {fileID: 114276698288548114}
@@ -199,6 +202,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4653208788056370}
   - component: {fileID: 135756097792283984}
+  - component: {fileID: 135058858722542526}
   - component: {fileID: 195137541712495830}
   - component: {fileID: 114090216987360064}
   - component: {fileID: 114853883544641342}
@@ -353,6 +357,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4878385353966152}
   - component: {fileID: 135352864895971940}
+  - component: {fileID: 135934933101168798}
   - component: {fileID: 195048388336783374}
   - component: {fileID: 114007353616371798}
   - component: {fileID: 114094078952289116}
@@ -1319,9 +1324,8 @@ MonoBehaviour:
   IsSelected: 0
   SelectionEffect: {fileID: 1415252600750754}
   FoodResourceCount: 100
-  MaxFoodResourceCount: 300
   TechResourceCount: 0
-  MaxTechResourceCount: 300
+  influencingOpponentUnits: []
 --- !u!114 &114071988231450030
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1337,9 +1341,8 @@ MonoBehaviour:
   IsSelected: 0
   SelectionEffect: {fileID: 1955897921613668}
   FoodResourceCount: 100
-  MaxFoodResourceCount: 300
   TechResourceCount: 0
-  MaxTechResourceCount: 300
+  influencingOpponentUnits: []
 --- !u!114 &114078294476735262
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1355,9 +1358,8 @@ MonoBehaviour:
   IsSelected: 0
   SelectionEffect: {fileID: 1865786805641522}
   FoodResourceCount: 100
-  MaxFoodResourceCount: 300
   TechResourceCount: 0
-  MaxTechResourceCount: 300
+  influencingOpponentUnits: []
 --- !u!114 &114090216987360064
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1373,9 +1375,8 @@ MonoBehaviour:
   IsSelected: 0
   SelectionEffect: {fileID: 1081043753591256}
   FoodResourceCount: 100
-  MaxFoodResourceCount: 300
   TechResourceCount: 0
-  MaxTechResourceCount: 300
+  influencingOpponentUnits: []
 --- !u!114 &114094078952289116
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1424,9 +1425,8 @@ MonoBehaviour:
   IsSelected: 0
   SelectionEffect: {fileID: 1134201277639374}
   FoodResourceCount: 300
-  MaxFoodResourceCount: 3000
   TechResourceCount: 0
-  MaxTechResourceCount: 3000
+  influencingOpponentUnits: []
 --- !u!114 &114740362000534976
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1461,6 +1461,18 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!135 &135058858722542526
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1541671085265738}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!135 &135063254230890222
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -1484,6 +1496,18 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!135 &135197808209231076
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1403358669602504}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.5
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!135 &135235929255119054
 SphereCollider:
@@ -1509,6 +1533,18 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!135 &135332748680148116
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1012352807812752}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!135 &135352864895971940
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -1521,6 +1557,18 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!135 &135447025690044646
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1387640976852124}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!135 &135476227856521206
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -1568,6 +1616,18 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!135 &135934933101168798
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1951934581855778}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!195 &195005315728519678
 NavMeshAgent:

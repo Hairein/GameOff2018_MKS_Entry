@@ -8,6 +8,8 @@ TagManager:
   - TechSource
   - Team1Member
   - Team2Member
+  - Obstacle
+  - Terrain
   layers:
   - Default
   - TransparentFX
