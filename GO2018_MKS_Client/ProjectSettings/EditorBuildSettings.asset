@@ -12,6 +12,30 @@ EditorBuildSettings:
     path: Assets/Scenes/TitleScene.unity
     guid: 49bd9bd8b234e5f4abb23bef388c27e5
   - enabled: 1
+    path: Assets/Scenes/CreateSessionScene.unity
+    guid: e347d85d6ec789c43b0f1ebb57c605b3
+  - enabled: 1
+    path: Assets/Scenes/JoinSessionScene.unity
+    guid: a98c8f04da72be149bdbeffadc2014a0
+  - enabled: 1
+    path: Assets/Scenes/SettingsScene.unity
+    guid: 700341c729bc58148b76ad0f0f2baa5c
+  - enabled: 1
+    path: Assets/Scenes/HelpScene.unity
+    guid: d2a4f2ce19baee643a4e566e1c2a8b1e
+  - enabled: 1
+    path: Assets/Scenes/WaitingForOpponentScene.unity
+    guid: cd3ccaea63cdfcb44aa7c6c70b58efff
+  - enabled: 1
     path: Assets/Scenes/TestMap1Scene.unity
     guid: ff6eae7969298f34cb082df661c17a88
+  - enabled: 1
+    path: Assets/Scenes/Map0.unity
+    guid: fcca776d7579cec4c96665c35655c7a9
+  - enabled: 1
+    path: Assets/Scenes/Map1.unity
+    guid: 061ff55778f26b9478a6d7ea4a8b6a55
+  - enabled: 1
+    path: Assets/Scenes/Map2.unity
+    guid: 9ea5c3b9b37fab54e9e8ff5c19a79a79
   m_configObjects: {}

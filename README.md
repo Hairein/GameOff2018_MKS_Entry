@@ -17,20 +17,20 @@ Open Game Tasks And Features
     * 4 Upgrade optional/choice levels 
     * Food upgrade costs: 1000, 1500, 2000, 2500
     * Tech upgrade costs: 1125, 1125, 1125, 1125
-    +A - Faster drone speed:                 
-    +A - Reduce unit food usage:             
-    +B - More food collection max volume:    
-    +B - More tech collection max volume:    
+    A - Faster drone speed:                 
+    A - Reduce unit food usage:             
+    B - More food collection max volume:    
+    B - More tech collection max volume:    
     C - Barricade build and breaker:        
     C - Barricade build and breaker:        
-    +D - Enemy unit food resource stealer:   
-    +D - Enemy unit tech resource stealer:   
+    D - Opponent unit food resource stealer:   
+    D - Opponent unit tech resource stealer:   
 - Breed new drones, max. 8. Keep upgrades for old and new drones
 - Death of Breeder causes game loss
-- Make 3 maps (48x48, 56x56, 64x64) initially for jam release
+- Make 3 maps (48x48) initially for jam release
 - Configuration Options:
     Fog of War [on/off]
-    Timed game session [on/off] 2:50 to 10:00 per Session
+    Timed game session [on/off] 2:50, 5:00, 7:50, 10:00 per Session
     Music [on/off/Volume]
     Sound FX [on/off/Volume]
 - Replace placeholder art!
@@ -38,5 +38,7 @@ Open Game Tasks And Features
 - Actions (Hold Key to enable mode actioning on next click):
     ESC - Stop currently active action mode (Building or destroying barricades).
     S - Stop navigation immediately 
-    LT/RT Strg/B - Build barricade [Breeder Resource Cost per Barricade: F: 500 T: 250]
+    LT/RT Strg/B - Build barricade [Breeder Resource Cost per Barricade: F: 250 T: 250]
     LT/RT Alt/D - Destroy barricade
+    F - Feed the Breeder Food from nearby drones (active while pressed)
+    T - Feed the Breeder Tech from nearby drones (active while pressed)

@@ -77,8 +77,19 @@ public class TechSourceLogic : MonoBehaviour
                 }
 
                 unit.TechResourceCount += newTechValue;
+                if (unit.TechResourceCount > maxTechResourceCount)
+                {
+                    unit.TechResourceCount = maxTechResourceCount;
+                }
+
                 ResourceCount -= newTechValue;
             }
+        }
+
+        if (ResourceCount < 0.0f)
+        {
+            ResourceCount = 0.0f;
+            Destroy(this.gameObject);
         }
     }
 

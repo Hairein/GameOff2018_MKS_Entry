@@ -11,11 +11,15 @@ public class GameLogicScript : MonoBehaviour
 
     private string welcomeText = string.Empty;
 
+    public string SessionMapScene = string.Empty;
+    public int SessionTeamNumber = 1;
+    public int SessionTimeSeconds = 5 * 60;
+
     void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
 
-        // Read consistence data
+        // Read persistent data
         string platformId = PlayerPrefs.GetString("platformId", string.Empty);
         if (string.IsNullOrEmpty(platformId))
         {
@@ -93,5 +97,14 @@ public class GameLogicScript : MonoBehaviour
     public string GetWelcomeText()
     {
         return welcomeText;
+    }
+
+    public void ReportCreateSessionChoices(int mapIndex, int teamIndex, int timeIndex)
+    {
+        SessionMapScene = string.Format("Map{0}", mapIndex);
+
+        SessionTeamNumber =  teamIndex == 0 ? 1 : 2;
+    
+        SessionTimeSeconds = timeIndex * 150;
     }
 }

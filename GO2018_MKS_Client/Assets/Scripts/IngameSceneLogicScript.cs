@@ -109,6 +109,16 @@ public class IngameSceneLogicScript : MonoBehaviour
     public GameObject BarricadeSpawnParent;
     public float ManhattanDistanceAroundTeamUnits = 3.0f;
 
+    // ---
+    public RawImage ChosenSpeedPlusUpgradeIcon;
+    public RawImage ChosenFoodDrainMinusUpgradeIcon;
+    public RawImage ChosenFoodCollectPlusUpgradeIcon;
+    public RawImage ChosenTechCollectPlusUpgradeIcon;
+    public RawImage ChosenBarricadeBuildUpgradeIcon;
+    public RawImage ChosenBarricadeBreakUpgradeIcon;
+    public RawImage ChosenFoodStealUpgradeIcon;
+    public RawImage ChosenTechStealUpgradeIcon;
+
     // ~~~
     void Start()
     {
@@ -864,6 +874,8 @@ public class IngameSceneLogicScript : MonoBehaviour
             }
         }
 
+        ChosenSpeedPlusUpgradeIcon.gameObject.SetActive(true);
+
         MoveTeamToNextUpgradeLevel();
     }
 
@@ -881,6 +893,8 @@ public class IngameSceneLogicScript : MonoBehaviour
 
             Team2FoodDrainFactor = TeamFoodDrainUpgradeFactor;
         }
+
+        ChosenFoodDrainMinusUpgradeIcon.gameObject.SetActive(true);
 
         MoveTeamToNextUpgradeLevel();
     }
@@ -900,6 +914,8 @@ public class IngameSceneLogicScript : MonoBehaviour
             Team2FoodCollectFactor = TeamFoodCollectUpgradeFactor;
         }
 
+        ChosenFoodCollectPlusUpgradeIcon.gameObject.SetActive(true);
+
         MoveTeamToNextUpgradeLevel();
     }
 
@@ -918,6 +934,8 @@ public class IngameSceneLogicScript : MonoBehaviour
             Team2TechCollectFactor = TeamTechCollectUpgradeFactor;
         }
 
+        ChosenTechCollectPlusUpgradeIcon.gameObject.SetActive(true);
+
         MoveTeamToNextUpgradeLevel();
     }
 
@@ -931,7 +949,9 @@ public class IngameSceneLogicScript : MonoBehaviour
         {
             Team2HasUpgradedBarricadeBuild = true;
         }
-        
+
+        ChosenBarricadeBuildUpgradeIcon.gameObject.SetActive(true);
+
         MoveTeamToNextUpgradeLevel();
     }
 
@@ -945,7 +965,9 @@ public class IngameSceneLogicScript : MonoBehaviour
         {
             Team2HasUpgradedBarricadeBreak = true;
         }
-        
+
+        ChosenBarricadeBreakUpgradeIcon.gameObject.SetActive(true);
+
         MoveTeamToNextUpgradeLevel();
     }
 
@@ -960,6 +982,8 @@ public class IngameSceneLogicScript : MonoBehaviour
             Team2HasUpgradedFoodSteal = true;
         }
 
+        ChosenFoodStealUpgradeIcon.gameObject.SetActive(true);
+
         MoveTeamToNextUpgradeLevel();
     }
 
@@ -973,6 +997,8 @@ public class IngameSceneLogicScript : MonoBehaviour
         {
             Team2HasUpgradedTechSteal = true;
         }
+
+        ChosenTechStealUpgradeIcon.gameObject.SetActive(true);
 
         MoveTeamToNextUpgradeLevel();
     }

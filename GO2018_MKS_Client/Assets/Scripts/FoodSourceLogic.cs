@@ -78,8 +78,19 @@ public class FoodSourceLogic : MonoBehaviour
                 }
 
                 unit.FoodResourceCount += newFoodValue;
+                if(unit.FoodResourceCount > maxFoodResourceCount)
+                {
+                    unit.FoodResourceCount = maxFoodResourceCount;
+                }
+
                 ResourceCount -= newFoodValue;
             }
+        }
+
+        if (ResourceCount < 0.0f)
+        {
+            ResourceCount = 0.0f;
+            Destroy(this.gameObject);
         }
     }
 
