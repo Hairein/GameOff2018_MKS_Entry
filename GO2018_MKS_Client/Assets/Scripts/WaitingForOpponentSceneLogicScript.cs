@@ -40,6 +40,8 @@ public class WaitingForOpponentSceneLogicScript : MonoBehaviour
     // Button Handlers
     public void OnClickBackButton()
     {
+        gameLogicScriptComponent.AbortCreateSession();
+
         SceneManager.LoadScene("CreateSessionScene", LoadSceneMode.Single);
     }
 }

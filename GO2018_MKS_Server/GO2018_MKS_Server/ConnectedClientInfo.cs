@@ -33,6 +33,9 @@ namespace GO2018_MKS_Server
             }
         }
 
+        private bool isCreatingSession = false;
+        private CreateSessionMessage createSessionMessage = null;
+
         public ConnectedClientInfo(TcpClient newTcpClient)
         {
             tcpClient = newTcpClient;
@@ -136,6 +139,24 @@ namespace GO2018_MKS_Server
         {
             platformId = newPlatformId;
             playerHandle = newPlayerHandle;
+        }
+
+        public bool SetCreateSessionState(CreateSessionMessage newCreateSessionMessage)
+        {
+            if(isCreatingSession || createSessionMessage == null)
+            {
+                return false;
+            }
+
+            createSessionMessage = newCreateSessionMessage;
+
+            return true;
+        }
+
+        public void ClearCreateSessionState()
+        {
+            isCreatingSession = false;
+            createSessionMessage = null;
         }
     }
 }

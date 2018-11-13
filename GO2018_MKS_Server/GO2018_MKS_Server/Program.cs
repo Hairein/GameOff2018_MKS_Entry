@@ -144,7 +144,7 @@ namespace GO2018_MKS_Server
             TcpClient tcpClient = client.GetTcpClient();
 
             // TEMP DEBUG
-            //Console.WriteLine("In - " + tcpClient.Client.Handle.ToString() + ": " + nextMessageText);
+            Console.WriteLine("In - " + tcpClient.Client.Handle.ToString() + ": " + nextMessageText);
 
             GenericMessage genericMessage = JsonConvert.DeserializeObject<GenericMessage>(nextMessageText);
             switch (genericMessage.Type)
@@ -187,7 +187,7 @@ namespace GO2018_MKS_Server
                         }
                         else
                         {
-                            loginAnswer = new LoginAnswerMessage(false, "Player already active in session.");
+                            loginAnswer = new LoginAnswerMessage(false, "Player already active in session");
                         }
                        client.AddMessage(loginAnswer);
                     }
@@ -198,6 +198,31 @@ namespace GO2018_MKS_Server
 
                         // TEMP WORKAROUND - Close client connection
                         client.Dispose();
+                    }
+                    break;
+                case MessageType.createSession:
+                    {
+                        Console.WriteLine("CreateSession TCP message received: " + tcpClient.Client.Handle.ToString());
+
+                        CreateSessionMessage createSessionMessage = JsonConvert.DeserializeObject<CreateSessionMessage>(nextMessageText);
+
+                        CreateSessionAnswerMessage createSessionAnswer;
+                        if (client.SetCreateSessionState(createSessionMessage))
+                        {
+                            createSessionAnswer = new CreateSessionAnswerMessage(true, "OK");
+                        }
+                        else
+                        {
+                            createSessionAnswer = new CreateSessionAnswerMessage(false, "Player busy in session");
+                        }
+                        client.AddMessage(createSessionAnswer);
+                    }
+                    break;
+                case MessageType.abortCreateSession:
+                    {
+                        Console.WriteLine("AbortCreateSessionMessage TCP message received: " + tcpClient.Client.Handle.ToString());
+
+                        client.ClearCreateSessionState();
                     }
                     break;
                 default:

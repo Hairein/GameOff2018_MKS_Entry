@@ -44,13 +44,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CreateSessionAnswerMessage.cs" />
     <Compile Include="LoginAnswerMessage.cs" />
     <Compile Include="GenericMessage.cs" />
+    <Compile Include="CreateSessionMessage.cs" />
     <Compile Include="LoginMessage.cs" />
+    <Compile Include="AbortCreateSessionMessage.cs" />
     <Compile Include="LogoutMessage.cs" />
     <Compile Include="TCPClientManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MessageTypes.cs" />
+    <Compile Include="Utitlity.cs" />
     <Compile Include="WelcomeMessage.cs" />
   </ItemGroup>
   <ItemGroup>

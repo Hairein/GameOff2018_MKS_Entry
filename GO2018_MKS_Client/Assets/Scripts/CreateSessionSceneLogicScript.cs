@@ -38,7 +38,7 @@ public class CreateSessionSceneLogicScript : MonoBehaviour
     {
         if (gameLogicScriptComponent != null)
         {
-            gameLogicScriptComponent.ReportCreateSessionChoices(SelectedMapIndex, SelectedTeamIndex, SelectedSessionTimeIndex);
+            gameLogicScriptComponent.CreateSession(SelectedMapIndex, SelectedTeamIndex, SelectedSessionTimeIndex);
 
             SceneManager.LoadScene("WaitingForOpponentScene", LoadSceneMode.Single);
         }

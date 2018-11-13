@@ -8,6 +8,20 @@
         loginAnswer,
 
         logout,
-        welcome
+        welcome,
+
+        createSession,
+        createSessionAnswer,
+        abortCreateSession,
+
+        waitForOpponent,
+        waitForOpponentAnswer,
+        abortWaitForOpponent,
+
+        listSessions,
+        joinSession,
+
+        readySessionStart,
+        readySessionStartAnswer,
     }
 }

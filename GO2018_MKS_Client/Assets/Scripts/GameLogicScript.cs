@@ -7,15 +7,15 @@ using UnityEngine;
 
 public class GameLogicScript : MonoBehaviour
 {
-    private TCPClientManager manager = new TCPClientManager();
+    private TCPClientManager tcpClientManager = new TCPClientManager();
 
     private string welcomeText = "Connecting To Server...";
 
-    public string SessionMapScene = string.Empty;
-    public int SessionTeamNumber = 1;
-    public int SessionTimeSeconds = 5 * 60;
-
     public LoginAnswerMessage LoginAnswerMessage = null;
+
+    public CreateSessionMessage createSessionMessage = null;
+    public CreateSessionAnswerMessage createSessionAnswerMessage = null;
+
 
     void Awake()
     {
@@ -43,22 +43,20 @@ public class GameLogicScript : MonoBehaviour
             PlayerPrefs.Save();
         }
 
-        manager.ConnectToTcpServer();
+        tcpClientManager.ConnectToTcpServer();
 
         LoginMessage loginMessage = new LoginMessage();
         loginMessage.PlatformId = platformId;
         loginMessage.PlayerHandle = playerHandle;
-        string message = JsonConvert.SerializeObject(loginMessage);
-        manager.SendMessage(message);
+        tcpClientManager.SendMessageObject(loginMessage);
     }
 
     private void OnDestroy()
     {
         LogoutMessage logoutMessage = new LogoutMessage();
-        string message = JsonConvert.SerializeObject(logoutMessage);
-        manager.SendMessage(message);
+        tcpClientManager.SendMessageObject(logoutMessage);
 
-        manager.DisconnectFromTcpServer();
+        tcpClientManager.DisconnectFromTcpServer();
     }
 
     void Start()
@@ -69,7 +67,7 @@ public class GameLogicScript : MonoBehaviour
     {
         while(true)
         {
-            string tcpMessage = manager.ReceiveMessage();
+            string tcpMessage = tcpClientManager.ReceiveMessage();
             if(string.IsNullOrEmpty(tcpMessage))
             {
                 break;
@@ -81,7 +79,7 @@ public class GameLogicScript : MonoBehaviour
 
     public void HandleTCPMessage(string message)
     {
-        //Debug.Log("TCP message received from server: " + message);
+        Debug.Log("TCP message received from server: " + message);
 
         // Handle message according to type
         GenericMessage genericMessage = JsonConvert.DeserializeObject<GenericMessage>(message);
@@ -98,6 +96,11 @@ public class GameLogicScript : MonoBehaviour
                     LoginAnswerMessage = JsonConvert.DeserializeObject<LoginAnswerMessage>(message);
                 }
                 break;
+            case MessageType.createSessionAnswer:
+                {
+                    createSessionAnswerMessage = JsonConvert.DeserializeObject<CreateSessionAnswerMessage>(message);
+                }
+                break;
             default:
                 {
                     Debug.Log("Generic/Unknown TCP message received.");
@@ -111,12 +114,35 @@ public class GameLogicScript : MonoBehaviour
         return welcomeText;
     }
 
-    public void ReportCreateSessionChoices(int mapIndex, int teamIndex, int timeIndex)
+    public void CreateSession(int mapIndex, int teamIndex, int timeIndex)
     {
-        SessionMapScene = string.Format("Map{0}", mapIndex);
+        if(mapIndex < 0 || mapIndex >= MessageLibraryUtitlity.SessionMapNames.Length)
+        {
+            return;
+        }
 
-        SessionTeamNumber =  teamIndex == 0 ? 1 : 2;
-    
-        SessionTimeSeconds = timeIndex * 150;
+        if (teamIndex < 0 || teamIndex > 2)
+        {
+            return;
+        }
+
+        if (timeIndex < 0 || timeIndex > MessageLibraryUtitlity.SessionDurationSeconds.Length)
+        {
+            return;
+        }
+
+        createSessionAnswerMessage = null;
+
+        string mapName = MessageLibraryUtitlity.SessionMapNames[mapIndex];
+        MessageLibraryUtitlity.SessionTeam team = teamIndex == 0 ? MessageLibraryUtitlity.SessionTeam.blue : MessageLibraryUtitlity.SessionTeam.orange;
+        int seconds = MessageLibraryUtitlity.SessionDurationSeconds[timeIndex];
+        createSessionMessage = new CreateSessionMessage(mapName, team, seconds);
+        tcpClientManager.SendMessageObject(createSessionMessage);
+    }
+
+    public void AbortCreateSession()
+    {
+        AbortCreateSessionMessage abortCreateSessionMessage = new AbortCreateSessionMessage();
+        tcpClientManager.SendMessageObject(abortCreateSessionMessage);
     }
 }

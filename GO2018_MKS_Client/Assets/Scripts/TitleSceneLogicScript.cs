@@ -43,7 +43,14 @@ public class TitleSceneLogicScript : MonoBehaviour
         if (welcomeText != null)
         {
             welcomeTextComponent = welcomeText.GetComponent<Text>();
-        }        
+        }
+
+        createSessionButton.gameObject.SetActive(true);
+        joinSessionButton.gameObject.SetActive(true);
+        settingsButton.gameObject.SetActive(true);
+        helpButton.gameObject.SetActive(true);
+        PlayerHandleText.gameObject.SetActive(true);
+        PlayerHandleInputField.gameObject.SetActive(true);
     }
 
     void Update()

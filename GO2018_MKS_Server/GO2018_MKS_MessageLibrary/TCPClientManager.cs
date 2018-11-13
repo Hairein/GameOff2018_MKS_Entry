@@ -49,12 +49,27 @@ namespace GO2018_MKS_MessageLibrary
             return tcpClient.Client.Connected;
         }
 
-        public void SendMessage(string message)
+        public void SendJsonMessage(string message)
         {
             if (!tcpClient.Connected)
             {
                 return;
             }
+
+            NetworkStream stream = tcpClient.GetStream();
+
+            byte[] data = Encoding.ASCII.GetBytes(message);
+            stream.Write(data, 0, data.Length);
+        }
+
+        public void SendMessageObject(object messageObject)
+        {
+            if (!tcpClient.Connected)
+            {
+                return;
+            }
+
+            string message = JsonConvert.SerializeObject(messageObject);
 
             NetworkStream stream = tcpClient.GetStream();
 
