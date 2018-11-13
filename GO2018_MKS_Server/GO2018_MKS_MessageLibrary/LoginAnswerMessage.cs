@@ -9,18 +9,22 @@ namespace GO2018_MKS_MessageLibrary
     public class LoginAnswerMessage : GenericMessage
     {
         public bool Success;
-        public string Reason;
+        public string Details;
 
         public LoginAnswerMessage()
         {
+            Type = MessageType.loginAnswer;
+
             Success = false;
-            Reason = string.Empty;
+            Details = string.Empty;
         }
 
-        public LoginAnswerMessage(bool flag, string reason)
+        public LoginAnswerMessage(bool flag, string details)
         {
+            Type = MessageType.loginAnswer;
+
             Success = flag;
-            Reason = reason;
+            Details = details;
         }
     }
 }

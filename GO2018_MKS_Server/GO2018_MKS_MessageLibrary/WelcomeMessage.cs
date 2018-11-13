@@ -8,20 +8,20 @@ namespace GO2018_MKS_MessageLibrary
 {
     public class WelcomeMessage : GenericMessage
     {
-        public string text;
+        public string Text;
 
         public WelcomeMessage()
         {
             Type = MessageType.welcome;
 
-            text = "Welcome to the GO2018 Game Server";
+            Text = "Welcome to the GO2018 Game Server";
         }
 
         public WelcomeMessage(string messageText)
         {
             Type = MessageType.welcome;
 
-            text = messageText;
+            Text = messageText;
         }
     }
 }

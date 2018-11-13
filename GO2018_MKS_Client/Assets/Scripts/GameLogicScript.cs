@@ -15,6 +15,8 @@ public class GameLogicScript : MonoBehaviour
     public int SessionTeamNumber = 1;
     public int SessionTimeSeconds = 5 * 60;
 
+    public LoginAnswerMessage LoginAnswerMessage = null;
+
     void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
@@ -41,20 +43,12 @@ public class GameLogicScript : MonoBehaviour
             PlayerPrefs.Save();
         }
 
-        //Debug.Log("Platform ID: " + platformId);
-        //Debug.Log("Player Handle: " + playerHandle);
-
         manager.ConnectToTcpServer();
 
         LoginMessage loginMessage = new LoginMessage();
         loginMessage.PlatformId = platformId;
         loginMessage.PlayerHandle = playerHandle;
         string message = JsonConvert.SerializeObject(loginMessage);
-        manager.SendMessage(message);
-
-        // TEMP Test Mulitmessage to server
-        GenericMessage genericMessage = new GenericMessage();
-        message = JsonConvert.SerializeObject(genericMessage);
         manager.SendMessage(message);
     }
 
@@ -73,30 +67,43 @@ public class GameLogicScript : MonoBehaviour
 
     void Update()
     {
-        string tcpMessage = string.Empty;
-        while(manager.ReceiveMessage(out tcpMessage))
+        while(true)
         {
-            Debug.Log("TCP message received: " + tcpMessage);
-
-            // Handle message according to type
-            GenericMessage genericMessage = JsonConvert.DeserializeObject<GenericMessage>(tcpMessage);
-            switch(genericMessage.Type)
+            string tcpMessage = manager.ReceiveMessage();
+            if(string.IsNullOrEmpty(tcpMessage))
             {
-                case MessageType.welcome:
-                    {
-                        WelcomeMessage welcomeMessage = JsonConvert.DeserializeObject<WelcomeMessage>(tcpMessage);
-                        welcomeText = welcomeMessage.text;
-                    }
-                    break;
-                default:
-                    break;
+                break;
             }
+
+            HandleTCPMessage(tcpMessage);
         }
     }
 
     public void HandleTCPMessage(string message)
     {
-        Debug.Log("TCP message received from server: " + message);
+        //Debug.Log("TCP message received from server: " + message);
+
+        // Handle message according to type
+        GenericMessage genericMessage = JsonConvert.DeserializeObject<GenericMessage>(message);
+        switch(genericMessage.Type)
+        {
+            case MessageType.welcome:
+                {
+                    WelcomeMessage welcomeMessage = JsonConvert.DeserializeObject<WelcomeMessage>(message);
+                    welcomeText = welcomeMessage.Text;
+                }
+                break;
+            case MessageType.loginAnswer:
+                {
+                    LoginAnswerMessage = JsonConvert.DeserializeObject<LoginAnswerMessage>(message);
+                }
+                break;
+            default:
+                {
+                    Debug.Log("Generic/Unknown TCP message received.");
+                }
+                break;
+        }
     }
 
     public string GetWelcomeText()

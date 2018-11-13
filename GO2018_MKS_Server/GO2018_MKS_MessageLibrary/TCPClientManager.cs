@@ -12,96 +12,94 @@ namespace GO2018_MKS_MessageLibrary
     {
         private string tcpServerAddress = "localhost";
         private int tcpServerPort = 13000;
-        public TcpClient client;
+        public TcpClient tcpClient;
 
         StringBuilder incomingBuffer = new StringBuilder();
 
         public void ConnectToTcpServer()
         {
-            client = new TcpClient(tcpServerAddress, tcpServerPort);
-            client.LingerState = new LingerOption(false, 0);
-            client.NoDelay = true;
+            tcpClient = new TcpClient(tcpServerAddress, tcpServerPort);
+            tcpClient.LingerState = new LingerOption(false, 0);
+            tcpClient.NoDelay = true;
+        }
+
+        public void ConnectToTcpServer(string serverAddress, int serverPort)
+        {
+            tcpServerAddress = serverAddress;
+            tcpServerPort = serverPort;
+
+            tcpClient = new TcpClient(tcpServerAddress, tcpServerPort);
+            tcpClient.LingerState = new LingerOption(false, 0);
+            tcpClient.NoDelay = true;
         }
 
         public void DisconnectFromTcpServer()
         {
-            if (client.Connected)
+            if (tcpClient.Connected)
             {
-                NetworkStream stream = client.GetStream();
+                NetworkStream stream = tcpClient.GetStream();
                 stream.Close();
 
-                client.Close();
+                tcpClient.Close();
             }
         }
 
-        private bool VerifyServerConnection()
+        private bool CheckServerConnected()
         {
-            return client.Client.Connected;
+            return tcpClient.Client.Connected;
         }
 
         public void SendMessage(string message)
         {
-            NetworkStream stream = client.GetStream();
+            if (!tcpClient.Connected)
+            {
+                return;
+            }
+
+            NetworkStream stream = tcpClient.GetStream();
 
             byte[] data = Encoding.ASCII.GetBytes(message);
             stream.Write(data, 0, data.Length);
         }
 
-        /*        
-        public bool ReceiveMessage(out string message)
+        public string ReceiveMessage()
         {
-            message = string.Empty;
+            string nextMessage = string.Empty;
 
-            List<string> listOfMessages = new List<string>();
-
-            int availableClientData = client.Available;
-            if (availableClientData != 0)
+            if (!tcpClient.Connected)
             {
-                NetworkStream stream = client.GetStream();
+                return nextMessage;
+            }
+
+            int availableClientData = tcpClient.Available;
+            if (availableClientData > 0)
+            {
+                NetworkStream stream = tcpClient.GetStream();
 
                 byte[] readBuffer = new byte[availableClientData];
                 int bytesRead = stream.Read(readBuffer, 0, availableClientData);
 
-                incomingBuffer.Append(Encoding.UTF8.GetString(readBuffer, 0, bytesRead));
+                string partMessageText = Encoding.UTF8.GetString(readBuffer, 0, bytesRead);
+
+                incomingBuffer.Append(partMessageText);
             }
 
-            if(incomingBuffer.Length == 0)
+            string readMessage = incomingBuffer.ToString();
+            if (!string.IsNullOrEmpty(readMessage))
             {
-                return false;
+                int closingBracketIndex = readMessage.IndexOf('}');
+                if (closingBracketIndex >= 0)
+                {
+                    nextMessage = readMessage.Substring(0, closingBracketIndex + 1);
+
+                    int remainingLength = readMessage.Length - nextMessage.Length;
+                    string remainingMessage = readMessage.Substring(closingBracketIndex + 1, remainingLength);
+
+                    incomingBuffer = new StringBuilder(remainingMessage);
+                }
             }
 
-            string cutableMessages = incomingBuffer.ToString();
-            int bracketCloseIndex = cutableMessages.IndexOf('}');
-            if (bracketCloseIndex >= 0) 
-            {
-                message = cutableMessages.Substring(0, bracketCloseIndex + 1);
-
-                string remainingPart = cutableMessages.Substring(bracketCloseIndex + 1, cutableMessages.Length - 1);
-                incomingBuffer = new StringBuilder(remainingPart);
-
-                return true;
-            }
-
-            return false;
-        }
-        */
-        public bool ReceiveMessage(out string message)
-        {
-            message = string.Empty;
-
-            int availableClientData = client.Available;
-            if (availableClientData == 0)
-            {
-                return false;
-            }
-
-            NetworkStream stream = client.GetStream();
-
-            byte[] readBuffer = new byte[availableClientData];
-            int bytesRead = stream.Read(readBuffer, 0, availableClientData);
-
-            message = Encoding.UTF8.GetString(readBuffer, 0, bytesRead);
-            return true;
+            return nextMessage;
         }
     }
 }

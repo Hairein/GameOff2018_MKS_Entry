@@ -6,11 +6,21 @@ public class TitleSceneLogicScript : MonoBehaviour
 {
     private GameLogicScript gameLogicScriptComponent = null;
 
+    private GameObject welcomeText;
+    private Text welcomeTextComponent;
+
+    public Text PlayerHandleText;
     public InputField PlayerHandleInputField;
     public string PlayerHandle;
 
-    GameObject welcomeText;
-    Text welcomeTextComponent;
+    private bool loginCompleted = false;
+    public GameObject LoginFailPanel;
+    public Text LoginFailDetails;
+
+    public Button createSessionButton;
+    public Button joinSessionButton;
+    public Button settingsButton;
+    public Button helpButton;
 
     void Start()
     {
@@ -33,7 +43,7 @@ public class TitleSceneLogicScript : MonoBehaviour
         if (welcomeText != null)
         {
             welcomeTextComponent = welcomeText.GetComponent<Text>();
-        }
+        }        
     }
 
     void Update()
@@ -46,6 +56,29 @@ public class TitleSceneLogicScript : MonoBehaviour
         if (welcomeTextComponent != null)
         {
             welcomeTextComponent.text = gameLogicScriptComponent.GetWelcomeText();
+        }
+
+        if(!loginCompleted)
+        {
+            if(gameLogicScriptComponent.LoginAnswerMessage != null)
+            {
+                loginCompleted = true;
+
+                if(!gameLogicScriptComponent.LoginAnswerMessage.Success)
+                {
+                    LoginFailDetails.text = gameLogicScriptComponent.LoginAnswerMessage.Details;
+                    LoginFailPanel.gameObject.SetActive(true);
+                }
+                else
+                {
+                    createSessionButton.gameObject.SetActive(true);
+                    joinSessionButton.gameObject.SetActive(true);
+                    settingsButton.gameObject.SetActive(true);
+                    helpButton.gameObject.SetActive(true);
+                    PlayerHandleText.gameObject.SetActive(true);
+                    PlayerHandleInputField.gameObject.SetActive(true);
+                }
+            }
         }
     }
 

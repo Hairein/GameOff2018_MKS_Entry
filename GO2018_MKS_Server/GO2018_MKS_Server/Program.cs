@@ -13,21 +13,31 @@ namespace GO2018_MKS_Server
     {
         bool runFlag = true;
 
-        List<TcpClient> connectedTcpClients = new List<TcpClient>();
-
-        Stack<KeyValuePair<TcpClient, GenericMessage>> StackOfPendingClientMessages = new Stack<KeyValuePair<TcpClient, GenericMessage>>();
+        List<ConnectedClientInfo> connectedClients = new List<ConnectedClientInfo>();
 
         static void Main(string[] args)
         {
+            int serverListenPort = 13000;
+
+            if(args.Length == 1)
+            {
+                string portText = args[0];
+                int cmdPort = 0;
+                if (int.TryParse(portText, out cmdPort))
+                {
+                    serverListenPort = cmdPort;
+                }
+            }
+
             Program program = new Program();
-            program.Run();
+            program.Run(serverListenPort);
         }
 
-        public void Run()
+        public void Run(int port)
         {
             Console.WriteLine("GO2018 MKS Server");
 
-            Thread tcpListenerThread = new Thread(new ThreadStart(TcpHandlerThreadProc));
+            Thread tcpListenerThread = new Thread(() => TcpHandlerThreadProc(port));
             tcpListenerThread.Start();
 
             PrintHelpMessage();
@@ -62,16 +72,15 @@ namespace GO2018_MKS_Server
             Console.WriteLine("Commands (help, quit, exit)");
         }
 
-        private void TcpHandlerThreadProc()
+        private void TcpHandlerThreadProc(int port)
         {
-            int port = 13000;
             TcpListener server = new TcpListener(IPAddress.Any, port);
             server.Start();
 
             while (runFlag)
             {
                 AcceptClients(server);
-                ReadClientMessages();
+                HandleClientMessages();
                 WriteClientMessages();
                 ClearLostClients();
 
@@ -81,16 +90,11 @@ namespace GO2018_MKS_Server
 
             server.Stop();
 
-            foreach (TcpClient client in connectedTcpClients)
+            foreach (ConnectedClientInfo client in connectedClients)
             {
-                if (client.Connected)
-                {
-                    NetworkStream stream = client.GetStream();
-                    stream.Close();
-
-                    client.Close();
-                }
+                client.Dispose();
             }
+            connectedClients.Clear();
         }
 
         // Connect players
@@ -98,140 +102,153 @@ namespace GO2018_MKS_Server
         {
             while (server.Pending())
             {
-                TcpClient client = server.AcceptTcpClient();
-                Console.WriteLine("Connected: " + client.Client.Handle.ToString());
+                TcpClient tcpClient = server.AcceptTcpClient();
+                Console.WriteLine("Connected: " + tcpClient.Client.Handle.ToString());
 
-                client.LingerState = new LingerOption(false, 0);
-                client.NoDelay = true;
+                tcpClient.LingerState = new LingerOption(false, 0);
+                tcpClient.NoDelay = true;
 
-                connectedTcpClients.Add(client);
+                ConnectedClientInfo newClient = new ConnectedClientInfo(tcpClient);
+                connectedClients.Add(newClient);
 
                 WelcomeMessage welcomeMessage = new WelcomeMessage();
-                StackOfPendingClientMessages.Push(new KeyValuePair<TcpClient, GenericMessage>(client, welcomeMessage));
+                newClient.AddMessage(welcomeMessage);
             }
         }
 
         // Read player messages
-        private void ReadClientMessages()
+        private void HandleClientMessages()
         {
-            foreach(TcpClient client in connectedTcpClients)
+            foreach (ConnectedClientInfo client in connectedClients)
             {
-                if (!VerifyClientConnection(client))
+                if (!client.IsConnected)
                 {
                     continue;
                 }
 
-                int availableClientData = client.Available;
-                if (availableClientData > 0)
+                while (true)
                 {
-                    NetworkStream stream = client.GetStream();
-
-                    byte[] readBuffer = new byte[availableClientData];
-                    int bytesRead = stream.Read(readBuffer, 0, availableClientData);
-
-                    string messageText = Encoding.UTF8.GetString(readBuffer, 0, bytesRead);
-                    // TEMP DEBUG
-                    Console.WriteLine(client.Client.Handle.ToString() + ": " + messageText);
-
-                    // TODO  Cut incoming mesage into portion for JSON desierialization
-
-                    GenericMessage genericMessage = JsonConvert.DeserializeObject<GenericMessage>(messageText);
-                    switch (genericMessage.Type)
+                    string inputMessage = client.GetNextIncomingMessage();
+                    if (string.IsNullOrEmpty(inputMessage))
                     {
-                        case MessageType.generic:
-                            {
-                                Console.WriteLine("Generic TCP message received: " + client.Client.Handle.ToString());
-                            }
-                            break;
-
-                        case MessageType.login:
-                            {
-                                Console.WriteLine("Login TCP message received: " + client.Client.Handle.ToString());
-
-                                //LoginAnswerMessage loginAnswer = new LoginAnswerMessage(true, "OK");
-                                //LoginAnswerMessage answer = new LoginAnswerMessage(false, "Player credentials already used in session");
-
-                                //KeyValuePair<TcpClient, GenericMessage> stackEntry = new KeyValuePair<TcpClient, GenericMessage>(client, loginAnswer);
-                                //StackOfPendingClientMessages.Push(stackEntry);
-                            }
-                            break;
-                        case MessageType.logout:
-                            {
-                                Console.WriteLine("Logout TCP message received: " + client.Client.Handle.ToString());
-
-                                // TEMP WORKAROUND - Close client
-                                stream.Close();
-                                client.Close();
-                            }
-                            break;
-
-                        default:
-                            {
-                                Console.WriteLine("Unhandled TCP message received: " + client.Client.Handle.ToString());
-                            }
-                            break;
+                        break;
                     }
-                }
+
+                    HandleIncomingMessage(client, inputMessage);                                        
+                }            
+            }
+        }
+
+        private void HandleIncomingMessage(ConnectedClientInfo client, string nextMessageText)
+        {
+            TcpClient tcpClient = client.GetTcpClient();
+
+            // TEMP DEBUG
+            //Console.WriteLine("In - " + tcpClient.Client.Handle.ToString() + ": " + nextMessageText);
+
+            GenericMessage genericMessage = JsonConvert.DeserializeObject<GenericMessage>(nextMessageText);
+            switch (genericMessage.Type)
+            {
+                case MessageType.generic:
+                    {
+                        Console.WriteLine("Generic TCP message received: " + tcpClient.Client.Handle.ToString());
+                    }
+                    break;
+
+                case MessageType.login:
+                    {
+                        Console.WriteLine("Login TCP message received: " + tcpClient.Client.Handle.ToString());
+
+                        LoginMessage loginMessage = JsonConvert.DeserializeObject<LoginMessage>(nextMessageText);
+
+                        bool verifyClient = true;
+                        foreach(ConnectedClientInfo clientInfo in connectedClients)
+                        {
+                            if(client != clientInfo)
+                            {                               
+                                string clientInfoPlatformId = string.Empty;
+                                string clientInfoPlayerHandle = string.Empty;
+                                clientInfo.GetPlayerCredentials(out clientInfoPlatformId, out clientInfoPlayerHandle);
+
+                                if (loginMessage.PlatformId == clientInfoPlatformId)
+                                {
+                                    verifyClient = false;
+                                    break;
+                                }
+                            }
+                        }
+
+                        client.SetPlayerCredentials(loginMessage.PlatformId, loginMessage.PlayerHandle);
+
+                        LoginAnswerMessage loginAnswer;
+                        if (verifyClient)
+                        {
+                            loginAnswer = new LoginAnswerMessage(true, "OK");
+                        }
+                        else
+                        {
+                            loginAnswer = new LoginAnswerMessage(false, "Player already active in session.");
+                        }
+                       client.AddMessage(loginAnswer);
+                    }
+                    break;
+                case MessageType.logout:
+                    {
+                        Console.WriteLine("Logout TCP message received: " + tcpClient.Client.Handle.ToString());
+
+                        // TEMP WORKAROUND - Close client connection
+                        client.Dispose();
+                    }
+                    break;
+                default:
+                    {
+                        Console.WriteLine("Unhandled TCP message received: " + tcpClient.Client.Handle.ToString());
+                    }
+                    break;
             }
         }
 
         // Write player messages
         private void WriteClientMessages()
         {
-            while (StackOfPendingClientMessages.Count > 0)
+            foreach (ConnectedClientInfo client in connectedClients)
             {
-                KeyValuePair<TcpClient, GenericMessage> entry = StackOfPendingClientMessages.Pop();
-
-                if (!VerifyClientConnection(entry.Key))
+                if (!client.IsConnected)
                 {
                     continue;
                 }
 
-                string message = JsonConvert.SerializeObject(entry.Value);
-                Byte[] data = System.Text.Encoding.UTF8.GetBytes(message);
-                NetworkStream stream = entry.Key.GetStream();
-                stream.Write(data, 0, data.Length);
+                client.SendPendingMessages();
             }
         }
 
         private void ClearLostClients()
         {
-            for (int clientIndex = connectedTcpClients.Count - 1; clientIndex >= 0; clientIndex--)
+            var connectedClientsArray = connectedClients.ToArray();
+            connectedClients.Clear();
+
+            for (int index = 0; index < connectedClientsArray.Length; index++)
             {
-                TcpClient client = connectedTcpClients[clientIndex];
-                if(VerifyClientConnection(client))
+                ConnectedClientInfo client = connectedClientsArray[index];
+                if(client.IsConnected)
                 {
+                    connectedClients.Add(client);
                     continue;
                 }
 
-                Console.WriteLine("Client lost, clearing: " + client.Client.Handle.ToString());
+                TcpClient tcpClient = client.GetTcpClient();
+
+                Console.WriteLine("Client lost, clearing: " + tcpClient.Client.Handle.ToString());
 
                 StorePlayerResults(client);
 
-                connectedTcpClients.Remove(client);
-
-                StackOfPendingClientMessages = new Stack<KeyValuePair<TcpClient, GenericMessage>>();
-
-                KeyValuePair<TcpClient, GenericMessage>[] stackPairArray = StackOfPendingClientMessages.ToArray();
-                for (int stackIndex = 0; stackIndex < stackPairArray.Length; stackIndex++)
-                {
-                    KeyValuePair<TcpClient, GenericMessage> stackEntry = stackPairArray[stackIndex];
-                    if(client != stackEntry.Key)
-                    {
-                        StackOfPendingClientMessages.Push(stackEntry);
-                    }
-                }
+                client.Dispose();
             }
         }
 
-        private bool VerifyClientConnection(TcpClient client)
+        private void StorePlayerResults(ConnectedClientInfo client)
         {
-            return client.Client.Connected;
-        }
-
-        private void StorePlayerResults(TcpClient client)
-        {
-            // TODO - Store persistent results of client brefore removing
+            // TODO - Store persistent results of client before removing
         }
     }
 }
