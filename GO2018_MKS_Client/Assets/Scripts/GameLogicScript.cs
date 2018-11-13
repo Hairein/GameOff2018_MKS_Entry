@@ -9,7 +9,7 @@ public class GameLogicScript : MonoBehaviour
 {
     private TCPClientManager manager = new TCPClientManager();
 
-    private string welcomeText = string.Empty;
+    private string welcomeText = "Connecting To Server...";
 
     public string SessionMapScene = string.Empty;
     public int SessionTeamNumber = 1;
@@ -51,6 +51,11 @@ public class GameLogicScript : MonoBehaviour
         loginMessage.PlayerHandle = playerHandle;
         string message = JsonConvert.SerializeObject(loginMessage);
         manager.SendMessage(message);
+
+        // TEMP Test Mulitmessage to server
+        GenericMessage genericMessage = new GenericMessage();
+        message = JsonConvert.SerializeObject(genericMessage);
+        manager.SendMessage(message);
     }
 
     private void OnDestroy()
@@ -71,7 +76,7 @@ public class GameLogicScript : MonoBehaviour
         string tcpMessage = string.Empty;
         while(manager.ReceiveMessage(out tcpMessage))
         {
-            //Debug.Log("TCP message received: " + tcpMessage);
+            Debug.Log("TCP message received: " + tcpMessage);
 
             // Handle message according to type
             GenericMessage genericMessage = JsonConvert.DeserializeObject<GenericMessage>(tcpMessage);

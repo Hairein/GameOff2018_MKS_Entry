@@ -9,6 +9,9 @@ public class TitleSceneLogicScript : MonoBehaviour
     public InputField PlayerHandleInputField;
     public string PlayerHandle;
 
+    GameObject welcomeText;
+    Text welcomeTextComponent;
+
     void Start()
     {
         GameObject gameLogic = GameObject.Find("GameLogic");
@@ -25,6 +28,12 @@ public class TitleSceneLogicScript : MonoBehaviour
         {
             PlayerHandleInputField.text = PlayerHandle;
         }
+
+        welcomeText = GameObject.Find("WelcomeText");
+        if (welcomeText != null)
+        {
+            welcomeTextComponent = welcomeText.GetComponent<Text>();
+        }
     }
 
     void Update()
@@ -34,10 +43,9 @@ public class TitleSceneLogicScript : MonoBehaviour
             return;
         }
 
-        GameObject welcomeText = GameObject.Find("WelcomeText");
-        if (welcomeText != null && string.IsNullOrEmpty(welcomeText.GetComponent<Text>().text))
+        if (welcomeTextComponent != null)
         {
-            welcomeText.GetComponent<Text>().text = gameLogicScriptComponent.GetWelcomeText();
+            welcomeTextComponent.text = gameLogicScriptComponent.GetWelcomeText();
         }
     }
 

@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LoginAnswerMessage.cs" />
     <Compile Include="GenericMessage.cs" />
     <Compile Include="LoginMessage.cs" />
     <Compile Include="LogoutMessage.cs" />

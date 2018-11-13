@@ -5,6 +5,8 @@
         generic,
 
         login,
+        loginAnswer,
+
         logout,
         welcome
     }
