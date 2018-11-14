@@ -6,7 +6,10 @@ public class CreateSessionSceneLogicScript : MonoBehaviour
 {
     private GameLogicScript gameLogicScriptComponent = null;
 
-    public Dropdown mapDropdown;
+    public Dropdown MapsDropdown;
+    public Dropdown TeamsDropdown;
+    public Dropdown TimesDropdown;
+
     public int SelectedMapIndex;
     public int SelectedTeamIndex;
     public int SelectedSessionTimeIndex;
@@ -21,11 +24,28 @@ public class CreateSessionSceneLogicScript : MonoBehaviour
         }
 
         gameLogicScriptComponent = gameLogic.GetComponent<GameLogicScript>();
+
+        Dropdown mapsDropdown = MapsDropdown.GetComponent<Dropdown>();
+        if (mapsDropdown != null)
+        {
+            mapsDropdown.value = SelectedMapIndex;
+        }
+
+        Dropdown teamsDropDown = TeamsDropdown.GetComponent<Dropdown>();
+        if (teamsDropDown != null)
+        {
+            teamsDropDown.value = SelectedTeamIndex;
+        }
+
+        Dropdown timesDropDown = TimesDropdown.GetComponent<Dropdown>();
+        if (timesDropDown != null)
+        {
+            timesDropDown.value = SelectedSessionTimeIndex;
+        }
     }
 
     void Update()
     {
-
     }
 
     // Button Handlers
@@ -46,16 +66,16 @@ public class CreateSessionSceneLogicScript : MonoBehaviour
 
     public void OnValueChangeMap()
     {
-        SelectedMapIndex = mapDropdown.value;
+        SelectedMapIndex = MapsDropdown.value;
     }
 
     public void OnValueChangeTeam()
     {
-        SelectedTeamIndex = mapDropdown.value;
+        SelectedTeamIndex = TeamsDropdown.value;
     }
 
     public void OnValueChangeSessionTime()
     {
-        SelectedSessionTimeIndex = mapDropdown.value;
+        SelectedSessionTimeIndex = TimesDropdown.value;
     }
 }

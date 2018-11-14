@@ -225,6 +225,44 @@ namespace GO2018_MKS_Server
                         client.ClearCreateSessionState();
                     }
                     break;
+                case MessageType.listSessions:
+                    {
+                        Console.WriteLine("ListSessions TCP message received: " + tcpClient.Client.Handle.ToString());
+
+                        List<SessionInfo> listOfSessions = new List<SessionInfo>();
+                        foreach(ConnectedClientInfo connectedClient in connectedClients)
+                        {
+                            if(connectedClient.IsCreatingSession)
+                            {
+                                string platformId;
+                                string playerHandle;
+                                connectedClient.GetPlayerCredentials(out platformId, out playerHandle);
+
+                                SessionInfo newSessionInfo = new SessionInfo(connectedClient.CreateSessionMessage.MapName, 
+                                    playerHandle, 
+                                    connectedClient.CreateSessionMessage.OwnTeam == MessageLibraryUtitlity.SessionTeam.blue ? MessageLibraryUtitlity.SessionTeam.orange : MessageLibraryUtitlity.SessionTeam.blue,
+                                    connectedClient.CreateSessionMessage.SessionSeconds);
+
+                                listOfSessions.Add(newSessionInfo);
+                            }
+                        }
+
+                        ListSessionsAnswerMessage listSessionsAnswer = new ListSessionsAnswerMessage();
+                        if (listOfSessions.Count > 0)
+                        {
+                            listSessionsAnswer.Success = true;
+                            listSessionsAnswer.Details = "OK";
+                            listSessionsAnswer.Sessions = listOfSessions.ToArray();
+                        }
+                        else
+                        {
+                            listSessionsAnswer.Success = false;
+                            listSessionsAnswer.Details = "No sessions available. Please refresh later";
+                            listSessionsAnswer.Sessions = null;
+                        }
+                        client.AddMessage(listSessionsAnswer);
+                    }
+                    break;
                 default:
                     {
                         Console.WriteLine("Unhandled TCP message received: " + tcpClient.Client.Handle.ToString());

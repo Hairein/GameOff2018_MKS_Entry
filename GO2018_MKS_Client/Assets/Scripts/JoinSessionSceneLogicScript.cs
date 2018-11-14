@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using GO2018_MKS_MessageLibrary;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class JoinSessionSceneLogicScript : MonoBehaviour
 {
@@ -16,6 +18,12 @@ public class JoinSessionSceneLogicScript : MonoBehaviour
 
     public int SelectedEntryIndex = 0;
 
+    public ScrollRect sessionListScrollRect;
+    public Button sessionJoinButton;
+    public Text NoSessionsText;
+
+    public bool rebuildSessionList = true;
+
     void Start()
     {
         GameObject gameLogic = GameObject.Find("GameLogic");
@@ -27,24 +35,76 @@ public class JoinSessionSceneLogicScript : MonoBehaviour
 
         gameLogicScriptComponent = gameLogic.GetComponent<GameLogicScript>();
 
-        SelectedEntryIndex = 0;
-        BuildSessionEntries(SelectedEntryIndex);
+        PrepareSessionListRefresh();
     }
 
     void Update()
     {
+        if(gameLogicScriptComponent == null)
+        {
+            return;
+        }
+
         float deltaTime = Time.deltaTime;
 
-        if (WaitingCursorRectTransform != null)
+        if (gameLogicScriptComponent.listSessionsAnswerMessage == null)
         {
-            WaitingCursorRectTransform.rotation = Quaternion.Euler(0.0f, 0.0f, RollAngle);
-        }
+            if (WaitingCursorRectTransform != null)
+            {
+                WaitingCursorRectTransform.rotation = Quaternion.Euler(0.0f, 0.0f, RollAngle);
+            }
 
-        RollAngle -= RollDegreesPerSecond * deltaTime;
-        while (RollAngle < 0.0f)
-        {
-            RollAngle += 360.0f;
+            RollAngle -= RollDegreesPerSecond * deltaTime;
+            while (RollAngle < 0.0f)
+            {
+                RollAngle += 360.0f;
+            }
         }
+        else
+        {
+            if (rebuildSessionList == true)
+            {
+                WaitingCursorRectTransform.gameObject.SetActive(false);
+
+                if (gameLogicScriptComponent.listSessionsAnswerMessage.Success)
+                {
+                    HandleSuccessfulSessionListUpdate();
+                }
+                else
+                {
+                    HandleFailedSessionListUpdate();
+                }
+
+                rebuildSessionList = false;
+            }
+        }
+    }
+
+    private void PrepareSessionListRefresh()
+    {
+        rebuildSessionList = true;
+
+        sessionListScrollRect.gameObject.SetActive(false);
+        sessionJoinButton.gameObject.SetActive(false);
+        NoSessionsText.gameObject.SetActive(false);
+        WaitingCursorRectTransform.gameObject.SetActive(true);
+
+        gameLogicScriptComponent.GetSessionsList();
+    }
+
+    private void HandleSuccessfulSessionListUpdate()
+    {
+        SelectedEntryIndex = 0;
+        BuildSessionEntries(SelectedEntryIndex);
+
+        sessionListScrollRect.gameObject.SetActive(true);
+        sessionJoinButton.gameObject.SetActive(true);
+        NoSessionsText.gameObject.SetActive(false);
+    }
+
+    private void HandleFailedSessionListUpdate()
+    {
+        NoSessionsText.gameObject.SetActive(true);
     }
 
     private void BuildSessionEntries(int selectedIndex)
@@ -54,9 +114,13 @@ public class JoinSessionSceneLogicScript : MonoBehaviour
             return;
         }
 
+        SessionInfo[] sessionInfoArray = gameLogicScriptComponent.listSessionsAnswerMessage.Sessions;
+
         List<GameObject> listOfEntries = new List<GameObject>();
-        for (int index = 0; index < 16; index++)
+        for (int index = 0; index < sessionInfoArray.Length; index++)
         {
+            SessionInfo sessionInfo = sessionInfoArray[index];
+
             GameObject newEntry = GameObject.Instantiate(SessionEntryTemplate, SessionContent.transform); 
             newEntry.SetActive(true);
 
@@ -67,6 +131,16 @@ public class JoinSessionSceneLogicScript : MonoBehaviour
                 newSessionEntryPanelScript.UpdateSelectionState();
 
                 newSessionEntryPanelScript.EntryIndex = index;
+
+                newSessionEntryPanelScript.MapText.text = "Map: " + sessionInfo.MapName;
+                newSessionEntryPanelScript.OpponentHandleText.text = "Opponent: " + sessionInfo.OpponentHandle;
+                newSessionEntryPanelScript.TeamText.text = sessionInfo.SuggestedTeam == MessageLibraryUtitlity.SessionTeam.blue ? "Team: Blue" : "Team: Orange";
+
+                int minutes = sessionInfo.DurationSeconds / 60;
+                string minutesText = minutes.ToString("D2");                
+                int seconds = sessionInfo.DurationSeconds % 60;
+                string secondsText = seconds.ToString("D2");
+                newSessionEntryPanelScript.DurationText.text = "Time: " + minutesText + ":" + secondsText;
             }
 
             listOfEntries.Add(newEntry);
@@ -109,6 +183,6 @@ public class JoinSessionSceneLogicScript : MonoBehaviour
 
     public void OnClickRefreshButton()
     {
-        // TODO - Refresh server session list
+        PrepareSessionListRefresh();
     }
 }

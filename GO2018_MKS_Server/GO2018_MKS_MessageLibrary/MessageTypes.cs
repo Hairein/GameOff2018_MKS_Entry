@@ -19,6 +19,7 @@
         abortWaitForOpponent,
 
         listSessions,
+        listSessionsAnswer,
         joinSession,
 
         readySessionStart,

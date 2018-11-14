@@ -4,8 +4,6 @@ using UnityEngine.UI;
 
 public class SettingsSceneLogicScript : MonoBehaviour
 {
-    private GameLogicScript gameLogicScriptComponent = null;
-
     public float SfxLevel = 0.0f;
     public float MusicLevel = 0.0f;
 
@@ -14,15 +12,6 @@ public class SettingsSceneLogicScript : MonoBehaviour
 
     void Start()
     {
-        GameObject gameLogic = GameObject.Find("GameLogic");
-        if (gameLogic == null)
-        {
-            SceneManager.LoadScene("BootScene", LoadSceneMode.Single);
-            return;
-        }
-
-        gameLogicScriptComponent = gameLogic.GetComponent<GameLogicScript>();
-
         // Read persistent data
         SfxLevel = PlayerPrefs.GetFloat("sfxLevel", 1.0f);
         if(SfxSlider != null)
@@ -39,7 +28,6 @@ public class SettingsSceneLogicScript : MonoBehaviour
 
     void Update()
     {
-
     }
 
     // Button Handlers

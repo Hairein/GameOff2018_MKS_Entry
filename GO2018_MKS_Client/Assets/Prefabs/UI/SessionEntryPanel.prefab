@@ -130,6 +130,10 @@ MonoBehaviour:
   EntryIndex: -1
   Mark: {fileID: 114553851804802994}
   IsSelected: 0
+  MapText: {fileID: 114326222541428750}
+  OpponentHandleText: {fileID: 114594301053464642}
+  TeamText: {fileID: 114527960182919102}
+  DurationText: {fileID: 114320947144033396}
 --- !u!114 &114283900893345476
 MonoBehaviour:
   m_ObjectHideFlags: 1

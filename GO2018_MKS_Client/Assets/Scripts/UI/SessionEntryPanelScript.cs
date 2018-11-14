@@ -10,6 +10,11 @@ public class SessionEntryPanelScript : MonoBehaviour
 
     public bool IsSelected = false;
 
+    public Text MapText;
+    public Text OpponentHandleText;
+    public Text TeamText;
+    public Text DurationText;
+
     void Start()
     {
     }

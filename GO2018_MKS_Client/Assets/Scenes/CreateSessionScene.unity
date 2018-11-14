@@ -1599,7 +1599,7 @@ GameObject:
   - component: {fileID: 732926878}
   - component: {fileID: 732926877}
   m_Layer: 5
-  m_Name: TeamDropdown
+  m_Name: TeamsDropdown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2669,7 +2669,7 @@ GameObject:
   - component: {fileID: 1186165838}
   - component: {fileID: 1186165837}
   m_Layer: 5
-  m_Name: SessionTimeDropdown
+  m_Name: SessionTimesDropdown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3448,10 +3448,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5cc170e951cc4a4ea3a57b4cd4d45b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapDropdown: {fileID: 2125530369}
+  MapsDropdown: {fileID: 2125530369}
+  TeamsDropdown: {fileID: 732926877}
+  TimesDropdown: {fileID: 1186165837}
   SelectedMapIndex: 0
   SelectedTeamIndex: 0
-  SelectedSessionTimeIndex: 0
+  SelectedSessionTimeIndex: 1
 --- !u!4 &1830053347
 Transform:
   m_ObjectHideFlags: 0

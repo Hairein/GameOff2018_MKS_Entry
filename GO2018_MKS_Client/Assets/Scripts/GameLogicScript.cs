@@ -16,6 +16,8 @@ public class GameLogicScript : MonoBehaviour
     public CreateSessionMessage createSessionMessage = null;
     public CreateSessionAnswerMessage createSessionAnswerMessage = null;
 
+    public ListSessionsMessage listSessionsMessage = null;
+    public ListSessionsAnswerMessage listSessionsAnswerMessage = null;
 
     void Awake()
     {
@@ -101,6 +103,11 @@ public class GameLogicScript : MonoBehaviour
                     createSessionAnswerMessage = JsonConvert.DeserializeObject<CreateSessionAnswerMessage>(message);
                 }
                 break;
+            case MessageType.listSessionsAnswer:
+                {
+                    listSessionsAnswerMessage = JsonConvert.DeserializeObject<ListSessionsAnswerMessage>(message);
+                }
+                break;
             default:
                 {
                     Debug.Log("Generic/Unknown TCP message received.");
@@ -144,5 +151,13 @@ public class GameLogicScript : MonoBehaviour
     {
         AbortCreateSessionMessage abortCreateSessionMessage = new AbortCreateSessionMessage();
         tcpClientManager.SendMessageObject(abortCreateSessionMessage);
+    }
+
+    public void GetSessionsList()
+    {
+        listSessionsAnswerMessage = null;
+
+        listSessionsMessage = new ListSessionsMessage();
+        tcpClientManager.SendMessageObject(listSessionsMessage);
     }
 }

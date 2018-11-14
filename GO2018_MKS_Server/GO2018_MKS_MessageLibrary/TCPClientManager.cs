@@ -102,15 +102,36 @@ namespace GO2018_MKS_MessageLibrary
             string readMessage = incomingBuffer.ToString();
             if (!string.IsNullOrEmpty(readMessage))
             {
-                int closingBracketIndex = readMessage.IndexOf('}');
-                if (closingBracketIndex >= 0)
+                Console.WriteLine("cutting up message: " + readMessage);
+
+                int bracketCounter = 0;
+                for (int charPos = 0; charPos < readMessage.Length; charPos++)
                 {
-                    nextMessage = readMessage.Substring(0, closingBracketIndex + 1);
+                    char charAtPos = readMessage[charPos];
 
-                    int remainingLength = readMessage.Length - nextMessage.Length;
-                    string remainingMessage = readMessage.Substring(closingBracketIndex + 1, remainingLength);
+                    if (charAtPos == '{')
+                    {
+                        bracketCounter++;
+                    }
+                    else if (charAtPos == '}')
+                    {
+                        bracketCounter--;
 
-                    incomingBuffer = new StringBuilder(remainingMessage);
+                        if (bracketCounter == 0)
+                        {
+                            nextMessage = readMessage.Substring(0, charPos + 1);
+
+                            string remainingMessage = string.Empty;
+                            int remainingLength = readMessage.Length - nextMessage.Length;
+                            if (remainingLength > 0)
+                            {
+                                remainingMessage = readMessage.Substring(charPos + 1, remainingLength);
+                            }
+
+                            incomingBuffer = new StringBuilder(remainingMessage);
+                            break;
+                        }
+                    }
                 }
             }
 

@@ -33,8 +33,8 @@ namespace GO2018_MKS_Server
             }
         }
 
-        private bool isCreatingSession = false;
-        private CreateSessionMessage createSessionMessage = null;
+        public bool IsCreatingSession = false;
+        public CreateSessionMessage CreateSessionMessage = null;
 
         public ConnectedClientInfo(TcpClient newTcpClient)
         {
@@ -114,15 +114,34 @@ namespace GO2018_MKS_Server
             string readMessage = incomingBuffer.ToString();                
             if (!string.IsNullOrEmpty(readMessage))
             {
-                int closingBracketIndex = readMessage.IndexOf('}');
-                if (closingBracketIndex >= 0)
+                int bracketCounter = 0;
+                for (int charPos = 0; charPos < readMessage.Length; charPos++)
                 {
-                    nextMessage = readMessage.Substring(0, closingBracketIndex + 1);
+                    char charAtPos = readMessage[charPos];
 
-                    int remainingLength = readMessage.Length - nextMessage.Length;
-                    string remainingMessage = readMessage.Substring(closingBracketIndex + 1, remainingLength);
+                    if (charAtPos == '{')
+                    {
+                        bracketCounter++;
+                    }
+                    else if (charAtPos == '}')
+                    {
+                        bracketCounter--;
 
-                    incomingBuffer = new StringBuilder(remainingMessage);
+                        if (bracketCounter == 0)
+                        {
+                            nextMessage = readMessage.Substring(0, charPos + 1);
+
+                            string remainingMessage = string.Empty;
+                            int remainingLength = readMessage.Length - nextMessage.Length;
+                            if (remainingLength > 0)
+                            {
+                                remainingMessage = readMessage.Substring(charPos + 1, remainingLength);
+                            }
+
+                            incomingBuffer = new StringBuilder(remainingMessage);
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -143,20 +162,21 @@ namespace GO2018_MKS_Server
 
         public bool SetCreateSessionState(CreateSessionMessage newCreateSessionMessage)
         {
-            if(isCreatingSession || createSessionMessage == null)
+            if (IsCreatingSession)
             {
                 return false;
             }
 
-            createSessionMessage = newCreateSessionMessage;
+            IsCreatingSession = true;
+            CreateSessionMessage = newCreateSessionMessage;
 
             return true;
         }
 
         public void ClearCreateSessionState()
         {
-            isCreatingSession = false;
-            createSessionMessage = null;
+            IsCreatingSession = false;
+            CreateSessionMessage = null;
         }
     }
 }
