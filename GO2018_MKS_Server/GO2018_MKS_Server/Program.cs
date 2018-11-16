@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using static GO2018_MKS_MessageLibrary.MessageLibraryUtitlity;
 
 namespace GO2018_MKS_Server
 {
@@ -14,6 +15,10 @@ namespace GO2018_MKS_Server
         bool runFlag = true;
 
         List<ConnectedClientInfo> connectedClients = new List<ConnectedClientInfo>();
+        int maxPlayersAllowed = 128;
+
+        List<ActiveSessionInfo> sessions = new List<ActiveSessionInfo>();
+        int maxActiveSessionsAllowed = 64;
 
         static void Main(string[] args)
         {
@@ -58,6 +63,16 @@ namespace GO2018_MKS_Server
                             PrintHelpMessage();
                         }
                         break;
+                    case "players":
+                        {
+                            PrintPlayers();
+                        }
+                        break;
+                    case "sessions":
+                        {
+                            PrintSessions();
+                        }
+                        break;
                     default:
                         Console.WriteLine("Unknown command: " + inputLine);
                         break;
@@ -69,7 +84,17 @@ namespace GO2018_MKS_Server
 
         void PrintHelpMessage()
         {
-            Console.WriteLine("Commands (help, quit, exit)");
+            Console.WriteLine("Commands (help, quit, exit, players, sessions)");
+        }
+
+        void PrintPlayers()
+        {
+            Console.WriteLine(string.Format("Players: {0}/{1}", connectedClients.Count, maxPlayersAllowed));
+        }
+
+        void PrintSessions()
+        {
+            Console.WriteLine(string.Format("Sessions: {0}/{1}", sessions.Count, maxActiveSessionsAllowed));
         }
 
         private void TcpHandlerThreadProc(int port)
@@ -161,11 +186,19 @@ namespace GO2018_MKS_Server
 
                         LoginMessage loginMessage = JsonConvert.DeserializeObject<LoginMessage>(nextMessageText);
 
-                        bool verifyClient = true;
-                        foreach(ConnectedClientInfo clientInfo in connectedClients)
+                        LoginAnswerMessage loginAnswer;
+                        if (connectedClients.Count >= maxPlayersAllowed)
                         {
-                            if(client != clientInfo)
-                            {                               
+                            loginAnswer = new LoginAnswerMessage(false, "Maximum number of players supported already logged in. Please login again later");
+                            client.AddMessage(loginAnswer);
+                            break;
+                        }
+
+                        bool verifyClient = true;
+                        foreach (ConnectedClientInfo clientInfo in connectedClients)
+                        {
+                            if (client != clientInfo)
+                            {
                                 string clientInfoPlatformId = string.Empty;
                                 string clientInfoPlayerHandle = string.Empty;
                                 clientInfo.GetPlayerCredentials(out clientInfoPlatformId, out clientInfoPlayerHandle);
@@ -180,16 +213,15 @@ namespace GO2018_MKS_Server
 
                         client.SetPlayerCredentials(loginMessage.PlatformId, loginMessage.PlayerHandle);
 
-                        LoginAnswerMessage loginAnswer;
-                        if (verifyClient)
-                        {
-                            loginAnswer = new LoginAnswerMessage(true, "OK");
-                        }
-                        else
+                        if (!verifyClient)
                         {
                             loginAnswer = new LoginAnswerMessage(false, "Player already active in session");
+                            client.AddMessage(loginAnswer);
+                            break;
                         }
-                       client.AddMessage(loginAnswer);
+
+                        loginAnswer = new LoginAnswerMessage(true, "OK");
+                        client.AddMessage(loginAnswer);
                     }
                     break;
                 case MessageType.logout:
@@ -197,6 +229,11 @@ namespace GO2018_MKS_Server
                         Console.WriteLine("Logout TCP message received: " + tcpClient.Client.Handle.ToString());
 
                         // TEMP WORKAROUND - Close client connection
+                        if(client.IsCreatingSession)
+                        {
+                            client.ClearCreateSessionState();
+                        }
+
                         client.Dispose();
                     }
                     break;
@@ -207,14 +244,29 @@ namespace GO2018_MKS_Server
                         CreateSessionMessage createSessionMessage = JsonConvert.DeserializeObject<CreateSessionMessage>(nextMessageText);
 
                         CreateSessionAnswerMessage createSessionAnswer;
-                        if (client.SetCreateSessionState(createSessionMessage))
+                        if(sessions.Count >= maxActiveSessionsAllowed)
                         {
-                            createSessionAnswer = new CreateSessionAnswerMessage(true, "OK");
+                            createSessionAnswer = new CreateSessionAnswerMessage(false, "Maximum number of sessions reached. Please create a session again later");
+                            client.AddMessage(createSessionAnswer);
+                            break;
                         }
-                        else
+
+                        if(client.IsInActiveSession)
                         {
-                            createSessionAnswer = new CreateSessionAnswerMessage(false, "Player busy in session");
+                            createSessionAnswer = new CreateSessionAnswerMessage(false, "Player is busy in an existing active session");
+                            client.AddMessage(createSessionAnswer);
+                            break;
                         }
+
+                        bool createSessionResult = client.SetCreateSessionState(createSessionMessage);
+                        if (!createSessionResult)
+                        {
+                            createSessionAnswer = new CreateSessionAnswerMessage(false, "Player is busy in an existing session");
+                            client.AddMessage(createSessionAnswer);
+                            break;
+                        }
+
+                        createSessionAnswer = new CreateSessionAnswerMessage(true, "OK");
                         client.AddMessage(createSessionAnswer);
                     }
                     break;
@@ -248,19 +300,87 @@ namespace GO2018_MKS_Server
                         }
 
                         ListSessionsAnswerMessage listSessionsAnswer = new ListSessionsAnswerMessage();
-                        if (listOfSessions.Count > 0)
-                        {
-                            listSessionsAnswer.Success = true;
-                            listSessionsAnswer.Details = "OK";
-                            listSessionsAnswer.Sessions = listOfSessions.ToArray();
-                        }
-                        else
+                        if (listOfSessions.Count == 0)
                         {
                             listSessionsAnswer.Success = false;
                             listSessionsAnswer.Details = "No sessions available. Please refresh later";
                             listSessionsAnswer.Sessions = null;
+                            client.AddMessage(listSessionsAnswer);
+                            break;
                         }
+
+                        listSessionsAnswer.Success = true;
+                        listSessionsAnswer.Details = "OK";
+                        listSessionsAnswer.Sessions = listOfSessions.ToArray();
                         client.AddMessage(listSessionsAnswer);
+                    }
+                    break;
+                case MessageType.joinSession:
+                    {
+                        Console.WriteLine("JoinSessionMessage TCP message received: " + tcpClient.Client.Handle.ToString());
+
+                        JoinSessionMessage joinSessionMessage = JsonConvert.DeserializeObject<JoinSessionMessage>(nextMessageText);
+
+                        SessionInfo chosenSession = joinSessionMessage.session;
+
+                        foreach (ConnectedClientInfo sessionSourceClient in connectedClients)
+                        {
+                            if (!sessionSourceClient.IsCreatingSession)
+                            {
+                                continue;
+                            }
+
+                            JoinSessionAnswerMessage joinSessionAnswer = null;
+                            StartCreatedSessionAnswerMessage startCreatedSession = null;
+
+                            if (sessionSourceClient.IsInActiveSession)
+                            {
+                                joinSessionAnswer = new JoinSessionAnswerMessage(false, "Opponent is busy in an existing active session");
+                                client.AddMessage(joinSessionAnswer);
+                                break;
+                            }
+
+                            if (client.IsInActiveSession)
+                            {
+                                joinSessionAnswer = new JoinSessionAnswerMessage(false, "Player is busy in an existing active session");
+                                client.AddMessage(joinSessionAnswer);
+                                break;
+                            }
+
+                            string sourcePlatformId = string.Empty;
+                            string sourcePlayerHandle = string.Empty;
+                            sessionSourceClient.GetPlayerCredentials(out sourcePlatformId, out sourcePlayerHandle);
+
+                            string joinPlatformId = string.Empty;
+                            string joinPlayerHandle = string.Empty;
+                            client.GetPlayerCredentials(out joinPlatformId, out joinPlayerHandle);
+
+                            SessionTeam opponentTeam = sessionSourceClient.CreateSessionMessage.OwnTeam == SessionTeam.blue ? SessionTeam.orange : SessionTeam.blue;
+
+                            if (chosenSession.MapName != sessionSourceClient.CreateSessionMessage.MapName
+                                && chosenSession.OpponentHandle != sourcePlayerHandle
+                                && chosenSession.SuggestedTeam != opponentTeam
+                                && chosenSession.DurationSeconds != sessionSourceClient.CreateSessionMessage.SessionSeconds)
+                            {
+                                joinSessionAnswer = new JoinSessionAnswerMessage(false, "Mismatch in the session parameters. Please restart the game");
+                                client.AddMessage(joinSessionAnswer);
+                                break;
+                            }
+
+                            ActiveSessionInfo newActiveSessionInfo = new ActiveSessionInfo(sessionSourceClient, client, sessionSourceClient.CreateSessionMessage.MapName, sessionSourceClient.CreateSessionMessage.SessionSeconds);
+                            sessions.Add(newActiveSessionInfo);
+
+                            sessionSourceClient.ClearCreateSessionState();
+                            sessionSourceClient.SetActiveSessionState(newActiveSessionInfo);
+
+                            client.SetActiveSessionState(newActiveSessionInfo);
+
+                            startCreatedSession = new StartCreatedSessionAnswerMessage(true, "OK", joinPlayerHandle);
+                            sessionSourceClient.AddMessage(startCreatedSession);
+
+                            joinSessionAnswer = new JoinSessionAnswerMessage(true, "OK");
+                            client.AddMessage(joinSessionAnswer);
+                        }
                     }
                     break;
                 default:

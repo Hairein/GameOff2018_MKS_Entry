@@ -21,6 +21,8 @@
         listSessions,
         listSessionsAnswer,
         joinSession,
+        joinSessionAnswer,
+        startCreatedSessionAnswer,
 
         readySessionStart,
         readySessionStartAnswer,

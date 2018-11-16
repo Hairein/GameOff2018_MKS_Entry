@@ -14,6 +14,8 @@ public class IngameCameraScript : MonoBehaviour
     public GameObject IngameSceneLogic;
     private IngameSceneLogicScript ingameSceneLogicScript;
 
+    private bool initialCameraSetup = true;
+
     void Start()
     {
         if (IngameSceneLogic == null)
@@ -21,12 +23,22 @@ public class IngameCameraScript : MonoBehaviour
             return;
         }
         ingameSceneLogicScript = IngameSceneLogic.GetComponent<IngameSceneLogicScript>();
-
-        Camera.main.transform.position = ingameSceneLogicScript.GetCameraStartPosition() + ViewOffset;
     }
 
     void Update()
     {
+        if(ingameSceneLogicScript == null)
+        {
+            return;
+        }
+
+        if(initialCameraSetup)
+        {
+            Camera.main.transform.position = ingameSceneLogicScript.GetCameraStartPosition() + ViewOffset;
+
+            initialCameraSetup = false;
+        }
+
         float deltaTime = Time.deltaTime;
         Vector3 mousePosition = Input.mousePosition;
 

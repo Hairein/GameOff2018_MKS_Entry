@@ -19,6 +19,11 @@ public class GameLogicScript : MonoBehaviour
     public ListSessionsMessage listSessionsMessage = null;
     public ListSessionsAnswerMessage listSessionsAnswerMessage = null;
 
+    public JoinSessionMessage joinSessionMessage = null;
+    public JoinSessionAnswerMessage joinSessionAnswerMessage = null;
+
+    public StartCreatedSessionAnswerMessage startCreatedSessionAnswerMessage = null;
+
     void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
@@ -108,6 +113,16 @@ public class GameLogicScript : MonoBehaviour
                     listSessionsAnswerMessage = JsonConvert.DeserializeObject<ListSessionsAnswerMessage>(message);
                 }
                 break;
+            case MessageType.joinSessionAnswer:
+                {
+                    joinSessionAnswerMessage = JsonConvert.DeserializeObject<JoinSessionAnswerMessage>(message);
+                }
+                break;
+            case MessageType.startCreatedSessionAnswer:
+                {
+                    startCreatedSessionAnswerMessage = JsonConvert.DeserializeObject<StartCreatedSessionAnswerMessage>(message);
+                }
+                break;
             default:
                 {
                     Debug.Log("Generic/Unknown TCP message received.");
@@ -139,6 +154,8 @@ public class GameLogicScript : MonoBehaviour
         }
 
         createSessionAnswerMessage = null;
+        joinSessionAnswerMessage = null;
+        startCreatedSessionAnswerMessage = null;
 
         string mapName = MessageLibraryUtitlity.SessionMapNames[mapIndex];
         MessageLibraryUtitlity.SessionTeam team = teamIndex == 0 ? MessageLibraryUtitlity.SessionTeam.blue : MessageLibraryUtitlity.SessionTeam.orange;
@@ -159,5 +176,20 @@ public class GameLogicScript : MonoBehaviour
 
         listSessionsMessage = new ListSessionsMessage();
         tcpClientManager.SendMessageObject(listSessionsMessage);
+    }
+
+    public void JoinSession(int sessionIndex)
+    {
+        if(listSessionsAnswerMessage == null || listSessionsAnswerMessage.Sessions.Length == 0)
+        {
+            return;
+        }
+
+        createSessionAnswerMessage = null;
+        joinSessionAnswerMessage = null;
+        startCreatedSessionAnswerMessage = null;
+
+        joinSessionMessage = new JoinSessionMessage(listSessionsAnswerMessage.Sessions[sessionIndex]);
+        tcpClientManager.SendMessageObject(joinSessionMessage);
     }
 }

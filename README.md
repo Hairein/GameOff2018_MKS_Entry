@@ -42,3 +42,9 @@ Open Game Tasks And Features
     LT/RT Alt/D - Destroy barricade
     F - Feed the Breeder Food from nearby drones (active while pressed)
     T - Feed the Breeder Tech from nearby drones (active while pressed)
+
+
+Development TODOs
+=================
+- Add server version check of client in login interaction
+- Do ingame UI to enable game surrender (abort)

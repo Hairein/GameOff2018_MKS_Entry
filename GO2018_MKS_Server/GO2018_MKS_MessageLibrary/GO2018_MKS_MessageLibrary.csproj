@@ -45,7 +45,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CreateSessionAnswerMessage.cs" />
+    <Compile Include="JoinSessionAnswerMessage.cs" />
     <Compile Include="ListSessionsAnswerMessage.cs" />
+    <Compile Include="JoinSessionMessage.cs" />
+    <Compile Include="StartCreatedSessionAnswerMessage.cs" />
     <Compile Include="LoginAnswerMessage.cs" />
     <Compile Include="GenericMessage.cs" />
     <Compile Include="CreateSessionMessage.cs" />

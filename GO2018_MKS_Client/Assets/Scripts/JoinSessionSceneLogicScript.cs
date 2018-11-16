@@ -24,6 +24,8 @@ public class JoinSessionSceneLogicScript : MonoBehaviour
 
     public bool rebuildSessionList = true;
 
+    public bool doJoinSessionHandling = false;
+
     void Start()
     {
         GameObject gameLogic = GameObject.Find("GameLogic");
@@ -76,6 +78,24 @@ public class JoinSessionSceneLogicScript : MonoBehaviour
                 }
 
                 rebuildSessionList = false;
+            }
+        }
+
+        if(doJoinSessionHandling)
+        {
+            if(gameLogicScriptComponent.joinSessionAnswerMessage != null)
+            {
+                if(gameLogicScriptComponent.joinSessionAnswerMessage.Success)
+                {
+                    // Goto ingame scene
+                    string finalMapName = string.Format("Map{0}", gameLogicScriptComponent.joinSessionMessage.session.MapName);
+                    SceneManager.LoadScene(finalMapName, LoadSceneMode.Single);
+                }
+                else
+                {
+                    // Go back 
+                    SceneManager.LoadScene("TitleScene", LoadSceneMode.Single);
+                }
             }
         }
     }
@@ -178,7 +198,14 @@ public class JoinSessionSceneLogicScript : MonoBehaviour
 
     public void OnClickJoinButton()
     {
-        // TODO - Join selected game if still free
+        gameLogicScriptComponent.JoinSession(SelectedEntryIndex);
+
+        sessionListScrollRect.gameObject.SetActive(false);
+        sessionJoinButton.gameObject.SetActive(false);
+        NoSessionsText.gameObject.SetActive(false);
+        WaitingCursorRectTransform.gameObject.SetActive(true);
+
+        doJoinSessionHandling = true;
     }
 
     public void OnClickRefreshButton()

@@ -90,9 +90,19 @@ public class TitleSceneLogicScript : MonoBehaviour
     }
 
     // Dev Shortcuts
-    public void OnClickTestMapButton()
+    public void OnClickTestMapMorpholiteButton()
     {
-        SceneManager.LoadScene("TestMap1Scene", LoadSceneMode.Single);
+        SceneManager.LoadScene("MapMorpholite", LoadSceneMode.Single);
+    }
+
+    public void OnClickTestMapSunsetButton()
+    {
+        SceneManager.LoadScene("MapSunset", LoadSceneMode.Single);
+    }
+
+    public void OnClickTestMapOverlordButton()
+    {
+        SceneManager.LoadScene("MapOverlord", LoadSceneMode.Single);
     }
 
     // Button Handlers

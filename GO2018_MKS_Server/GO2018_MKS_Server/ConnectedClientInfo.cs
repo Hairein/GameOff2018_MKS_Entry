@@ -36,6 +36,9 @@ namespace GO2018_MKS_Server
         public bool IsCreatingSession = false;
         public CreateSessionMessage CreateSessionMessage = null;
 
+        public bool IsInActiveSession = false;
+        public ActiveSessionInfo ActiveSession = null;
+
         public ConnectedClientInfo(TcpClient newTcpClient)
         {
             tcpClient = newTcpClient;
@@ -177,6 +180,25 @@ namespace GO2018_MKS_Server
         {
             IsCreatingSession = false;
             CreateSessionMessage = null;
+        }
+
+        public bool SetActiveSessionState(ActiveSessionInfo newActiveSession)
+        {
+            if (IsInActiveSession)
+            {
+                return false;
+            }
+
+            IsInActiveSession = true;
+            ActiveSession = newActiveSession;
+
+            return true;
+        }
+
+        public void ClearActiveSessionState()
+        {
+            IsInActiveSession = false;
+            ActiveSession = null;
         }
     }
 }

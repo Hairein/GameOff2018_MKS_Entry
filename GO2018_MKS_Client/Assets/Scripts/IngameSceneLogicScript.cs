@@ -50,6 +50,15 @@ public class IngameSceneLogicScript : MonoBehaviour
     public Text TimeText;
     public Text TimeTextShadow;
 
+    public string PlayerHandle = "Player";
+    public int PlayerScore = 0;
+    public Text PlayerScoreText;
+    public Text PlayerScoreTextShadow;
+    public string OpponentHandle = "Opponent";
+    public int OpponentScore = 0;
+    public Text OpponentScoreText;
+    public Text OpponentScoreTextShadow;
+
     // Upgrading 
     public int Team1UpgradeLevel = 0;
     public float Team1BreederMaxFoodResourceCount = 3000.0f;
@@ -130,19 +139,46 @@ public class IngameSceneLogicScript : MonoBehaviour
         }
         gameLogicScriptComponent = gameLogic.GetComponent<GameLogicScript>();
 
+        // Here, initialize according to created or joined session
+        int handleTextMaxLength = 16;
+        string rawPlayerHandle = PlayerPrefs.GetString("playerHandle", "Player");
+        PlayerHandle = rawPlayerHandle.Substring(0, Math.Min(rawPlayerHandle.Length, handleTextMaxLength));
+
+        string rawOpponentHandle = string.Empty;
+
+        if (gameLogicScriptComponent.createSessionAnswerMessage != null)
+        {
+            TeamNumber = gameLogicScriptComponent.createSessionMessage.OwnTeam == GO2018_MKS_MessageLibrary.MessageLibraryUtitlity.SessionTeam.blue ? 1 : 2;
+
+            rawOpponentHandle = gameLogicScriptComponent.startCreatedSessionAnswerMessage.opponentHandle;
+            OpponentHandle = rawOpponentHandle.Substring(0, Math.Min(rawOpponentHandle.Length, handleTextMaxLength));
+
+            RoundTimeInSeconds = gameLogicScriptComponent.createSessionMessage.SessionSeconds;
+        }
+        else if (gameLogicScriptComponent.joinSessionAnswerMessage != null)
+        {
+            TeamNumber = gameLogicScriptComponent.joinSessionMessage.session.SuggestedTeam == GO2018_MKS_MessageLibrary.MessageLibraryUtitlity.SessionTeam.blue ? 1 : 2;
+
+            rawOpponentHandle = gameLogicScriptComponent.joinSessionMessage.session.OpponentHandle;
+            OpponentHandle = rawOpponentHandle.Substring(0, Math.Min(rawOpponentHandle.Length, 16));
+
+            RoundTimeInSeconds = gameLogicScriptComponent.joinSessionMessage.session.DurationSeconds;
+        }
+
         BuildTeamMembers();
         UpdateUnitIcons();
-
-        bool oldCountdownRoundTime = CountdownRoundTime;
-        CountdownRoundTime = false;
-        HandleRoundTime(0.0f);
-        CountdownRoundTime = oldCountdownRoundTime;
     }
 
     void Update()
     {
         if (gameLogicScriptComponent == null)
         {
+            return;
+        }
+
+        if(Input.GetKeyUp(KeyCode.Escape))
+        {
+            SceneManager.LoadScene("TitleScene", LoadSceneMode.Single);
             return;
         }
 
@@ -277,6 +313,8 @@ public class IngameSceneLogicScript : MonoBehaviour
         HandleUnits(deltaTime);
 
         HandleTeamUpgradingCapability();
+
+        UpdateScores();
     }
 
     private void OnGUI()
@@ -1279,5 +1317,16 @@ public class IngameSceneLogicScript : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void UpdateScores()
+    {
+        string playerScoreText = PlayerHandle + " " + PlayerScore.ToString("D5");
+        PlayerScoreText.text = playerScoreText;
+        PlayerScoreTextShadow.text = playerScoreText;
+
+        string opponentScoreText = OpponentHandle + " " + OpponentScore.ToString("D5");
+        OpponentScoreText.text = opponentScoreText;
+        OpponentScoreTextShadow.text = opponentScoreText;
     }
 }

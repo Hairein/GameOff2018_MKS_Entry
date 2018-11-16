@@ -35,6 +35,21 @@ public class WaitingForOpponentSceneLogicScript : MonoBehaviour
         {
             RollAngle += 360.0f;
         }
+
+        if(gameLogicScriptComponent.startCreatedSessionAnswerMessage != null)
+        {
+            if(gameLogicScriptComponent.startCreatedSessionAnswerMessage.Success)
+            {
+                // Use the CreateSession parameters
+                string finalMapName = string.Format("Map{0}", gameLogicScriptComponent.createSessionMessage.MapName);
+                SceneManager.LoadScene(finalMapName, LoadSceneMode.Single);
+                return;
+            }
+            else
+            {
+                SceneManager.LoadScene("TitleScene", LoadSceneMode.Single);
+            }
+        }
     }
 
     // Button Handlers
