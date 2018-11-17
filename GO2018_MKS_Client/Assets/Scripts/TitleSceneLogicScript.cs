@@ -9,6 +9,8 @@ public class TitleSceneLogicScript : MonoBehaviour
     private GameObject welcomeText;
     private Text welcomeTextComponent;
 
+    public Text ClientVersionText;
+
     public Text PlayerHandleText;
     public InputField PlayerHandleInputField;
     public string PlayerHandle;
@@ -32,6 +34,8 @@ public class TitleSceneLogicScript : MonoBehaviour
         }
 
         gameLogicScriptComponent = gameLogic.GetComponent<GameLogicScript>();
+
+        ClientVersionText.text = gameLogicScriptComponent.ClientVersion;
 
         PlayerHandle = PlayerPrefs.GetString("playerHandle", "Player");
         if(PlayerHandleInputField != null)
@@ -135,7 +139,7 @@ public class TitleSceneLogicScript : MonoBehaviour
     {
         if (PlayerHandleInputField != null)
         {
-            PlayerHandle = PlayerHandleInputField.text;
+            PlayerHandle = PlayerHandleInputField.text.Trim();
 
             PlayerPrefs.SetString("playerHandle", PlayerHandle);
             PlayerPrefs.Save();

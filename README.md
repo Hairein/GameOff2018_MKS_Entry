@@ -10,7 +10,7 @@ TODO: Introduce game play
 
 TODO: Credits
 
-Open Game Tasks And Features
+Open Game Features
 =======================
 - Enable selected unit shortcut assignment
 - Enable drone upgrade path (food, tech):    
@@ -46,5 +46,7 @@ Open Game Tasks And Features
 
 Development TODOs
 =================
-- Add server version check of client in login interaction
 - Do ingame UI to enable game surrender (abort)
+- Implement synched time coutdown from server
+- Implement session end on timeout
+- Implement session win/loss display with return to create or join screen as last chosen

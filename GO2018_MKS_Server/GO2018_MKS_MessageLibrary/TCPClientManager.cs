@@ -12,15 +12,12 @@ namespace GO2018_MKS_MessageLibrary
     {
         private string tcpServerAddress = "localhost";
         private int tcpServerPort = 13000;
-        public TcpClient tcpClient;
+        public TcpClient tcpClient = null;
 
         StringBuilder incomingBuffer = new StringBuilder();
 
         public void ConnectToTcpServer()
         {
-            tcpClient = new TcpClient(tcpServerAddress, tcpServerPort);
-            tcpClient.LingerState = new LingerOption(false, 0);
-            tcpClient.NoDelay = true;
         }
 
         public void ConnectToTcpServer(string serverAddress, int serverPort)
@@ -44,14 +41,14 @@ namespace GO2018_MKS_MessageLibrary
             }
         }
 
-        private bool CheckServerConnected()
+        public bool IsConnected()
         {
             return tcpClient.Client.Connected;
         }
 
         public void SendJsonMessage(string message)
         {
-            if (!tcpClient.Connected)
+            if (tcpClient == null || !tcpClient.Connected)
             {
                 return;
             }
@@ -64,7 +61,7 @@ namespace GO2018_MKS_MessageLibrary
 
         public void SendMessageObject(object messageObject)
         {
-            if (!tcpClient.Connected)
+            if (tcpClient == null || !tcpClient.Connected)
             {
                 return;
             }
@@ -81,7 +78,7 @@ namespace GO2018_MKS_MessageLibrary
         {
             string nextMessage = string.Empty;
 
-            if (!tcpClient.Connected)
+            if (tcpClient == null || !tcpClient.Connected)
             {
                 return nextMessage;
             }

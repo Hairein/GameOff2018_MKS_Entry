@@ -7,9 +7,16 @@ using UnityEngine;
 
 public class GameLogicScript : MonoBehaviour
 {
+
     private TCPClientManager tcpClientManager = new TCPClientManager();
+    public bool DidLogin = false;
 
     private string welcomeText = "Connecting To Server...";
+
+    public string ClientVersion = "v1.0preAlpha";
+
+    public string DefaultHost;
+    public int DefaultPort;
 
     public LoginAnswerMessage LoginAnswerMessage = null;
 
@@ -27,6 +34,34 @@ public class GameLogicScript : MonoBehaviour
     void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
+    }
+
+    private void OnDestroy()
+    {
+        DoLogout();
+    }
+
+    void Start()
+    {
+    }
+
+    void Update()
+    {
+        while(true)
+        {
+            string tcpMessage = tcpClientManager.ReceiveMessage();
+            if(string.IsNullOrEmpty(tcpMessage))
+            {
+                break;
+            }
+
+            HandleTCPMessage(tcpMessage);
+        }
+    }
+
+    public void DoLogin(string host, int port)
+    {
+        DidLogin = false;
 
         // Read persistent data
         string platformId = PlayerPrefs.GetString("platformId", string.Empty);
@@ -50,39 +85,30 @@ public class GameLogicScript : MonoBehaviour
             PlayerPrefs.Save();
         }
 
-        tcpClientManager.ConnectToTcpServer();
+        tcpClientManager.ConnectToTcpServer(host, port);
 
         LoginMessage loginMessage = new LoginMessage();
         loginMessage.PlatformId = platformId;
         loginMessage.PlayerHandle = playerHandle;
+        loginMessage.ClientVersion = ClientVersion;
         tcpClientManager.SendMessageObject(loginMessage);
     }
 
-    private void OnDestroy()
+    public void DoLogout()
     {
+        if(DidLogin == false)
+        {
+            return;
+        }
+
+        DidLogin = false;
+
         LogoutMessage logoutMessage = new LogoutMessage();
         tcpClientManager.SendMessageObject(logoutMessage);
 
         tcpClientManager.DisconnectFromTcpServer();
     }
 
-    void Start()
-    {
-    }
-
-    void Update()
-    {
-        while(true)
-        {
-            string tcpMessage = tcpClientManager.ReceiveMessage();
-            if(string.IsNullOrEmpty(tcpMessage))
-            {
-                break;
-            }
-
-            HandleTCPMessage(tcpMessage);
-        }
-    }
 
     public void HandleTCPMessage(string message)
     {
@@ -101,6 +127,8 @@ public class GameLogicScript : MonoBehaviour
             case MessageType.loginAnswer:
                 {
                     LoginAnswerMessage = JsonConvert.DeserializeObject<LoginAnswerMessage>(message);
+
+                    DidLogin = true;
                 }
                 break;
             case MessageType.createSessionAnswer:

@@ -1549,7 +1549,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: 'Login to the server failed for the reasons given below.
 
-    Please quit and restart the game.'
+    Please update, quit and restart the game.'
 --- !u!222 &1410884234
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2146,7 +2146,7 @@ GameObject:
   - component: {fileID: 1920330052}
   - component: {fileID: 1920330051}
   m_Layer: 5
-  m_Name: SceneText
+  m_Name: VersionText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2167,8 +2167,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 90, y: -24}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: 132, y: -24}
+  m_SizeDelta: {x: 240, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1920330051
 MonoBehaviour:
@@ -2191,10 +2191,10 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: 9061d5329a86bbe44ba08d105d58c456, type: 3}
-    m_FontSize: 14
+    m_FontSize: 12
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 1
     m_MaxSize: 40
     m_Alignment: 0
     m_AlignByGeometry: 0
@@ -2202,7 +2202,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Title Scene
+  m_Text: vX.X
 --- !u!222 &1920330052
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2237,6 +2237,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eee698749f7c0b1449c0b16752de77d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ClientVersionText: {fileID: 1920330051}
   PlayerHandleText: {fileID: 67090399}
   PlayerHandleInputField: {fileID: 2014632266}
   PlayerHandle: Player
@@ -2679,6 +2680,11 @@ MonoBehaviour:
   m_CharacterLimit: 32
   m_OnEndEdit:
     m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.InputField+SubmitEvent, UnityEngine.UI, Version=1.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  m_OnValueChanged:
+    m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1923020521}
         m_MethodName: OnTextChangePlayerHandle
@@ -2691,11 +2697,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_TypeName: UnityEngine.UI.InputField+SubmitEvent, UnityEngine.UI, Version=1.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  m_OnValueChanged:
-    m_PersistentCalls:
-      m_Calls: []
     m_TypeName: UnityEngine.UI.InputField+OnChangeEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
   m_CaretColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}

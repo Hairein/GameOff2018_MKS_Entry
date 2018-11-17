@@ -12,6 +12,8 @@ namespace GO2018_MKS_Server
 {
     class Program
     {
+        string serverVersion = "v1.0preAlpha";
+
         bool runFlag = true;
 
         List<ConnectedClientInfo> connectedClients = new List<ConnectedClientInfo>();
@@ -40,7 +42,8 @@ namespace GO2018_MKS_Server
 
         public void Run(int port)
         {
-            Console.WriteLine("GO2018 MKS Server");
+            Console.WriteLine("GO2018 MKS Server [" + serverVersion + "]");
+            Console.WriteLine("Listening on port: " + port.ToString());
 
             Thread tcpListenerThread = new Thread(() => TcpHandlerThreadProc(port));
             tcpListenerThread.Start();
@@ -187,6 +190,16 @@ namespace GO2018_MKS_Server
                         LoginMessage loginMessage = JsonConvert.DeserializeObject<LoginMessage>(nextMessageText);
 
                         LoginAnswerMessage loginAnswer;
+
+                        if(loginMessage.ClientVersion != serverVersion)
+                        {
+                            string mismatch = string.Format("Client [{0}] / Server [{1}] version mismatch. Unable to login.", loginMessage.ClientVersion, serverVersion);
+
+                            loginAnswer = new LoginAnswerMessage(false, mismatch);
+                            client.AddMessage(loginAnswer);
+                            break;
+                        }
+
                         if (connectedClients.Count >= maxPlayersAllowed)
                         {
                             loginAnswer = new LoginAnswerMessage(false, "Maximum number of players supported already logged in. Please login again later");

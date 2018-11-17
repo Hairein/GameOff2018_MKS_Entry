@@ -10,6 +10,7 @@ namespace GO2018_MKS_MessageLibrary
     {
         public string PlatformId;
         public string PlayerHandle;
+        public string ClientVersion;
 
         public LoginMessage()
         {
@@ -17,14 +18,16 @@ namespace GO2018_MKS_MessageLibrary
 
             PlatformId = string.Empty;
             PlayerHandle = string.Empty;
+            ClientVersion = string.Empty;
         }
 
-        public LoginMessage(string id, string name)
+        public LoginMessage(string id, string name, string newClientVersion)
         {
             Type = MessageType.login;
 
             PlatformId = id;
             PlayerHandle = name;
+            ClientVersion = newClientVersion;
         }
     }
 }
