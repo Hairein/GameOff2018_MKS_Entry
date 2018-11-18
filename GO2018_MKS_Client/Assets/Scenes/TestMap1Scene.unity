@@ -2932,6 +2932,7 @@ MonoBehaviour:
   TeamBreeder: {fileID: 0}
   TeamDrones: []
   TeamInBarricadeBuildMode: 0
+  TeamInBarricadeBreakMode: 0
   Team1SpawnParent: {fileID: 0}
   Team2SpawnParent: {fileID: 0}
   EnableFoodDrain: 0
@@ -2958,6 +2959,14 @@ MonoBehaviour:
   RoundTimeInSeconds: 210
   TimeText: {fileID: 244744582}
   TimeTextShadow: {fileID: 208327068}
+  PlayerHandle: Player
+  PlayerScore: 0
+  PlayerScoreText: {fileID: 0}
+  PlayerScoreTextShadow: {fileID: 0}
+  OpponentHandle: Opponent
+  OpponentScore: 0
+  OpponentScoreText: {fileID: 0}
+  OpponentScoreTextShadow: {fileID: 0}
   Team1UpgradeLevel: 0
   Team1BreederMaxFoodResourceCount: 3000
   Team1BreederMaxTechResourceCount: 3000
@@ -3033,6 +3042,7 @@ MonoBehaviour:
   ChosenBarricadeBreakUpgradeIcon: {fileID: 236004}
   ChosenFoodStealUpgradeIcon: {fileID: 1539534866}
   ChosenTechStealUpgradeIcon: {fileID: 1278564104}
+  MenuPanel: {fileID: 0}
 --- !u!4 &1415268402
 Transform:
   m_ObjectHideFlags: 0

@@ -10,9 +10,10 @@ TODO: Introduce game play
 
 TODO: Credits
 
+TODO: Write documentation to handle custom server install, setup and configuration
+
 Open Game Features
 =======================
-- Enable selected unit shortcut assignment
 - Enable drone upgrade path (food, tech):    
     * 4 Upgrade optional/choice levels 
     * Food upgrade costs: 1000, 1500, 2000, 2500
@@ -30,23 +31,29 @@ Open Game Features
 - Make 3 maps (48x48) initially for jam release
 - Configuration Options:
     Fog of War [on/off]
-    Timed game session [on/off] 2:50, 5:00, 7:50, 10:00 per Session
+    Timed game session [on/off] 2:50, 5:00, 7:50, 10:00 minutes per Session
     Music [on/off/Volume]
     Sound FX [on/off/Volume]
 - Replace placeholder art!
 - End round when timer runs out
 - Actions (Hold Key to enable mode actioning on next click):
-    ESC - Stop currently active action mode (Building or destroying barricades).
-    S - Stop navigation immediately 
-    LT/RT Strg/B - Build barricade [Breeder Resource Cost per Barricade: F: 250 T: 250]
-    LT/RT Alt/D - Destroy barricade
-    F - Feed the Breeder Food from nearby drones (active while pressed)
-    T - Feed the Breeder Tech from nearby drones (active while pressed)
+    ESC - (toggle) Show/hide menu ingame
+    S - (press) Stop navigation immediately 
+    P - (hold) Build barricade mode [Breeder Resource Cost per Barricade placed: F: 250 T: 250]
+    B - (hold) Destroy barricade mode
+    F - (hold) Feed the Breeder Food from all nearby drones 
+    T - (hold) Feed the Breeder Tech from all nearby drones
 
 
 Development TODOs
 =================
-- Do ingame UI to enable game surrender (abort)
-- Implement synched time coutdown from server
+- *Implement synched time coutdown from server
 - Implement session end on timeout
 - Implement session win/loss display with return to create or join screen as last chosen
+- Implement network player navigation and actions cross communication during session
+    *Unit navigation commands
+    *Unit Food/Tech level changes
+    Unit drone spawns (only near Breeder)
+    *Resource food/tech level changes
+    Barricade spawns
+    *Barricade level changes

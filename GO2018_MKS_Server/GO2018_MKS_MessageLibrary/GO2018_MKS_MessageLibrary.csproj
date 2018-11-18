@@ -44,10 +44,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BarricadeResourceState.cs" />
+    <Compile Include="MineResourceState.cs" />
+    <Compile Include="BarricadesUpdateMessage.cs" />
+    <Compile Include="MinesUpdateMessage.cs" />
+    <Compile Include="PlayerUnitsUpdateMessage.cs" />
+    <Compile Include="PlayerUnitsNavigationMessage.cs" />
+    <Compile Include="CollectSessionUpdateAnswers.cs" />
+    <Compile Include="UnitResourceState.cs" />
+    <Compile Include="WorldCoordinate.cs" />
+    <Compile Include="SessionUpdateAnswerMessage.cs" />
+    <Compile Include="PlayerSessionLostMessage.cs" />
+    <Compile Include="OpponentSessionLostAnswerMessage.cs" />
     <Compile Include="CreateSessionAnswerMessage.cs" />
     <Compile Include="JoinSessionAnswerMessage.cs" />
     <Compile Include="ListSessionsAnswerMessage.cs" />
     <Compile Include="JoinSessionMessage.cs" />
+    <Compile Include="EndSessionAnswerMessage.cs" />
+    <Compile Include="ReadySessionStartAnswerMessage.cs" />
+    <Compile Include="ReadySessionStartMessage.cs" />
     <Compile Include="StartCreatedSessionAnswerMessage.cs" />
     <Compile Include="LoginAnswerMessage.cs" />
     <Compile Include="GenericMessage.cs" />
@@ -60,6 +75,7 @@
     <Compile Include="TCPClientManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MessageTypes.cs" />
+    <Compile Include="UnitNavigationCommand.cs" />
     <Compile Include="Utitlity.cs" />
     <Compile Include="WelcomeMessage.cs" />
   </ItemGroup>

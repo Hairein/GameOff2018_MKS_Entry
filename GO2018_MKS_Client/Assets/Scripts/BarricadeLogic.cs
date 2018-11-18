@@ -73,12 +73,12 @@ public class BarricadeLogic : MonoBehaviour
 
             if (breederLogic != null || droneLogic != null)
             {
-                if (teamHasBarricadeBuildUpgrade)
+                if (teamHasBarricadeBuildUpgrade && ingameLogicScript.TeamInBarricadeBuildMode)
                 {
                     nosBuilders++;
                 }
 
-                if (teamHasBarricadeBreakUpgrade)
+                if (teamHasBarricadeBreakUpgrade && ingameLogicScript.TeamInBarricadeBreakMode)
                 {
                     nosDestroyers++;
                 }

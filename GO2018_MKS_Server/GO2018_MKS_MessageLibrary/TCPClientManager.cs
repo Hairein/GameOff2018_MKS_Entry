@@ -22,6 +22,11 @@ namespace GO2018_MKS_MessageLibrary
 
         public void ConnectToTcpServer(string serverAddress, int serverPort)
         {
+            if (tcpClient != null && tcpClient.Connected)
+            {
+                DisconnectFromTcpServer();
+            }
+
             tcpServerAddress = serverAddress;
             tcpServerPort = serverPort;
 
@@ -32,17 +37,24 @@ namespace GO2018_MKS_MessageLibrary
 
         public void DisconnectFromTcpServer()
         {
-            if (tcpClient.Connected)
+            if (tcpClient == null || !tcpClient.Connected)
             {
-                NetworkStream stream = tcpClient.GetStream();
-                stream.Close();
-
-                tcpClient.Close();
+                return;
             }
+
+            NetworkStream stream = tcpClient.GetStream();
+            stream.Close();
+
+            tcpClient.Close();
         }
 
         public bool IsConnected()
         {
+            if (tcpClient == null)
+            {
+                return false;
+            }
+
             return tcpClient.Client.Connected;
         }
 

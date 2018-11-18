@@ -26,7 +26,7 @@ public class MapLogic : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             return;
         }
 
-        ingameSceneLogicScript.IgnorePointerInput = true;
+        ingameSceneLogicScript.IgnoreIngamePointerInput = true;
 
         Vector2 mousePosition = pointerEventData.position;
         RectTransform rectTransform = this.gameObject.GetComponent<RectTransform>();
@@ -54,6 +54,6 @@ public class MapLogic : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             return;
         }
 
-        ingameSceneLogicScript.IgnorePointerInput = false;
+        ingameSceneLogicScript.IgnoreIngamePointerInput = false;
     }
 }

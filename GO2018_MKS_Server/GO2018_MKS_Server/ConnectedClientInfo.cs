@@ -85,8 +85,14 @@ namespace GO2018_MKS_Server
                 string messageText = JsonConvert.SerializeObject(message);
                 Byte[] data = System.Text.Encoding.UTF8.GetBytes(messageText);
 
-                NetworkStream stream = tcpClient.GetStream();
-                stream.Write(data, 0, data.Length);
+                try
+                {
+                    NetworkStream stream = tcpClient.GetStream();
+                    stream.Write(data, 0, data.Length);
+                }
+                catch
+                {
+                }
             }
 
             messageStack.Clear();

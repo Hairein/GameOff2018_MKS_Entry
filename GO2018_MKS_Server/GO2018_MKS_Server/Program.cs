@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -105,15 +106,48 @@ namespace GO2018_MKS_Server
             TcpListener server = new TcpListener(IPAddress.Any, port);
             server.Start();
 
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Restart();
+
             while (runFlag)
             {
+                // ---
+                if (stopwatch.IsRunning)
+                {
+                    stopwatch.Stop();
+                }
+
+                float deltaTimeMs = stopwatch.ElapsedMilliseconds;
+
+                if (!stopwatch.IsRunning)
+                {
+                    stopwatch.Restart();
+                }
+                //---
+
                 AcceptClients(server);
+
+                ResetSessionData();
                 HandleClientMessages();
+                HandleSessions(deltaTimeMs);
+
                 WriteClientMessages();
                 ClearLostClients();
 
-                // TEMP Break for a bit
-                Thread.Sleep(200);
+                // Break for a bit if empty server
+                if (sessions.Count == 0)
+                {
+                    Thread.Sleep(250);
+                }
+                else
+                {
+                    Thread.Sleep(85);
+                }
+            }
+
+            if(stopwatch.IsRunning)
+            {
+                stopwatch.Stop();
             }
 
             server.Stop();
@@ -171,22 +205,19 @@ namespace GO2018_MKS_Server
         {
             TcpClient tcpClient = client.GetTcpClient();
 
-            // TEMP DEBUG
-            Console.WriteLine("In - " + tcpClient.Client.Handle.ToString() + ": " + nextMessageText);
-
             GenericMessage genericMessage = JsonConvert.DeserializeObject<GenericMessage>(nextMessageText);
+
+            // TEMP DEBUG
+            //Console.WriteLine("In - " + tcpClient.Client.Handle.ToString() + ": (" + MessageTypeTexts.GetMessageTypeText(genericMessage.Type) + ")" + nextMessageText);
+
             switch (genericMessage.Type)
             {
                 case MessageType.generic:
                     {
-                        Console.WriteLine("Generic TCP message received: " + tcpClient.Client.Handle.ToString());
                     }
                     break;
-
                 case MessageType.login:
                     {
-                        Console.WriteLine("Login TCP message received: " + tcpClient.Client.Handle.ToString());
-
                         LoginMessage loginMessage = JsonConvert.DeserializeObject<LoginMessage>(nextMessageText);
 
                         LoginAnswerMessage loginAnswer;
@@ -239,21 +270,19 @@ namespace GO2018_MKS_Server
                     break;
                 case MessageType.logout:
                     {
-                        Console.WriteLine("Logout TCP message received: " + tcpClient.Client.Handle.ToString());
-
-                        // TEMP WORKAROUND - Close client connection
-                        if(client.IsCreatingSession)
+                        if (client.IsCreatingSession)
                         {
-                            client.ClearCreateSessionState();
+                            RemoveClientFromCreatingSession(client);
                         }
 
+                        InformSessionsOfLostClient(client);
+
+                        // TEMP WORKAROUND - Close client connection
                         client.Dispose();
                     }
                     break;
                 case MessageType.createSession:
                     {
-                        Console.WriteLine("CreateSession TCP message received: " + tcpClient.Client.Handle.ToString());
-
                         CreateSessionMessage createSessionMessage = JsonConvert.DeserializeObject<CreateSessionMessage>(nextMessageText);
 
                         CreateSessionAnswerMessage createSessionAnswer;
@@ -285,15 +314,11 @@ namespace GO2018_MKS_Server
                     break;
                 case MessageType.abortCreateSession:
                     {
-                        Console.WriteLine("AbortCreateSessionMessage TCP message received: " + tcpClient.Client.Handle.ToString());
-
-                        client.ClearCreateSessionState();
+                        RemoveClientFromCreatingSession(client);
                     }
                     break;
                 case MessageType.listSessions:
                     {
-                        Console.WriteLine("ListSessions TCP message received: " + tcpClient.Client.Handle.ToString());
-
                         List<SessionInfo> listOfSessions = new List<SessionInfo>();
                         foreach(ConnectedClientInfo connectedClient in connectedClients)
                         {
@@ -330,8 +355,6 @@ namespace GO2018_MKS_Server
                     break;
                 case MessageType.joinSession:
                     {
-                        Console.WriteLine("JoinSessionMessage TCP message received: " + tcpClient.Client.Handle.ToString());
-
                         JoinSessionMessage joinSessionMessage = JsonConvert.DeserializeObject<JoinSessionMessage>(nextMessageText);
 
                         SessionInfo chosenSession = joinSessionMessage.session;
@@ -396,6 +419,171 @@ namespace GO2018_MKS_Server
                         }
                     }
                     break;
+                case MessageType.readySessionStart:
+                    {
+                        foreach(ActiveSessionInfo session in sessions)
+                        {
+                            if(client == session.player1 || client == session.player2)
+                            {
+                                session.ReadyStateCounter++;
+
+                                if(session.ReadyStateCounter == 2)
+                                {
+                                    ReadySessionStartAnswerMessage readySessionStartAnswerMessage = new ReadySessionStartAnswerMessage(true, "OK");
+                                    session.player1.AddMessage(readySessionStartAnswerMessage);
+                                    session.player2.AddMessage(readySessionStartAnswerMessage);
+
+                                    session.State = SessionState.ingame;
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case MessageType.playerSessionLost:
+                    {
+                        InformSessionsOfLostClient(client);
+                    }
+                    break;
+                case MessageType.playerUnitsNavigation:
+                    {
+                        PlayerUnitsNavigationMessage playerUnitsNavigationMessage = JsonConvert.DeserializeObject<PlayerUnitsNavigationMessage>(nextMessageText);
+
+                        ActiveSessionInfo activeSession = FindActiveSessionFromClient(client);
+                        if(activeSession != null)
+                        {
+                            if (client == activeSession.player1)
+                            {
+                                foreach (UnitNavigationCommand command in playerUnitsNavigationMessage.NavigationCommands)
+                                {
+                                    activeSession.CollectSessionUpdateAnswers.AddPlayer1UnitNavigationCommand(command);
+                                }
+                            }
+                            else 
+                            {
+                                foreach (UnitNavigationCommand command in playerUnitsNavigationMessage.NavigationCommands)
+                                {
+                                    activeSession.CollectSessionUpdateAnswers.AddPlayer2UnitNavigationCommand(command);
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case MessageType.playerUnitsUpdate: 
+                    {
+                        PlayerUnitsUpdateMessage playerUnitsUpdateMessage = JsonConvert.DeserializeObject<PlayerUnitsUpdateMessage>(nextMessageText);
+
+                        ActiveSessionInfo activeSession = FindActiveSessionFromClient(client);
+                        if (activeSession != null)
+                        {
+                            if (client == activeSession.player1)
+                            {
+                                foreach (UnitResourceState newState in playerUnitsUpdateMessage.UnitResourceStates)
+                                {
+                                    bool isHandled = false;
+                                    foreach (UnitResourceState existingState in activeSession.CollectSessionUpdateAnswers.Player1UnitResourceStates)
+                                    {
+                                        if(newState.Name == existingState.Name)
+                                        {
+                                            isHandled = true;
+
+                                            existingState.FoodResourceCount = newState.FoodResourceCount;
+                                            existingState.TechResourceCount = newState.TechResourceCount;
+
+                                            break;
+                                        }
+                                    }
+
+                                    if(!isHandled)
+                                    {
+                                        activeSession.CollectSessionUpdateAnswers.AddPlayer1UnitResourceStates(newState);
+                                    }
+                                }
+                            }
+                            else 
+                            {
+                                foreach (UnitResourceState newState in playerUnitsUpdateMessage.UnitResourceStates)
+                                {
+                                    bool isHandled = false;
+                                    foreach (UnitResourceState existingState in activeSession.CollectSessionUpdateAnswers.Player2UnitResourceStates)
+                                    {
+                                        if (newState.Name == existingState.Name)
+                                        {
+                                            isHandled = true;
+
+                                            existingState.FoodResourceCount = newState.FoodResourceCount;
+                                            existingState.TechResourceCount = newState.TechResourceCount;
+
+                                            break;
+                                        }
+                                    }
+
+                                    if (!isHandled)
+                                    {
+                                        activeSession.CollectSessionUpdateAnswers.AddPlayer2UnitResourceStates(newState);
+                                    }
+                                }
+                            }
+                        }
+                     }
+                    break;
+                case MessageType.mineResourcesUpdate:
+                    {
+                        MinesUpdateMessage minesUpdateMessage = JsonConvert.DeserializeObject<MinesUpdateMessage>(nextMessageText);
+
+                        ActiveSessionInfo activeSession = FindActiveSessionFromClient(client);
+                        if (activeSession != null)
+                        {
+                            foreach (MineResourceState newState in minesUpdateMessage.MineResourceStates)
+                            {
+                                bool isHandled = false;
+                                foreach (MineResourceState existingState in activeSession.CollectSessionUpdateAnswers.MineResourceStates)
+                                {
+                                    if (newState.Name == existingState.Name)
+                                    {
+                                        isHandled = true;
+
+                                        existingState.ResourceCount = Math.Min(existingState.ResourceCount, newState.ResourceCount);
+                                        break;
+                                    }
+                                }
+
+                                if (!isHandled)
+                                {
+                                    activeSession.CollectSessionUpdateAnswers.AddMineResourceState(newState);
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case MessageType.barricadesUpdate:
+                    {
+                        BarricadesUpdateMessage barricadesUpdateMessage = JsonConvert.DeserializeObject<BarricadesUpdateMessage>(nextMessageText);
+
+                        ActiveSessionInfo activeSession = FindActiveSessionFromClient(client);
+                        if (activeSession != null)
+                        {
+                            foreach (BarricadeResourceState newState in barricadesUpdateMessage.Barricades)
+                            {
+                                bool isHandled = false;
+                                foreach (BarricadeResourceState existingState in activeSession.CollectSessionUpdateAnswers.BarricadeResourceStates)
+                                {
+                                    if (newState.Name == existingState.Name)
+                                    {
+                                        isHandled = true;
+
+                                        existingState.ResourceCount = Math.Min(existingState.ResourceCount, newState.ResourceCount);
+                                        break;
+                                    }
+                                }
+
+                                if (!isHandled)
+                                {
+                                    activeSession.CollectSessionUpdateAnswers.AddBarricadeResourceState(newState);
+                                }
+                            }
+                        }
+                    }
+                    break;
                 default:
                     {
                         Console.WriteLine("Unhandled TCP message received: " + tcpClient.Client.Handle.ToString());
@@ -438,6 +626,8 @@ namespace GO2018_MKS_Server
 
                 StorePlayerResults(client);
 
+                InformSessionsOfLostClient(client);
+
                 client.Dispose();
             }
         }
@@ -445,6 +635,133 @@ namespace GO2018_MKS_Server
         private void StorePlayerResults(ConnectedClientInfo client)
         {
             // TODO - Store persistent results of client before removing
+        }
+
+        private void ResetSessionData()
+        {
+            for (int index = 0; index < sessions.Count; index++)
+            {
+                ActiveSessionInfo activeSession = sessions[index];
+
+                activeSession.CollectSessionUpdateAnswers.Reset();
+            }
+        }
+
+        private void HandleSessions(float deltaTime)
+        {
+            for (int index = 0; index < sessions.Count; index++)
+            {
+                ActiveSessionInfo activeSession = sessions[index];
+
+                switch(activeSession.State)
+                {
+                    case SessionState.waiting:
+                        {
+
+                        }
+                        break;
+                    case SessionState.ingame:
+                        {
+                            activeSession.Update(deltaTime);
+                        }
+                        break;
+                    case SessionState.ending:
+                        {
+
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        private void RemoveClientFromCreatingSession(ConnectedClientInfo client)
+        {
+            ActiveSessionInfo[] sessionsArray = sessions.ToArray();
+            sessions = new List<ActiveSessionInfo>();
+
+            for (int index = 0; index < sessionsArray.Length; index++)
+            {
+                ActiveSessionInfo session = sessionsArray[index];
+
+                if (client == session.player1 || client == session.player2)
+                {
+                    ReadySessionStartAnswerMessage readySessionStartAnswerMessage = new ReadySessionStartAnswerMessage(false, "Opponent session lost");
+                    if (client == session.player1)
+                    {
+                        session.player2.AddMessage(readySessionStartAnswerMessage);
+                    }
+                    else if (client == session.player2)
+                    {
+                        session.player1.AddMessage(readySessionStartAnswerMessage);
+                    }
+
+                    session.player1.ClearCreateSessionState();
+                    session.player1.ClearActiveSessionState();
+
+                    session.player2.ClearCreateSessionState();
+                    session.player2.ClearActiveSessionState();
+
+                    continue;
+                }
+
+                sessions.Add(session);
+            }
+            
+        }
+
+        private void InformSessionsOfLostClient(ConnectedClientInfo client)
+        {
+            ActiveSessionInfo[] sessionsArray = sessions.ToArray();
+            sessions = new List<ActiveSessionInfo>();
+
+            for (int index = 0; index < sessionsArray.Length; index++)
+            {
+                ActiveSessionInfo session = sessionsArray[index];
+
+                if (client == session.player1 || client == session.player2)
+                {
+                    OpponentSessionLostAnswerMessage opponentSessionLostAnswerMessage = new OpponentSessionLostAnswerMessage();
+                    if (client == session.player1)
+                    {
+                        session.player2.AddMessage(opponentSessionLostAnswerMessage);
+                    }
+                    else if (client == session.player2)
+                    {
+                        session.player1.AddMessage(opponentSessionLostAnswerMessage);
+                    }
+
+                    session.player1.ClearCreateSessionState();
+                    session.player1.ClearActiveSessionState();
+
+                    session.player2.ClearCreateSessionState();
+                    session.player2.ClearActiveSessionState();
+
+                    continue;
+                }
+
+                sessions.Add(session);
+            }
+        }
+
+        private ActiveSessionInfo FindActiveSessionFromClient(ConnectedClientInfo client)
+        {
+            ActiveSessionInfo activeSession = null;
+
+            ActiveSessionInfo[] sessionsArray = sessions.ToArray();
+            for (int index = 0; index < sessionsArray.Length; index++)
+            {
+                ActiveSessionInfo session = sessionsArray[index];
+
+                if (client == session.player1 || client == session.player2)
+                {
+                    activeSession = session;
+                    break;
+                }
+            }
+
+            return activeSession;
         }
     }
 }

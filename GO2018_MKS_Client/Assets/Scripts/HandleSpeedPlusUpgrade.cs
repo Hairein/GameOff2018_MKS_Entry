@@ -28,7 +28,7 @@ public class HandleSpeedPlusUpgrade : MonoBehaviour, IPointerDownHandler, IPoint
             return;
         }
 
-        ingameSceneLogicScript.IgnorePointerInput = true;
+        ingameSceneLogicScript.IgnoreIngamePointerInput = true;
     }
 
     public void OnPointerUp(PointerEventData pointerEventData)
@@ -40,6 +40,6 @@ public class HandleSpeedPlusUpgrade : MonoBehaviour, IPointerDownHandler, IPoint
 
         ingameSceneLogicScript.UpgradeSpeedPlus();
 
-        ingameSceneLogicScript.IgnorePointerInput = false;
+        ingameSceneLogicScript.IgnoreIngamePointerInput = false;
     }
 }

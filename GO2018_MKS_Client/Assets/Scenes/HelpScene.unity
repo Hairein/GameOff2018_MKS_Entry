@@ -566,7 +566,7 @@ MonoBehaviour:
     F - Feed the Breeder with Food resources gathered by drones nearby\n T - Feed
     the Breeder with Tech resources gathered by drones nearby\n P - Start barricade
     [Cost: F:100 T:250] placement mode\n ESCAPE - Cancel barricade placement mode\n
-    S - Stop current Breeder or Drone movement command\n\n\n"
+    S - Stop current Breeder or Drone movement command\n M - Toggle menu ingame\n\n"
 --- !u!222 &1118550035
 CanvasRenderer:
   m_ObjectHideFlags: 0

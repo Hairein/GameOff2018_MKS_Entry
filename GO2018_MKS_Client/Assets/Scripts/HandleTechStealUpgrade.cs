@@ -28,7 +28,7 @@ public class HandleTechStealUpgrade : MonoBehaviour, IPointerDownHandler, IPoint
             return;
         }
 
-        ingameSceneLogicScript.IgnorePointerInput = true;
+        ingameSceneLogicScript.IgnoreIngamePointerInput = true;
     }
 
     public void OnPointerUp(PointerEventData pointerEventData)
@@ -40,6 +40,6 @@ public class HandleTechStealUpgrade : MonoBehaviour, IPointerDownHandler, IPoint
 
         ingameSceneLogicScript.UpgradeTechSteal();
 
-        ingameSceneLogicScript.IgnorePointerInput = false;
+        ingameSceneLogicScript.IgnoreIngamePointerInput = false;
     }
 }

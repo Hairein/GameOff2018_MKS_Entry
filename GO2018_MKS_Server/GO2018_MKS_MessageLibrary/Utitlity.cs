@@ -28,5 +28,32 @@ namespace GO2018_MKS_MessageLibrary
             450,    // 7.5 * 60
             600     // 10.0 * 60
         };
+
+        public enum SessionState
+        {
+            none,
+            waiting,
+            ingame,
+            ending
+        };
+
+        public enum SessionResult
+        {
+            pending,
+            won,
+            lost
+        };
+
+        public enum UnitType
+        {
+            breeder,
+            drone
+        };
+
+        public enum MineType
+        {
+            food,
+            tech
+        };
     }
 }

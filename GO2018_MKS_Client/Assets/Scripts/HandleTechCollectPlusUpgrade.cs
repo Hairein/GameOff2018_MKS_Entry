@@ -28,7 +28,7 @@ public class HandleTechCollectPlusUpgrade : MonoBehaviour, IPointerDownHandler, 
             return;
         }
 
-        ingameSceneLogicScript.IgnorePointerInput = true;
+        ingameSceneLogicScript.IgnoreIngamePointerInput = true;
     }
 
     public void OnPointerUp(PointerEventData pointerEventData)
@@ -40,6 +40,6 @@ public class HandleTechCollectPlusUpgrade : MonoBehaviour, IPointerDownHandler, 
 
         ingameSceneLogicScript.UpgradeTechCollectPlus();
 
-        ingameSceneLogicScript.IgnorePointerInput = false;
+        ingameSceneLogicScript.IgnoreIngamePointerInput = false;
     }
 }

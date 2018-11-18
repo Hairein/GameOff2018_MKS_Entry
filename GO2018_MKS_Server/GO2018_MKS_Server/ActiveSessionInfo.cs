@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static GO2018_MKS_Server.ServerUtitlity;
+﻿using GO2018_MKS_MessageLibrary;
+using static GO2018_MKS_MessageLibrary.MessageLibraryUtitlity;
 
 namespace GO2018_MKS_Server
 {
@@ -16,6 +12,13 @@ namespace GO2018_MKS_Server
         public int DurationSeconds = 0;
 
         public SessionState State;
+
+        public float SessionTimeRemainingSeconds = 0.0f;
+
+        public int ReadyStateCounter = 0;
+
+        public CollectSessionUpdateAnswers CollectSessionUpdateAnswers = new CollectSessionUpdateAnswers();
+        private SessionUpdateAnswerMessage sessionUpdateAnswerMessage = new SessionUpdateAnswerMessage();
 
         public ActiveSessionInfo()
         {
@@ -31,6 +34,23 @@ namespace GO2018_MKS_Server
 
             MapName = newMapName;
             DurationSeconds = newDurationSeconds;
+
+            SessionTimeRemainingSeconds = (float)DurationSeconds;
+        }
+
+        public void Update(float deltaTime)
+        {
+            SessionTimeRemainingSeconds -= (deltaTime / 1000.0f); // Convert ms to seconds before reduction
+
+            CollectSessionUpdateAnswers.SessionTimeLeft = SessionTimeRemainingSeconds;
+
+            if (player1 != null && player2 != null)
+            {
+                sessionUpdateAnswerMessage.Convert(CollectSessionUpdateAnswers);
+
+                player1.AddMessage(sessionUpdateAnswerMessage);
+                player2.AddMessage(sessionUpdateAnswerMessage);
+            }
         }
     }
 }

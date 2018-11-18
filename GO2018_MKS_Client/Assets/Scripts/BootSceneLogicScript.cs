@@ -19,6 +19,10 @@ public class BootSceneLogicScript : MonoBehaviour
 
     public Button LoginButton;
 
+    public Text ErrorText;
+
+    public string WebsiteURL = "http://www.micahkoleoso.de";
+
     private string host = string.Empty;
     private int port = 0;
 
@@ -79,8 +83,19 @@ public class BootSceneLogicScript : MonoBehaviour
 
                     if (LoginButton.gameObject.activeSelf) LoginButton.gameObject.SetActive(false);
 
+                    if (!ErrorText.gameObject.activeSelf) ErrorText.gameObject.SetActive(false);
+
                     SceneManager.LoadScene("TitleScene", LoadSceneMode.Single);
                     return;
+                }
+                else
+                {
+                    if (ErrorText.text != gameLogicScriptComponent.LoginAnswerMessage.Details)
+                    {
+                        ErrorText.text = gameLogicScriptComponent.LoginAnswerMessage.Details;
+                    }
+
+                    if (!ErrorText.gameObject.activeSelf) ErrorText.gameObject.SetActive(true);
                 }
             }
         }
@@ -205,5 +220,10 @@ public class BootSceneLogicScript : MonoBehaviour
 
         PlayerPrefs.SetInt("port", port);
         PlayerPrefs.Save();
+    }
+
+    public void OnClickWebsiteButton()
+    {
+        Application.OpenURL(WebsiteURL);
     }
 }

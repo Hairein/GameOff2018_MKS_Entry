@@ -1,9 +1,11 @@
 ﻿using GO2018_MKS_MessageLibrary;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
+using static GO2018_MKS_MessageLibrary.MessageLibraryUtitlity;
 
 public class GameLogicScript : MonoBehaviour
 {
@@ -13,7 +15,7 @@ public class GameLogicScript : MonoBehaviour
 
     private string welcomeText = "Connecting To Server...";
 
-    public string ClientVersion = "v1.0preAlpha";
+    public string ClientVersion;
 
     public string DefaultHost;
     public int DefaultPort;
@@ -31,6 +33,16 @@ public class GameLogicScript : MonoBehaviour
 
     public StartCreatedSessionAnswerMessage startCreatedSessionAnswerMessage = null;
 
+    public SessionState SessionState = SessionState.none;
+    public SessionResult SessionResult = SessionResult.pending;
+
+    public ReadySessionStartMessage readySessionStartMessage = null;
+    public ReadySessionStartAnswerMessage readySessionStartAnswerMessage = null;
+    public OpponentSessionLostAnswerMessage opponentSessionLostAnswerMessage = null;
+    public PlayerSessionLostMessage playerSessionLostMessage = null;
+
+    public SessionUpdateAnswerMessage sessionUpdateAnswerMessage = null;
+
     void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
@@ -38,6 +50,13 @@ public class GameLogicScript : MonoBehaviour
 
     private void OnDestroy()
     {
+        // TODO Check if player still in active session, 
+        // Report to server about abort
+        if (SessionState == SessionState.waiting || SessionState == SessionState.ingame)
+        {
+            SetSessionSurrender();
+        }
+
         DoLogout();
     }
 
@@ -109,13 +128,15 @@ public class GameLogicScript : MonoBehaviour
         tcpClientManager.DisconnectFromTcpServer();
     }
 
-
     public void HandleTCPMessage(string message)
     {
-        Debug.Log("TCP message received from server: " + message);
-
         // Handle message according to type
         GenericMessage genericMessage = JsonConvert.DeserializeObject<GenericMessage>(message);
+
+        // DEBUG only, hide in production
+        //string incomingMessageText = string.Format("TCP message ({0}) received from server: {1}", MessageTypeTexts.GetMessageTypeText(genericMessage.Type), message);
+        //Debug.Log(incomingMessageText);
+
         switch(genericMessage.Type)
         {
             case MessageType.welcome:
@@ -151,7 +172,23 @@ public class GameLogicScript : MonoBehaviour
                     startCreatedSessionAnswerMessage = JsonConvert.DeserializeObject<StartCreatedSessionAnswerMessage>(message);
                 }
                 break;
-            default:
+            case MessageType.readySessionStartAnswer:
+                {
+                    readySessionStartAnswerMessage = JsonConvert.DeserializeObject<ReadySessionStartAnswerMessage>(message);
+                    SessionState = SessionState.ingame;
+                }
+                break;
+             case MessageType.opponentSessionLostAnswer:
+                {
+                    opponentSessionLostAnswerMessage = JsonConvert.DeserializeObject<OpponentSessionLostAnswerMessage>(message);
+                }
+                break;
+             case MessageType.sessionUpdateAnswer:
+                {
+                    sessionUpdateAnswerMessage = JsonConvert.DeserializeObject<SessionUpdateAnswerMessage>(message);
+                }
+                break;
+           default:
                 {
                     Debug.Log("Generic/Unknown TCP message received.");
                 }
@@ -219,5 +256,140 @@ public class GameLogicScript : MonoBehaviour
 
         joinSessionMessage = new JoinSessionMessage(listSessionsAnswerMessage.Sessions[sessionIndex]);
         tcpClientManager.SendMessageObject(joinSessionMessage);
+    }
+
+    public void SetSessionReady()
+    {
+        SessionState = SessionState.waiting;
+        SessionResult = SessionResult.pending;
+
+        opponentSessionLostAnswerMessage = null;
+        readySessionStartAnswerMessage = null;
+        playerSessionLostMessage = null;
+
+        readySessionStartMessage = new ReadySessionStartMessage();
+        tcpClientManager.SendMessageObject(readySessionStartMessage);
+    }
+
+    public void SetSessionSurrender()
+    {
+        SessionState = SessionState.ending;
+        SessionResult = SessionResult.lost;
+
+        playerSessionLostMessage = new PlayerSessionLostMessage();
+        tcpClientManager.SendMessageObject(playerSessionLostMessage);
+    }
+
+    public void SetSessionWon()
+    {
+        SessionState = SessionState.ending;
+        SessionResult = SessionResult.won;
+    }
+
+    public void ClearSessionUpdateMessage()
+    {
+        sessionUpdateAnswerMessage = null;
+    }
+
+    public void EmitUnitNavigationCommands(GameObject[] units, Vector3 navigationTarget)
+    {
+        WorldCoordinate position = new WorldCoordinate(navigationTarget.x, navigationTarget.y, navigationTarget.z);
+
+        List<string> names = new List<string>();
+        foreach(GameObject unit in units)
+        {
+            names.Add(unit.name);
+        }
+
+        UnitNavigationCommand command = new UnitNavigationCommand(names.ToArray(), position);
+
+        List<UnitNavigationCommand> commands = new List<UnitNavigationCommand>();
+        commands.Add(command);
+
+        PlayerUnitsNavigationMessage playerUnitsNavigationMessage = new PlayerUnitsNavigationMessage(commands.ToArray());
+        tcpClientManager.SendMessageObject(playerUnitsNavigationMessage);
+    }
+
+    public void EmitUnitStateCommands(GameObject[] units)
+    {
+        List<UnitResourceState> states = new List<UnitResourceState>();
+
+        foreach(GameObject unit in units)
+        {
+            UnitLogic unitLogic = unit.GetComponent<UnitLogic>();
+            if(unitLogic == null)
+            {
+                continue;
+            }
+
+            UnitType unitType = UnitType.breeder;
+            DroneLogic droneLogic = unit.GetComponent<DroneLogic>();
+            if(droneLogic != null)
+            {
+                unitType = UnitType.drone;
+            }
+
+            UnitResourceState newState = new UnitResourceState(unit.name, unitType, unitLogic.FoodResourceCount, unitLogic.TechResourceCount);
+            states.Add(newState);
+        }
+
+        if (states.Count > 0)
+        {
+            PlayerUnitsUpdateMessage playerUnitsUpdateMessage = new PlayerUnitsUpdateMessage(states.ToArray());
+            tcpClientManager.SendMessageObject(playerUnitsUpdateMessage);
+        }
+    }
+
+    public void EmitMineStateCommands(GameObject[] mines)
+    {
+        List<MineResourceState> states = new List<MineResourceState>();
+
+        foreach (GameObject mine in mines)
+        {
+            FoodSourceLogic foodLogic = mine.GetComponent<FoodSourceLogic>();
+            if (foodLogic != null)
+            {
+                MineResourceState newState = new MineResourceState(mine.name, MineType.food, foodLogic.ResourceCount);
+                states.Add(newState);
+            }
+            else 
+            {
+                TechSourceLogic techLogic = mine.GetComponent<TechSourceLogic>();
+                if (techLogic != null)
+                {
+                    MineResourceState newState = new MineResourceState(mine.name, MineType.tech, techLogic.ResourceCount);
+                    states.Add(newState);
+                }
+            }
+        }
+
+        if (states.Count > 0)
+        {
+            MinesUpdateMessage minesUpdateMessage = new MinesUpdateMessage(states.ToArray());
+            tcpClientManager.SendMessageObject(minesUpdateMessage);
+        }
+    }
+
+    public void EmitBarricadeStateCommands(GameObject[] barricades)
+    {
+        List<BarricadeResourceState> states = new List<BarricadeResourceState>();
+
+        foreach (GameObject barricade in barricades)
+        {
+            WorldCoordinate position = new WorldCoordinate(barricade.transform.position.x, barricade.transform.position.y, barricade.transform.position.z);
+
+            BarricadeLogic barricadeLogic = barricade.GetComponent<BarricadeLogic>();
+            if (barricadeLogic != null)
+            {
+                BarricadeResourceState newState = new BarricadeResourceState(barricade.name, position, barricadeLogic.LifeCount);
+                states.Add(newState);
+            }
+         }
+
+        if (states.Count > 0)
+        {
+            BarricadesUpdateMessage barricadesUpdateMessage = new BarricadesUpdateMessage(states.ToArray());
+            tcpClientManager.SendMessageObject(barricadesUpdateMessage);
+        }
     }
 }

@@ -8,11 +8,5 @@ namespace GO2018_MKS_Server
 {
     public static class ServerUtitlity
     {
-        public enum SessionState
-        {
-            waiting,
-            ingame,
-            ending
-        };
     }
 }

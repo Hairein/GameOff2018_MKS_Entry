@@ -28,7 +28,7 @@ public class HandleFoodStealUpgrade : MonoBehaviour, IPointerDownHandler, IPoint
             return;
         }
 
-        ingameSceneLogicScript.IgnorePointerInput = true;
+        ingameSceneLogicScript.IgnoreIngamePointerInput = true;
     }
 
     public void OnPointerUp(PointerEventData pointerEventData)
@@ -40,6 +40,6 @@ public class HandleFoodStealUpgrade : MonoBehaviour, IPointerDownHandler, IPoint
 
         ingameSceneLogicScript.UpgradeFoodSteal();
 
-        ingameSceneLogicScript.IgnorePointerInput = false;
+        ingameSceneLogicScript.IgnoreIngamePointerInput = false;
     }
 }

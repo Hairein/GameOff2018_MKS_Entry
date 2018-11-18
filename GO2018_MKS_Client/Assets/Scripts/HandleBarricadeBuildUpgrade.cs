@@ -28,7 +28,7 @@ public class HandleBarricadeBuildUpgrade : MonoBehaviour, IPointerDownHandler, I
             return;
         }
 
-        ingameSceneLogicScript.IgnorePointerInput = true;
+        ingameSceneLogicScript.IgnoreIngamePointerInput = true;
     }
 
     public void OnPointerUp(PointerEventData pointerEventData)
@@ -40,6 +40,6 @@ public class HandleBarricadeBuildUpgrade : MonoBehaviour, IPointerDownHandler, I
 
         ingameSceneLogicScript.UpgradeBarricadeBuild();
 
-        ingameSceneLogicScript.IgnorePointerInput = false;
+        ingameSceneLogicScript.IgnoreIngamePointerInput = false;
     }
 }
