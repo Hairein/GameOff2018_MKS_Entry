@@ -43,7 +43,7 @@ Open Game Features
     B - (hold) Destroy barricade mode
     F - (hold) Feed the Breeder Food from all nearby drones 
     T - (hold) Feed the Breeder Tech from all nearby drones
-
+    D - (hold) Drone spawn mode [Breeder Resource Cost per Barricade placed: F: 750 T: 500]
 
 Development TODOs
 =================
@@ -53,7 +53,7 @@ Development TODOs
 - Implement network player navigation and actions cross communication during session
     *Unit navigation commands
     *Unit Food/Tech level changes
-    Unit drone spawns (only near Breeder)
+    *Unit drone spawns (only near Breeder)
     *Resource food/tech level changes
-    Barricade spawns
+    *Barricade spawns
     *Barricade level changes

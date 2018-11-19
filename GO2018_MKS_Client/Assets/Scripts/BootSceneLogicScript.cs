@@ -23,6 +23,8 @@ public class BootSceneLogicScript : MonoBehaviour
 
     public string WebsiteURL = "http://www.micahkoleoso.de";
 
+    public Image ResolutionWarningPanel;
+
     private string host = string.Empty;
     private int port = 0;
 
@@ -30,6 +32,11 @@ public class BootSceneLogicScript : MonoBehaviour
 
     void Start()
     {
+        if(Screen.currentResolution.width < 1024 || Screen.currentResolution.height < 768)
+        {
+            ResolutionWarningPanel.gameObject.SetActive(true);
+        }
+
         HostText.gameObject.SetActive(false);
         HostInputField.gameObject.SetActive(false);
         PortText.gameObject.SetActive(false);

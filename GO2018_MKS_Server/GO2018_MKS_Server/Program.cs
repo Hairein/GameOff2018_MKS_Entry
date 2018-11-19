@@ -486,6 +486,8 @@ namespace GO2018_MKS_Server
                                         {
                                             isHandled = true;
 
+                                            existingState.Position = newState.Position;
+
                                             existingState.FoodResourceCount = newState.FoodResourceCount;
                                             existingState.TechResourceCount = newState.TechResourceCount;
 
@@ -509,6 +511,8 @@ namespace GO2018_MKS_Server
                                         if (newState.Name == existingState.Name)
                                         {
                                             isHandled = true;
+
+                                            existingState.Position = newState.Position;
 
                                             existingState.FoodResourceCount = newState.FoodResourceCount;
                                             existingState.TechResourceCount = newState.TechResourceCount;

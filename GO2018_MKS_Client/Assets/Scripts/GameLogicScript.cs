@@ -329,7 +329,9 @@ public class GameLogicScript : MonoBehaviour
                 unitType = UnitType.drone;
             }
 
-            UnitResourceState newState = new UnitResourceState(unit.name, unitType, unitLogic.FoodResourceCount, unitLogic.TechResourceCount);
+            WorldCoordinate position = new WorldCoordinate(unit.transform.position.x, unit.transform.position.y, unit.transform.position.z);
+
+            UnitResourceState newState = new UnitResourceState(unit.name, unitType, position, unitLogic.FoodResourceCount, unitLogic.TechResourceCount);
             states.Add(newState);
         }
 

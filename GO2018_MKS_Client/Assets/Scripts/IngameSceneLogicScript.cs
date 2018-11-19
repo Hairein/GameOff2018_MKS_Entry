@@ -23,6 +23,7 @@ public class IngameSceneLogicScript : MonoBehaviour
     public int TeamNumber = 1;
     public int OpponentTeamNumber = 2;
     public GameObject[] SelectedUnits;
+    private int nextFreeIndex = 0;
 
     public GameObject TeamBreeder;
     public GameObject[] TeamDrones;
@@ -35,6 +36,8 @@ public class IngameSceneLogicScript : MonoBehaviour
 
     public bool TeamInBarricadeBuildMode = false;
     public bool TeamInBarricadeBreakMode = false;
+    public bool TeamInDroneSpawnMode = false;
+    private int maxDronesNos = 8;
 
     public GameObject Team1SpawnParent;
     public GameObject Team2SpawnParent;
@@ -121,12 +124,21 @@ public class IngameSceneLogicScript : MonoBehaviour
     public float TeamTechStealRatePerSec = 2.5f;
 
     // ---
+    public float ManhattanDistanceAroundTeamUnits = 3.0f;
+
+    // ---
     public GameObject barricadePreview;
     public GameObject barricadeReal;
     public float BarricadeFoodCost = 100.0f;
     public float BarricadeTechCost = 250.0f;
     public GameObject BarricadeSpawnParent;
-    public float ManhattanDistanceAroundTeamUnits = 3.0f;
+
+    // ---
+    public GameObject dronePreview;
+    public GameObject droneTeam1Real;
+    public GameObject droneTeam2Real;
+    public float DroneFoodCost = 750.0f;
+    public float DroneTechCost = 500.0f;
 
     // ---
     public RawImage ChosenSpeedPlusUpgradeIcon;
@@ -185,7 +197,7 @@ public class IngameSceneLogicScript : MonoBehaviour
         OpponentTeamNumber = TeamNumber == 1 ? 2 : 1;
 
         BuildTeamMembers();
-        UpdateUnitIcons();
+        UpdateTeamIcons();
 
         BuildMines();
         BuildBarricades();
@@ -330,8 +342,9 @@ public class IngameSceneLogicScript : MonoBehaviour
     {
         RoundTimeInSeconds = gameLogicScriptComponent.sessionUpdateAnswerMessage.SessionTimeLeft;
 
-        HandleOpponentCommands();
+        // Must send resource state foirst in case of newly spawned drones, their initial positions are required
         HandleOpponentResourceCommands();
+        HandleOpponentCommands();
 
         HandleMineCommands();
         HandleBarricadeCommands();
@@ -389,9 +402,12 @@ public class IngameSceneLogicScript : MonoBehaviour
 
         foreach (UnitResourceState state in states)
         {
+            bool bFound = false;
+
             if (state.Name == OpponentTeamBreeder.name)
             {
-            if (state.Name == OpponentTeamBreeder.name)
+                bFound = true;
+
                 SetUnitResourceLevels(OpponentTeamBreeder, state.FoodResourceCount, state.TechResourceCount);
             }
             else
@@ -403,8 +419,17 @@ public class IngameSceneLogicScript : MonoBehaviour
                         continue;
                     }
 
+                    bFound = true;
+
                     SetUnitResourceLevels(drone, state.FoodResourceCount, state.TechResourceCount);
                 }
+            }
+
+            // Spawn new drones if this name was not found
+            if (!bFound)
+            {
+                Vector3 position = new Vector3(state.Position.X, state.Position.Y, state.Position.Z);
+                SpawnOpposingNamedDrone(state.Name, position);
             }
         }
     }
@@ -456,18 +481,30 @@ public class IngameSceneLogicScript : MonoBehaviour
 
         foreach (BarricadeResourceState state in states)
         {
+            bool bFound = false;
+
             foreach (GameObject barricade in Barricades)
             {
                 if (state.Name == barricade.name)
                 {
+                    bFound = true;
+
                     BarricadeLogic barricadeLogic = barricade.GetComponent<BarricadeLogic>();
                     if (barricadeLogic != null)
                     {
                         barricadeLogic.LifeCount = state.ResourceCount;
+
                     }
 
                     continue;
                 }
+            }
+
+            // Spawn new barricade if this name was not found
+            if(!bFound)
+            {
+                Vector3 position = new Vector3(state.Position.X, state.Position.Y, state.Position.Z);
+                SpawnNamedBarricade(state.Name, position);
             }
         }
     }
@@ -478,7 +515,7 @@ public class IngameSceneLogicScript : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                if (!TeamInBarricadeBuildMode && !IsSelecting)
+                if (!TeamInBarricadeBuildMode && !TeamInDroneSpawnMode && !IsSelecting)
                 {
                     IsSelecting = true;
                     selectionStartPosition = mousePosition;
@@ -488,7 +525,7 @@ public class IngameSceneLogicScript : MonoBehaviour
             {
                 if (TeamInBarricadeBuildMode)
                 {
-                    // Finalize barricade placement if resource are sufficient
+                    // Finalize barricade placement if resources are sufficient
                     UnitLogic breederUnitLogic = TeamBreeder.GetComponent<UnitLogic>();
                     if (breederUnitLogic != null)
                     {
@@ -500,12 +537,38 @@ public class IngameSceneLogicScript : MonoBehaviour
                             RaycastHit clickHit;
                             if (GetScreenHitResultInWorld(mousePosition, out clickHit))
                             {
-                                Vector3 griddedPosition = CalculateGridForBarricadePlacement(clickHit.point);
-                                if (IsPointNearTeamUnits(griddedPosition))
+                                Vector3 griddedPosition = CalculateGridForSpawnedObjectPlacement(clickHit.point);
+                                if (IsPointNearTeamBreeder(griddedPosition))
                                 {
-                                    GameObject newBarricade = Instantiate(barricadeReal, BarricadeSpawnParent.transform);
-                                    newBarricade.transform.position = griddedPosition;
-                                    newBarricade.SetActive(true);
+                                    SpawnBarricade(griddedPosition);
+                                }
+                            }
+                        }
+                    }
+                }
+                else if (TeamInDroneSpawnMode)
+                {
+                    // Finalize drone spawn placement if resources are sufficient
+                    UnitLogic breederUnitLogic = TeamBreeder.GetComponent<UnitLogic>();
+                    if (breederUnitLogic != null)
+                    {
+                        if (breederUnitLogic.FoodResourceCount >= DroneFoodCost && breederUnitLogic.TechResourceCount >= DroneTechCost)
+                        {
+                            breederUnitLogic.FoodResourceCount -= DroneFoodCost;
+                            breederUnitLogic.TechResourceCount -= DroneTechCost;
+
+                            RaycastHit clickHit;
+                            if (GetScreenHitResultInWorld(mousePosition, out clickHit))
+                            {
+                                Vector3 griddedPosition = CalculateGridForSpawnedObjectPlacement(clickHit.point);
+                                if (IsPointNearTeamBreeder(griddedPosition))
+                                {
+                                    SpawnDrone(griddedPosition);
+
+                                    if(TeamDrones.Length >= maxDronesNos)
+                                    {
+                                        StopDroneSpawnMode();
+                                    }
                                 }
                             }
                         }
@@ -533,14 +596,33 @@ public class IngameSceneLogicScript : MonoBehaviour
             }
 
             // Check special keys for actions
+            if (Input.GetKeyUp(KeyCode.Escape))
+            {
+                MenuPanel.gameObject.SetActive(!MenuPanel.gameObject.activeSelf);
+            }
+
             if (Input.GetKeyUp(KeyCode.S))
             {
                 CancelNavigation();
             }
 
-            if (Input.GetKeyUp(KeyCode.Escape))
+            if (Input.GetKeyDown(KeyCode.D))
             {
-                MenuPanel.gameObject.SetActive(!MenuPanel.gameObject.activeSelf);
+                if (!TeamInDroneSpawnMode)
+                {
+                    StartDroneSpawnMode();
+
+                    Debug.Log("Starting drone spawn mode");
+                }
+            }
+            else if (Input.GetKeyUp(KeyCode.D))
+            {
+                if (TeamInDroneSpawnMode)
+                {
+                    StopDroneSpawnMode();
+
+                    Debug.Log("Ending drone spawn mode");
+                }
             }
 
             if (Input.GetKeyDown(KeyCode.P))
@@ -552,7 +634,8 @@ public class IngameSceneLogicScript : MonoBehaviour
                     Debug.Log("Starting barricade build mode");
                 }
             }
-            else if (Input.GetKeyUp(KeyCode.P))
+
+            if (Input.GetKeyUp(KeyCode.P))
             {
                 if (TeamInBarricadeBuildMode)
                 {
@@ -580,6 +663,16 @@ public class IngameSceneLogicScript : MonoBehaviour
                     Debug.Log("Ending barricade break mode");
                 }
             }
+
+            // Handle cursor visibility in modes
+            if (TeamInDroneSpawnMode || TeamInBarricadeBuildMode)
+            {
+                ShowCursor(false);
+            }
+            else
+            {
+                ShowCursor(true);
+            }
         }
 
         // Check if need to show selection rectangle (4 px drag minimum)
@@ -604,9 +697,21 @@ public class IngameSceneLogicScript : MonoBehaviour
             RaycastHit clickHit;
             if (GetScreenHitResultInWorld(mousePosition, out clickHit))
             {
-                Vector3 griddedPosition = CalculateGridForBarricadePlacement(clickHit.point);
-                barricadePreview.SetActive(IsPointNearTeamUnits(griddedPosition));
+                Vector3 griddedPosition = CalculateGridForSpawnedObjectPlacement(clickHit.point);
+                barricadePreview.SetActive(IsPointNearTeamBreeder(griddedPosition));
                 barricadePreview.transform.position = griddedPosition;
+            }
+        }
+
+        if (TeamInDroneSpawnMode)
+        {
+            RaycastHit clickHit;
+            if (GetScreenHitResultInWorld(mousePosition, out clickHit))
+            {
+                Vector3 griddedPosition = CalculateGridForSpawnedObjectPlacement(clickHit.point);
+                dronePreview.SetActive(IsPointNearTeamBreeder(griddedPosition));
+                dronePreview.transform.position = griddedPosition;
+                dronePreview.transform.rotation = TeamBreeder.transform.rotation;
             }
         }
     }
@@ -790,10 +895,10 @@ public class IngameSceneLogicScript : MonoBehaviour
 
         SelectedUnits = listOfSelectedUnits.ToArray();
 
-        UpdateUnitIcons();
+        UpdateTeamIcons();
     }
 
-    public void UpdateUnitIcons()
+    public void UpdateTeamIcons()
     {
         UnitLogic breederUnitLogic = TeamBreeder.GetComponent<UnitLogic>();
         if (breederUnitLogic != null && breederUnitLogic.gameObject.activeSelf)
@@ -870,6 +975,81 @@ public class IngameSceneLogicScript : MonoBehaviour
             }
         }
         TeamDrones = teamDrones.ToArray();
+
+        List<GameObject> opponentTeamDrones = new List<GameObject>();
+        foreach (GameObject unit in opponentTeamMembers)
+        {
+            BreederLogic breederLogic = unit.GetComponent<BreederLogic>();
+            if (breederLogic != null && breederLogic.gameObject.activeSelf)
+            {
+                OpponentTeamBreeder = unit;
+            }
+            else
+            {
+                DroneLogic droneLogic = unit.GetComponent<DroneLogic>();
+                if (droneLogic != null && droneLogic.gameObject.activeSelf)
+                {
+                    opponentTeamDrones.Add(unit);
+                }
+            }
+        }
+        OpponentTeamDrones = opponentTeamDrones.ToArray();
+    }
+
+    private void BuildTeam()
+    {
+        GameObject[] teamMembers;
+
+        if (TeamNumber == 1)
+        {
+            teamMembers = GameObject.FindGameObjectsWithTag("Team1Member");
+        }
+        else
+        {
+            teamMembers = GameObject.FindGameObjectsWithTag("Team2Member");
+        }
+
+        if (teamMembers.Length == 0)
+        {
+            return;
+        }
+
+        List<GameObject> teamDrones = new List<GameObject>();
+        foreach (GameObject unit in teamMembers)
+        {
+            BreederLogic breederLogic = unit.GetComponent<BreederLogic>();
+            if (breederLogic != null && breederLogic.gameObject.activeSelf)
+            {
+                TeamBreeder = unit;
+            }
+            else
+            {
+                DroneLogic droneLogic = unit.GetComponent<DroneLogic>();
+                if (droneLogic != null && droneLogic.gameObject.activeSelf)
+                {
+                    teamDrones.Add(unit);
+                }
+            }
+        }
+        TeamDrones = teamDrones.ToArray();
+    }
+
+    private void BuildOpposingTeam()
+    {
+        GameObject[] opponentTeamMembers;
+        if (TeamNumber == 1)
+        {
+            opponentTeamMembers = GameObject.FindGameObjectsWithTag("Team2Member");
+        }
+        else
+        {
+            opponentTeamMembers = GameObject.FindGameObjectsWithTag("Team1Member");
+        }
+
+        if (opponentTeamMembers.Length == 0)
+        {
+            return;
+        }
 
         List<GameObject> opponentTeamDrones = new List<GameObject>();
         foreach (GameObject unit in opponentTeamMembers)
@@ -1000,7 +1180,7 @@ public class IngameSceneLogicScript : MonoBehaviour
         if (unitDidDie)
         {
             BuildTeamMembers();
-            UpdateUnitIcons();
+            UpdateTeamIcons();
         }
 
         // Units can steal other units resources
@@ -1640,7 +1820,33 @@ public class IngameSceneLogicScript : MonoBehaviour
         }
     }
 
-    private Vector3 CalculateGridForBarricadePlacement(Vector3 inputPosition)
+    private void StartDroneSpawnMode()
+    {
+        if(TeamDrones.Length >= maxDronesNos)
+        {
+            return;
+        }
+
+        UnitLogic breederUnitLogic = TeamBreeder.GetComponent<UnitLogic>();
+        if (breederUnitLogic != null)
+        {
+            if (breederUnitLogic.FoodResourceCount >= DroneFoodCost && breederUnitLogic.TechResourceCount >= DroneTechCost)
+            {
+                TeamInDroneSpawnMode = true;
+
+                dronePreview.SetActive(true);
+            }
+        }
+    }
+
+    private void StopDroneSpawnMode()
+    {
+        TeamInDroneSpawnMode = false;
+
+        dronePreview.SetActive(false);
+    }
+
+    private Vector3 CalculateGridForSpawnedObjectPlacement(Vector3 inputPosition)
     {
         Vector3 outputPosition = new Vector3(inputPosition.x, inputPosition.y, inputPosition.z);
 
@@ -1701,6 +1907,18 @@ public class IngameSceneLogicScript : MonoBehaviour
         return false;
     }
 
+    private bool IsPointNearTeamBreeder(Vector3 point)
+    {
+        float breederManhattanDistanceX = Math.Abs(TeamBreeder.transform.position.x - point.x);
+        float breederManhattanDistanceZ = Math.Abs(TeamBreeder.transform.position.z - point.z);
+        if (breederManhattanDistanceX <= ManhattanDistanceAroundTeamUnits && breederManhattanDistanceZ <= ManhattanDistanceAroundTeamUnits)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     private void UpdateScores()
     {
         string playerScoreText = PlayerHandle + " " + PlayerScore.ToString("D5");
@@ -1715,6 +1933,108 @@ public class IngameSceneLogicScript : MonoBehaviour
     public void LostOpponentSession()
     {
         gameLogicScriptComponent.SetSessionWon();
+    }
+
+    private void SpawnBarricade(Vector3 position)
+    {
+        GameObject newBarricade = Instantiate(barricadeReal, BarricadeSpawnParent.transform);
+
+        string teamPrefix = string.Format("_Team{0}_", TeamNumber.ToString());
+        newBarricade.name = string.Format("{0}{1}{2}", newBarricade.name, teamPrefix, nextFreeIndex++.ToString());
+
+        newBarricade.transform.position = position;
+        newBarricade.SetActive(true);
+
+        BuildBarricades();
+    }
+
+    private void SpawnNamedBarricade(string newName, Vector3 position)
+    {
+        GameObject newBarricade = Instantiate(barricadeReal, BarricadeSpawnParent.transform);
+
+        newBarricade.name = newName;
+
+        newBarricade.transform.position = position;
+        newBarricade.SetActive(true);
+
+        BuildBarricades();
+    }
+
+    private void SpawnDrone(Vector3 position)
+    {
+        GameObject newDrone;
+        if (TeamNumber == 1)
+        {
+            newDrone  = Instantiate(droneTeam1Real, Team1SpawnParent.transform);
+        }
+        else
+        {
+            newDrone  = Instantiate(droneTeam1Real, Team2SpawnParent.transform);
+        }
+
+        string teamPrefix = string.Format("_Team{0}_", TeamNumber.ToString());
+        newDrone.name = string.Format("{0}{1}{2}", newDrone.name, teamPrefix, nextFreeIndex++.ToString());
+
+        newDrone.transform.position = position;
+        newDrone.transform.rotation = newDrone.transform.parent.rotation;
+
+        newDrone.SetActive(true);
+
+        BuildTeam();
+        UpdateTeamIcons();
+    }
+
+    private void SpawnNamedDrone(string newName, Vector3 position)
+    {
+        GameObject newDrone;
+        if (TeamNumber == 1)
+        {
+            newDrone = Instantiate(droneTeam1Real, Team1SpawnParent.transform);
+        }
+        else
+        {
+            newDrone = Instantiate(droneTeam2Real, Team2SpawnParent.transform);
+        }
+
+        newDrone.name = newName;
+
+        newDrone.transform.position = position;
+        newDrone.transform.rotation = TeamBreeder.transform.rotation;
+
+        newDrone.SetActive(true);
+
+        BuildTeam();
+        UpdateTeamIcons();
+    }
+
+    private void SpawnOpposingNamedDrone(string newName, Vector3 position)
+    {
+        GameObject newDrone;
+        if (TeamNumber == 1)
+        {
+            newDrone = Instantiate(droneTeam2Real, Team2SpawnParent.transform);
+        }
+        else
+        {
+            newDrone = Instantiate(droneTeam1Real, Team1SpawnParent.transform);
+        }
+
+        newDrone.name = newName;
+
+        newDrone.transform.position = position;
+        newDrone.transform.rotation = OpponentTeamBreeder.transform.rotation;
+
+        newDrone.SetActive(true);
+
+        BuildOpposingTeam();
+    }
+
+    private void ShowCursor(bool flag)
+    {
+        if (Cursor.visible != flag)
+        {
+            Cursor.visible = flag;
+        }
     }
 
     // UI Handlers
@@ -1738,4 +2058,5 @@ public class IngameSceneLogicScript : MonoBehaviour
             SceneManager.LoadScene("TitleScene", LoadSceneMode.Single);
         }
     }
+
 }

@@ -12,6 +12,8 @@ namespace GO2018_MKS_MessageLibrary
         public string Name = string.Empty;
 
         public UnitType UnitType = UnitType.breeder;
+
+        public WorldCoordinate Position = new WorldCoordinate();
          
         public float FoodResourceCount = 0.0f;
         public float TechResourceCount = 0.0f;
@@ -20,11 +22,13 @@ namespace GO2018_MKS_MessageLibrary
         {
         }
 
-        public UnitResourceState(string newName, UnitType newUnitType, float newFoodResourceCount, float newTechResourceCount)
+        public UnitResourceState(string newName, UnitType newUnitType, WorldCoordinate newPosition, float newFoodResourceCount, float newTechResourceCount)
         {
             Name = newName;
 
             UnitType = newUnitType;
+
+            Position = newPosition;
 
             FoodResourceCount = newFoodResourceCount;
             TechResourceCount = newTechResourceCount;
