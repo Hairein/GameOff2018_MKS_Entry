@@ -20,6 +20,9 @@ namespace GO2018_MKS_MessageLibrary
 
         public BarricadeResourceState[] BarricadeResourceStates = null;
 
+        public int Player1Score = 0;
+        public int Player2Score = 0;
+
         public SessionUpdateAnswerMessage()
         {
             Type = MessageType.sessionUpdateAnswer;
@@ -40,6 +43,8 @@ namespace GO2018_MKS_MessageLibrary
             MineResourceStates = collected.MineResourceStates.ToArray();
 
             BarricadeResourceStates = collected.BarricadeResourceStates.ToArray();
+
+            ConvertScores(collected);
         }
 
         public void Convert(CollectSessionUpdateAnswers collected)
@@ -57,6 +62,14 @@ namespace GO2018_MKS_MessageLibrary
             MineResourceStates = collected.MineResourceStates.ToArray();
 
             BarricadeResourceStates = collected.BarricadeResourceStates.ToArray();
+
+            ConvertScores(collected);
+        }
+
+        private void ConvertScores(CollectSessionUpdateAnswers collected)
+        {
+            Player1Score = (int)collected.Player1Score;
+            Player2Score = (int)collected.Player2Score;
         }
     }
 }

@@ -20,6 +20,8 @@ namespace GO2018_MKS_Server
         public CollectSessionUpdateAnswers CollectSessionUpdateAnswers = new CollectSessionUpdateAnswers();
         private SessionUpdateAnswerMessage sessionUpdateAnswerMessage = new SessionUpdateAnswerMessage();
 
+        private float scoreMultiplicationFactor = 1.0f;
+
         public ActiveSessionInfo()
         {
             State = SessionState.waiting;
@@ -44,6 +46,36 @@ namespace GO2018_MKS_Server
 
             CollectSessionUpdateAnswers.SessionTimeLeft = SessionTimeRemainingSeconds;
 
+            // Calculate scores
+            foreach (var unitResource in CollectSessionUpdateAnswers.Player1UnitResourceStates)
+            {
+                if (unitResource.UnitType == UnitType.breeder)
+                {
+                    if (unitResource.FoodResourceCount > CollectSessionUpdateAnswers.PreviousPlayer1BreederResources)
+                    {
+                        CollectSessionUpdateAnswers.Player1Score += (unitResource.FoodResourceCount - CollectSessionUpdateAnswers.PreviousPlayer1BreederResources) * scoreMultiplicationFactor;
+                    }
+
+                    CollectSessionUpdateAnswers.PreviousPlayer1BreederResources = unitResource.FoodResourceCount;
+                    break;
+                }
+            }
+
+            foreach (var unitResource in CollectSessionUpdateAnswers.Player2UnitResourceStates)
+            {
+                if (unitResource.UnitType == UnitType.breeder)
+                {
+                    if (unitResource.FoodResourceCount > CollectSessionUpdateAnswers.PreviousPlayer2BreederResources)
+                    {
+                        CollectSessionUpdateAnswers.Player2Score += (unitResource.FoodResourceCount - CollectSessionUpdateAnswers.PreviousPlayer2BreederResources) * scoreMultiplicationFactor;
+                    }
+
+                    CollectSessionUpdateAnswers.PreviousPlayer2BreederResources = unitResource.FoodResourceCount;
+                    break;
+                }
+            }
+
+            // Copy over
             if (player1 != null && player2 != null)
             {
                 sessionUpdateAnswerMessage.Convert(CollectSessionUpdateAnswers);

@@ -85,12 +85,6 @@ public class TechSourceLogic : MonoBehaviour
                 ResourceCount -= newTechValue;
             }
         }
-
-        if (ResourceCount < 0.0f)
-        {
-            ResourceCount = 0.0f;
-            Destroy(this.gameObject);
-        }
     }
 
     void OnTriggerEnter(Collider other)

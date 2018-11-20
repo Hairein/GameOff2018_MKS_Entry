@@ -342,6 +342,17 @@ public class IngameSceneLogicScript : MonoBehaviour
     {
         RoundTimeInSeconds = gameLogicScriptComponent.sessionUpdateAnswerMessage.SessionTimeLeft;
 
+        if(TeamNumber == 1)
+        {
+            PlayerScore = gameLogicScriptComponent.sessionUpdateAnswerMessage.Player1Score;
+            OpponentScore = gameLogicScriptComponent.sessionUpdateAnswerMessage.Player2Score;
+        }
+        else
+        {
+            PlayerScore = gameLogicScriptComponent.sessionUpdateAnswerMessage.Player2Score;
+            OpponentScore = gameLogicScriptComponent.sessionUpdateAnswerMessage.Player1Score;
+        }
+
         // Must send resource state foirst in case of newly spawned drones, their initial positions are required
         HandleOpponentResourceCommands();
         HandleOpponentCommands();
@@ -370,7 +381,10 @@ public class IngameSceneLogicScript : MonoBehaviour
             {
                 if (unitName == OpponentTeamBreeder.name)
                 {
-                    SetUnitNavigationTarget(OpponentTeamBreeder, target);
+                    if (OpponentTeamBreeder.activeSelf)
+                    {
+                        SetUnitNavigationTarget(OpponentTeamBreeder, target);
+                    }
                 }
                 else
                 {
@@ -381,7 +395,10 @@ public class IngameSceneLogicScript : MonoBehaviour
                             continue;
                         }
 
-                        SetUnitNavigationTarget(drone, target);
+                        if (drone.activeSelf)
+                        {
+                            SetUnitNavigationTarget(drone, target);
+                        }
                     }
                 }
             }
@@ -408,6 +425,13 @@ public class IngameSceneLogicScript : MonoBehaviour
             {
                 bFound = true;
 
+                UnitLogic unitLogic = OpponentTeamBreeder.GetComponent<UnitLogic>();
+                if (unitLogic != null && unitLogic.FoodResourceCount < HungerDeathFoodLevel)
+                {
+                    RemoveDeadUnitFromWorld(OpponentTeamBreeder);
+                    continue;
+                }
+
                 SetUnitResourceLevels(OpponentTeamBreeder, state.FoodResourceCount, state.TechResourceCount);
             }
             else
@@ -420,6 +444,13 @@ public class IngameSceneLogicScript : MonoBehaviour
                     }
 
                     bFound = true;
+
+                    UnitLogic unitLogic = drone.GetComponent<UnitLogic>();
+                    if (unitLogic != null && unitLogic.FoodResourceCount < HungerDeathFoodLevel)
+                    {
+                        RemoveDeadUnitFromWorld(drone);
+                        continue;
+                    }
 
                     SetUnitResourceLevels(drone, state.FoodResourceCount, state.TechResourceCount);
                 }
@@ -436,11 +467,13 @@ public class IngameSceneLogicScript : MonoBehaviour
 
     private void HandleMineCommands()
     {
+        bool rebuild = false;
+
         MineResourceState[] states = gameLogicScriptComponent.sessionUpdateAnswerMessage.MineResourceStates;
 
         foreach(MineResourceState state in states)
         {
-            if(state.MineType == MineType.food)
+            if (state.MineType == MineType.food)
             {
                 foreach(GameObject foodResource in FoodSources)
                 {
@@ -450,6 +483,14 @@ public class IngameSceneLogicScript : MonoBehaviour
                         if(foodSourceLogic != null)
                         {
                             foodSourceLogic.ResourceCount = state.ResourceCount;
+
+                            if (foodSourceLogic.ResourceCount <= 0.0f)
+                            {
+                                foodSourceLogic.gameObject.SetActive(false);
+                                Destroy(foodSourceLogic.gameObject);
+                                rebuild |= true;
+                                continue;
+                            }
                         }
 
                         continue;
@@ -466,6 +507,14 @@ public class IngameSceneLogicScript : MonoBehaviour
                         if(techSourceLogic != null)
                         {
                             techSourceLogic.ResourceCount = state.ResourceCount;
+
+                            if (techSourceLogic.ResourceCount <= 0.0f)
+                            {
+                                techSourceLogic.gameObject.SetActive(false);
+                                Destroy(techSourceLogic.gameObject);
+                                rebuild |= true;
+                                continue;
+                            }
                         }
 
                         continue;
@@ -473,10 +522,17 @@ public class IngameSceneLogicScript : MonoBehaviour
                 }
             }
         }
+
+        if (rebuild)
+        {
+            BuildMines();
+        }
     }
 
     private void HandleBarricadeCommands()
     {
+        bool rebuild = false;
+
         BarricadeResourceState[] states = gameLogicScriptComponent.sessionUpdateAnswerMessage.BarricadeResourceStates;
 
         foreach (BarricadeResourceState state in states)
@@ -494,6 +550,14 @@ public class IngameSceneLogicScript : MonoBehaviour
                     {
                         barricadeLogic.LifeCount = state.ResourceCount;
 
+                        if (barricadeLogic.LifeCount <= 0.0f)
+                        {
+                            barricadeLogic.gameObject.SetActive(false);
+                            Destroy(barricadeLogic.gameObject);
+                            rebuild |= true;
+                            continue;
+                        }
+
                     }
 
                     continue;
@@ -506,6 +570,11 @@ public class IngameSceneLogicScript : MonoBehaviour
                 Vector3 position = new Vector3(state.Position.X, state.Position.Y, state.Position.Z);
                 SpawnNamedBarricade(state.Name, position);
             }
+        }
+
+        if (rebuild)
+        {
+            BuildBarricades();
         }
     }
 
@@ -1160,7 +1229,7 @@ public class IngameSceneLogicScript : MonoBehaviour
             if (unitLogic.FoodResourceCount < HungerDeathFoodLevel)
             {
                 // Die...
-                RemoveDeadUnitFromWorld(unitLogic.gameObject);
+                RemoveDeadTeamUnitFromWorld(unitLogic.gameObject);
 
                 unitDidDie |= true;
                 continue;
@@ -1188,7 +1257,7 @@ public class IngameSceneLogicScript : MonoBehaviour
         HandleTeamTechSteal(deltaTime);
     }
 
-    private void RemoveDeadUnitFromWorld(GameObject deadMember)
+    private void RemoveDeadTeamUnitFromWorld(GameObject deadMember)
     {
         List<GameObject> listoFSelectedGameObjects = new List<GameObject>();
 
@@ -1202,9 +1271,13 @@ public class IngameSceneLogicScript : MonoBehaviour
 
         SelectedUnits = listoFSelectedGameObjects.ToArray();
 
+        RemoveDeadUnitFromWorld(deadMember);
+    }
+
+    private void RemoveDeadUnitFromWorld(GameObject deadMember)
+    {
         deadMember.SetActive(false);
         Destroy(deadMember);
-
     }
 
     public float GetBreederMaxFoodResource(int teamNumber)

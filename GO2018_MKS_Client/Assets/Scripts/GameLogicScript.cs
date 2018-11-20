@@ -298,7 +298,12 @@ public class GameLogicScript : MonoBehaviour
         List<string> names = new List<string>();
         foreach(GameObject unit in units)
         {
-            names.Add(unit.name);
+            if (!unit.activeSelf)
+            {
+                continue;
+            }
+
+            names.Add(unit.name);           
         }
 
         UnitNavigationCommand command = new UnitNavigationCommand(names.ToArray(), position);
@@ -316,6 +321,11 @@ public class GameLogicScript : MonoBehaviour
 
         foreach(GameObject unit in units)
         {
+            if (!unit.activeSelf)
+            {
+                continue;
+            }
+
             UnitLogic unitLogic = unit.GetComponent<UnitLogic>();
             if(unitLogic == null)
             {
@@ -348,6 +358,11 @@ public class GameLogicScript : MonoBehaviour
 
         foreach (GameObject mine in mines)
         {
+            if (!mine.activeSelf)
+            {
+                continue;
+            }
+
             FoodSourceLogic foodLogic = mine.GetComponent<FoodSourceLogic>();
             if (foodLogic != null)
             {
@@ -378,6 +393,11 @@ public class GameLogicScript : MonoBehaviour
 
         foreach (GameObject barricade in barricades)
         {
+            if (!barricade.activeSelf)
+            {
+                continue;
+            }
+
             WorldCoordinate position = new WorldCoordinate(barricade.transform.position.x, barricade.transform.position.y, barricade.transform.position.z);
 
             BarricadeLogic barricadeLogic = barricade.GetComponent<BarricadeLogic>();

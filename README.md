@@ -49,7 +49,7 @@ Development TODOs
 =================
 - *Implement synched time coutdown from server
 - Implement session end on timeout
-- Implement session win/loss display with return to create or join screen as last chosen
+- *Implement session win/loss display with return to create or join screen as last chosen
 - Implement network player navigation and actions cross communication during session
     *Unit navigation commands
     *Unit Food/Tech level changes
@@ -57,3 +57,4 @@ Development TODOs
     *Resource food/tech level changes
     *Barricade spawns
     *Barricade level changes
+    *Calculate server-side scores and transmit to both clients with update message.

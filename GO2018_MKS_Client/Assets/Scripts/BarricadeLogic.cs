@@ -100,12 +100,6 @@ public class BarricadeLogic : MonoBehaviour
         {
             float totalBreakValue = nosDestroyers * baseTapRateThisFrame;
             LifeCount -= totalBreakValue;
-
-            if (LifeCount < 0.0f)
-            {
-                LifeCount = 0.0f;
-                Destroy(this.gameObject);
-            }
         }
     }
 

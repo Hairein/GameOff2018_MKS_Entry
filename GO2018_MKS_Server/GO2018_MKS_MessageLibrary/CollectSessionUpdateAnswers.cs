@@ -20,6 +20,12 @@ namespace GO2018_MKS_MessageLibrary
 
         public List<BarricadeResourceState> BarricadeResourceStates = new List<BarricadeResourceState>();
 
+        public float PreviousPlayer1BreederResources = 300.0f;
+        public float Player1Score = 0.0f;
+
+        public float PreviousPlayer2BreederResources = 300.0f;
+        public float Player2Score = 0.0f;
+
         public CollectSessionUpdateAnswers()
         {
             Reset();

@@ -86,12 +86,6 @@ public class FoodSourceLogic : MonoBehaviour
                 ResourceCount -= newFoodValue;
             }
         }
-
-        if (ResourceCount < 0.0f)
-        {
-            ResourceCount = 0.0f;
-            Destroy(this.gameObject);
-        }
     }
 
     void OnTriggerEnter(Collider other)
