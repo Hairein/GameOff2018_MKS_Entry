@@ -272,7 +272,7 @@ namespace GO2018_MKS_Server
                     {
                         if (client.IsCreatingSession)
                         {
-                            RemoveClientFromCreatingSession(client);
+                            client.ClearCreateSessionState();
                         }
 
                         InformSessionsOfLostClient(client);
@@ -314,7 +314,11 @@ namespace GO2018_MKS_Server
                     break;
                 case MessageType.abortCreateSession:
                     {
-                        RemoveClientFromCreatingSession(client);
+                        if (client.IsCreatingSession)
+                        {
+                            client.ClearCreateSessionState();
+                        }
+
                     }
                     break;
                 case MessageType.listSessions:
@@ -322,6 +326,11 @@ namespace GO2018_MKS_Server
                         List<SessionInfo> listOfSessions = new List<SessionInfo>();
                         foreach(ConnectedClientInfo connectedClient in connectedClients)
                         {
+                            if(client == connectedClient)
+                            {
+                                continue;
+                            }
+
                             if(connectedClient.IsCreatingSession)
                             {
                                 string platformId;
@@ -667,6 +676,18 @@ namespace GO2018_MKS_Server
                     case SessionState.ingame:
                         {
                             activeSession.Update(deltaTime);
+
+                            if(activeSession.CollectSessionUpdateAnswers.SessionTimeLeft <= 0.0f)
+                            {
+                                EndSessionAnswerMessage endSessionAnswerMessage = new EndSessionAnswerMessage();
+                                activeSession.player1.AddMessage(endSessionAnswerMessage);
+                                activeSession.player2.AddMessage(endSessionAnswerMessage);
+
+                                activeSession.player1.ClearActiveSessionState();
+                                activeSession.player2.ClearActiveSessionState();
+
+                                RemoveSession(activeSession);
+                            }
                         }
                         break;
                     case SessionState.ending:
@@ -678,41 +699,6 @@ namespace GO2018_MKS_Server
                         break;
                 }
             }
-        }
-
-        private void RemoveClientFromCreatingSession(ConnectedClientInfo client)
-        {
-            ActiveSessionInfo[] sessionsArray = sessions.ToArray();
-            sessions = new List<ActiveSessionInfo>();
-
-            for (int index = 0; index < sessionsArray.Length; index++)
-            {
-                ActiveSessionInfo session = sessionsArray[index];
-
-                if (client == session.player1 || client == session.player2)
-                {
-                    ReadySessionStartAnswerMessage readySessionStartAnswerMessage = new ReadySessionStartAnswerMessage(false, "Opponent session lost");
-                    if (client == session.player1)
-                    {
-                        session.player2.AddMessage(readySessionStartAnswerMessage);
-                    }
-                    else if (client == session.player2)
-                    {
-                        session.player1.AddMessage(readySessionStartAnswerMessage);
-                    }
-
-                    session.player1.ClearCreateSessionState();
-                    session.player1.ClearActiveSessionState();
-
-                    session.player2.ClearCreateSessionState();
-                    session.player2.ClearActiveSessionState();
-
-                    continue;
-                }
-
-                sessions.Add(session);
-            }
-            
         }
 
         private void InformSessionsOfLostClient(ConnectedClientInfo client)
@@ -766,6 +752,25 @@ namespace GO2018_MKS_Server
             }
 
             return activeSession;
+        }
+
+        private void RemoveSession(ActiveSessionInfo session)
+        {
+            ActiveSessionInfo[] sessionsArray = sessions.ToArray();
+
+            sessions.Clear();
+
+            for (int index = 0; index < sessionsArray.Length; index++)
+            {
+                ActiveSessionInfo checkSession = sessionsArray[index];
+
+                if (session == checkSession)
+                {
+                    continue;
+                }
+
+                sessions.Add(checkSession);
+            }
         }
     }
 }

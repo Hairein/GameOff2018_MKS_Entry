@@ -56,6 +56,7 @@ GameObject:
   - component: {fileID: 195903476482231964}
   - component: {fileID: 114812759088880384}
   - component: {fileID: 114210594731058606}
+  - component: {fileID: 54385722269057448}
   m_Layer: 0
   m_Name: Team1Drone2
   m_TagString: Team1Member
@@ -162,6 +163,7 @@ GameObject:
   - component: {fileID: 195801323527768986}
   - component: {fileID: 114901330688298314}
   - component: {fileID: 114315387257375318}
+  - component: {fileID: 54833912965993980}
   m_Layer: 0
   m_Name: Team1Drone4
   m_TagString: Team1Member
@@ -200,6 +202,7 @@ GameObject:
   - component: {fileID: 195151040114954720}
   - component: {fileID: 114448943867702450}
   - component: {fileID: 114809196965239564}
+  - component: {fileID: 54313186071654372}
   m_Layer: 0
   m_Name: Team1Drone1
   m_TagString: Team1Member
@@ -255,6 +258,7 @@ GameObject:
   - component: {fileID: 195073598294928622}
   - component: {fileID: 114148187079326772}
   - component: {fileID: 114414233375144554}
+  - component: {fileID: 54151289664520258}
   m_Layer: 0
   m_Name: Team1Breeder
   m_TagString: Team1Member
@@ -293,6 +297,7 @@ GameObject:
   - component: {fileID: 195915040351809410}
   - component: {fileID: 114572257762191534}
   - component: {fileID: 114127205979948772}
+  - component: {fileID: 54926632964421510}
   m_Layer: 0
   m_Name: Team1Drone3
   m_TagString: Team1Member
@@ -1309,6 +1314,81 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1768109553592176}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!54 &54151289664520258
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1569679983187726}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
+--- !u!54 &54313186071654372
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1507573152285852}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
+--- !u!54 &54385722269057448
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1257484752319562}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
+--- !u!54 &54833912965993980
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1488119147416502}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
+--- !u!54 &54926632964421510
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1763697822422924}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
 --- !u!114 &114127205979948772
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1336,7 +1416,8 @@ MonoBehaviour:
   SelectionEffect: {fileID: 1504553327506088}
   FoodResourceCount: 300
   TechResourceCount: 0
-  influencingOpponentUnits: []
+  InfluencingTeamUnits: []
+  InfluencingOpponentUnits: []
 --- !u!114 &114210594731058606
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1386,7 +1467,8 @@ MonoBehaviour:
   SelectionEffect: {fileID: 1635008323971704}
   FoodResourceCount: 100
   TechResourceCount: 0
-  influencingOpponentUnits: []
+  InfluencingTeamUnits: []
+  InfluencingOpponentUnits: []
 --- !u!114 &114572257762191534
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1403,7 +1485,8 @@ MonoBehaviour:
   SelectionEffect: {fileID: 1391738631314824}
   FoodResourceCount: 100
   TechResourceCount: 0
-  influencingOpponentUnits: []
+  InfluencingTeamUnits: []
+  InfluencingOpponentUnits: []
 --- !u!114 &114809196965239564
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1431,7 +1514,8 @@ MonoBehaviour:
   SelectionEffect: {fileID: 1768109553592176}
   FoodResourceCount: 100
   TechResourceCount: 0
-  influencingOpponentUnits: []
+  InfluencingTeamUnits: []
+  InfluencingOpponentUnits: []
 --- !u!114 &114901330688298314
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1448,7 +1532,8 @@ MonoBehaviour:
   SelectionEffect: {fileID: 1548594287789094}
   FoodResourceCount: 100
   TechResourceCount: 0
-  influencingOpponentUnits: []
+  InfluencingTeamUnits: []
+  InfluencingOpponentUnits: []
 --- !u!135 &135012353320727602
 SphereCollider:
   m_ObjectHideFlags: 1

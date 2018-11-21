@@ -194,25 +194,11 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 236001}
   m_CullTransparentMesh: 0
---- !u!1001 &328820
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4577831751797168, guid: de984fe42f3e9b94dbc7a06b26616f87, type: 2}
-      propertyPath: m_RootOrder
-      value: 10
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: de984fe42f3e9b94dbc7a06b26616f87, type: 2}
-  m_IsPrefabAsset: 0
 --- !u!1 &328821 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1240919971938782, guid: de984fe42f3e9b94dbc7a06b26616f87,
     type: 2}
-  m_PrefabInternal: {fileID: 328820}
+  m_PrefabInternal: {fileID: 1899726957}
 --- !u!224 &3836453 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 224064645083821134, guid: bb04eb863e5dfea4e80cc15cc64459c8,
@@ -3981,9 +3967,12 @@ MonoBehaviour:
   TeamInDroneSpawnMode: 0
   Team1SpawnParent: {fileID: 328821}
   Team2SpawnParent: {fileID: 738370619}
-  EnableFoodDrain: 0
-  FoodDrainPerSec: 5
+  EnableFoodDrain: 1
+  FoodDrainPerSec: 0.25
+  FeedGainPerSec: 10
   HungerDeathFoodLevel: -10
+  TeamInFeedBreederFoodMode: 0
+  TeamInFeedBreederTechMode: 0
   IgnoreIngamePointerInput: 0
   MapDimensions: {x: 48, y: 48}
   BreederIcon: {fileID: 1169124963}
@@ -6239,6 +6228,48 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 1896178602}
   m_Script: {fileID: -98529514, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+--- !u!1001 &1899726957
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4577831751797168, guid: de984fe42f3e9b94dbc7a06b26616f87, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: -19.36
+      objectReference: {fileID: 0}
+    - target: {fileID: 4577831751797168, guid: de984fe42f3e9b94dbc7a06b26616f87, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4577831751797168, guid: de984fe42f3e9b94dbc7a06b26616f87, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: -19.33
+      objectReference: {fileID: 0}
+    - target: {fileID: 4577831751797168, guid: de984fe42f3e9b94dbc7a06b26616f87, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4577831751797168, guid: de984fe42f3e9b94dbc7a06b26616f87, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0.3826828
+      objectReference: {fileID: 0}
+    - target: {fileID: 4577831751797168, guid: de984fe42f3e9b94dbc7a06b26616f87, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4577831751797168, guid: de984fe42f3e9b94dbc7a06b26616f87, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 0.92387986
+      objectReference: {fileID: 0}
+    - target: {fileID: 4577831751797168, guid: de984fe42f3e9b94dbc7a06b26616f87, type: 2}
+      propertyPath: m_RootOrder
+      value: 10
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: de984fe42f3e9b94dbc7a06b26616f87, type: 2}
+  m_IsPrefabAsset: 0
 --- !u!1 &1926044985
 GameObject:
   m_ObjectHideFlags: 0

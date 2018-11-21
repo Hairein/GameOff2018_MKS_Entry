@@ -43,6 +43,8 @@ public class GameLogicScript : MonoBehaviour
 
     public SessionUpdateAnswerMessage sessionUpdateAnswerMessage = null;
 
+    public EndSessionAnswerMessage endSessionAnswerMessage = null;
+
     void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
@@ -188,7 +190,12 @@ public class GameLogicScript : MonoBehaviour
                     sessionUpdateAnswerMessage = JsonConvert.DeserializeObject<SessionUpdateAnswerMessage>(message);
                 }
                 break;
-           default:
+              case MessageType.endSessionAnswer:
+                {
+                    endSessionAnswerMessage = JsonConvert.DeserializeObject<EndSessionAnswerMessage>(message);
+                }
+                break;
+          default:
                 {
                     Debug.Log("Generic/Unknown TCP message received.");
                 }
@@ -258,14 +265,23 @@ public class GameLogicScript : MonoBehaviour
         tcpClientManager.SendMessageObject(joinSessionMessage);
     }
 
-    public void SetSessionReady()
+    private void ResetMessages()
+    {
+        opponentSessionLostAnswerMessage = null;
+        readySessionStartAnswerMessage = null;
+        playerSessionLostMessage = null;
+
+        sessionUpdateAnswerMessage = null;
+
+        endSessionAnswerMessage = null;
+    }
+
+public void SetSessionReady()
     {
         SessionState = SessionState.waiting;
         SessionResult = SessionResult.pending;
 
-        opponentSessionLostAnswerMessage = null;
-        readySessionStartAnswerMessage = null;
-        playerSessionLostMessage = null;
+        ResetMessages();
 
         readySessionStartMessage = new ReadySessionStartMessage();
         tcpClientManager.SendMessageObject(readySessionStartMessage);
@@ -284,6 +300,12 @@ public class GameLogicScript : MonoBehaviour
     {
         SessionState = SessionState.ending;
         SessionResult = SessionResult.won;
+    }
+
+    public void SetSessionLost()
+    {
+        SessionState = SessionState.ending;
+        SessionResult = SessionResult.lost;
     }
 
     public void ClearSessionUpdateMessage()

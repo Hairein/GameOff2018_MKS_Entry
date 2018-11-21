@@ -22,6 +22,8 @@ public class IngameSceneLogicScript : MonoBehaviour
 
     public int TeamNumber = 1;
     public int OpponentTeamNumber = 2;
+    public int TeamPacketIndex = 1;
+    public int OpponentTeamPacketIndex = 2;
     public GameObject[] SelectedUnits;
     private int nextFreeIndex = 0;
 
@@ -43,8 +45,12 @@ public class IngameSceneLogicScript : MonoBehaviour
     public GameObject Team2SpawnParent;
 
     public bool EnableFoodDrain = true;
-    public float FoodDrainPerSec = 5.0f;
+    public float FoodDrainPerSec = 2.0f;
+    public float FeedGainPerSec = 5.0f;
     public float HungerDeathFoodLevel = -10.0f;
+
+    public bool TeamInFeedBreederFoodMode = false;
+    public bool TeamInFeedBreederTechMode = false;
 
     public bool IgnoreIngamePointerInput = false;
 
@@ -183,6 +189,9 @@ public class IngameSceneLogicScript : MonoBehaviour
             OpponentHandle = rawOpponentHandle.Substring(0, Math.Min(rawOpponentHandle.Length, handleTextMaxLength));
 
             RoundTimeInSeconds = gameLogicScriptComponent.createSessionMessage.SessionSeconds;
+
+            TeamPacketIndex = 1;
+            OpponentTeamPacketIndex = 2;
         }
         else if (gameLogicScriptComponent.joinSessionAnswerMessage != null)
         {
@@ -192,6 +201,9 @@ public class IngameSceneLogicScript : MonoBehaviour
             OpponentHandle = rawOpponentHandle.Substring(0, Math.Min(rawOpponentHandle.Length, 16));
 
             RoundTimeInSeconds = gameLogicScriptComponent.joinSessionMessage.session.DurationSeconds;
+
+            TeamPacketIndex = 2;
+            OpponentTeamPacketIndex = 1;
         }
 
         OpponentTeamNumber = TeamNumber == 1 ? 2 : 1;
@@ -273,8 +285,24 @@ public class IngameSceneLogicScript : MonoBehaviour
                     if (gameLogicScriptComponent.opponentSessionLostAnswerMessage != null)
                     {
                         LostOpponentSession();
+
                         return;
                     }
+
+                    if (gameLogicScriptComponent.endSessionAnswerMessage != null)
+                    {
+                        if(PlayerScore > OpponentScore)
+                        {
+                            gameLogicScriptComponent.SetSessionWon();
+                        }
+                        else
+                        {
+                            gameLogicScriptComponent.SetSessionLost();
+                        }
+
+                        return;
+                    }
+
 
                     if(gameLogicScriptComponent.sessionUpdateAnswerMessage != null)
                     {
@@ -290,6 +318,8 @@ public class IngameSceneLogicScript : MonoBehaviour
                     HandleRoundTime(deltaTime);
 
                     HandleUnits(deltaTime);
+                    HandleBreederFeeding(deltaTime);
+
                     HandleMines();
                     HandleBarricades();
 
@@ -342,7 +372,7 @@ public class IngameSceneLogicScript : MonoBehaviour
     {
         RoundTimeInSeconds = gameLogicScriptComponent.sessionUpdateAnswerMessage.SessionTimeLeft;
 
-        if(TeamNumber == 1)
+        if(gameLogicScriptComponent.createSessionAnswerMessage != null)
         {
             PlayerScore = gameLogicScriptComponent.sessionUpdateAnswerMessage.Player1Score;
             OpponentScore = gameLogicScriptComponent.sessionUpdateAnswerMessage.Player2Score;
@@ -364,7 +394,7 @@ public class IngameSceneLogicScript : MonoBehaviour
     private void HandleOpponentCommands()
     {
         UnitNavigationCommand[] commands;
-        if (OpponentTeamNumber == 1)
+        if (OpponentTeamPacketIndex == 1)
         {
             commands = gameLogicScriptComponent.sessionUpdateAnswerMessage.Player1UnitNavigationCommands;
         }
@@ -408,7 +438,7 @@ public class IngameSceneLogicScript : MonoBehaviour
     private void HandleOpponentResourceCommands()
     {
         UnitResourceState[] states;
-        if (OpponentTeamNumber == 1)
+        if (OpponentTeamPacketIndex == 1)
         {
             states = gameLogicScriptComponent.sessionUpdateAnswerMessage.Player1UnitResourceStates;
         }
@@ -730,6 +760,44 @@ public class IngameSceneLogicScript : MonoBehaviour
                     StopBreakingBarricadeMode();
 
                     Debug.Log("Ending barricade break mode");
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                if (!TeamInFeedBreederFoodMode)
+                {
+                    StartBreederFeedingFoodMode();
+
+                    Debug.Log("Starting Breeder Food feeding mode");
+                }
+            }
+            else if (Input.GetKeyUp(KeyCode.F))
+            {
+                if (TeamInFeedBreederFoodMode)
+                {
+                    StopBreederFeedingFoodMode();
+
+                    Debug.Log("Ending Breeder Food feeding mode");
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                if (!TeamInFeedBreederTechMode)
+                {
+                    StartBreederFeedingTechMode();
+
+                    Debug.Log("Starting Breeder Tech feeding mode");
+                }
+            }
+            else if (Input.GetKeyUp(KeyCode.T))
+            {
+                if (TeamInFeedBreederTechMode)
+                {
+                    StopBreederFeedingTechMode();
+
+                    Debug.Log("Ending Breeder Tech feeding mode");
                 }
             }
 
@@ -1664,7 +1732,7 @@ public class IngameSceneLogicScript : MonoBehaviour
             UnitLogic teamBreederUnitLogic = TeamBreeder.GetComponent<UnitLogic>();
             if (teamBreederUnitLogic != null)
             {
-                foreach (UnitLogic opponentUnitLogic in teamBreederUnitLogic.influencingOpponentUnits)
+                foreach (UnitLogic opponentUnitLogic in teamBreederUnitLogic.InfluencingOpponentUnits)
                 {
                     if (opponentUnitLogic.FoodResourceCount <= 0.0f)
                     {
@@ -1691,7 +1759,7 @@ public class IngameSceneLogicScript : MonoBehaviour
                 UnitLogic teamDroneUnitLogic = teamDrone.GetComponent<UnitLogic>();
                 if (teamDroneUnitLogic != null)
                 {
-                    foreach (UnitLogic opponentUnitLogic in teamDroneUnitLogic.influencingOpponentUnits)
+                    foreach (UnitLogic opponentUnitLogic in teamDroneUnitLogic.InfluencingOpponentUnits)
                     {
                         if (opponentUnitLogic.FoodResourceCount <= 0.0f)
                         {
@@ -1738,7 +1806,7 @@ public class IngameSceneLogicScript : MonoBehaviour
             UnitLogic teamBreederUnitLogic = TeamBreeder.GetComponent<UnitLogic>();
             if (teamBreederUnitLogic != null)
             {
-                foreach (UnitLogic opponentUnitLogic in teamBreederUnitLogic.influencingOpponentUnits)
+                foreach (UnitLogic opponentUnitLogic in teamBreederUnitLogic.InfluencingOpponentUnits)
                 {
                     if (opponentUnitLogic.TechResourceCount <= 0.0f)
                     {
@@ -1764,7 +1832,7 @@ public class IngameSceneLogicScript : MonoBehaviour
                 UnitLogic teamDroneUnitLogic = teamDrone.GetComponent<UnitLogic>();
                 if (teamDroneUnitLogic != null)
                 {
-                    foreach (UnitLogic opponentUnitLogic in teamDroneUnitLogic.influencingOpponentUnits)
+                    foreach (UnitLogic opponentUnitLogic in teamDroneUnitLogic.InfluencingOpponentUnits)
                     {
                         if (opponentUnitLogic.TechResourceCount <= 0.0f)
                         {
@@ -1917,6 +1985,26 @@ public class IngameSceneLogicScript : MonoBehaviour
         TeamInDroneSpawnMode = false;
 
         dronePreview.SetActive(false);
+    }
+
+    private void StartBreederFeedingFoodMode()
+    {
+        TeamInFeedBreederFoodMode = true;
+    }
+
+    private void StopBreederFeedingFoodMode()
+    {
+        TeamInFeedBreederFoodMode = false;
+    }
+
+    private void StartBreederFeedingTechMode()
+    {
+        TeamInFeedBreederTechMode = true;
+    }
+
+    private void StopBreederFeedingTechMode()
+    {
+        TeamInFeedBreederTechMode = false;
     }
 
     private Vector3 CalculateGridForSpawnedObjectPlacement(Vector3 inputPosition)
@@ -2083,13 +2171,13 @@ public class IngameSceneLogicScript : MonoBehaviour
     private void SpawnOpposingNamedDrone(string newName, Vector3 position)
     {
         GameObject newDrone;
-        if (TeamNumber == 1)
+        if (OpponentTeamNumber == 1)
         {
-            newDrone = Instantiate(droneTeam2Real, Team2SpawnParent.transform);
+            newDrone = Instantiate(droneTeam1Real, Team1SpawnParent.transform);
         }
         else
         {
-            newDrone = Instantiate(droneTeam1Real, Team1SpawnParent.transform);
+            newDrone = Instantiate(droneTeam2Real, Team2SpawnParent.transform);
         }
 
         newDrone.name = newName;
@@ -2107,6 +2195,38 @@ public class IngameSceneLogicScript : MonoBehaviour
         if (Cursor.visible != flag)
         {
             Cursor.visible = flag;
+        }
+    }
+
+    private void HandleBreederFeeding(float deltaTime)
+    {
+        UnitLogic breederUnitLogic = TeamBreeder.GetComponent<UnitLogic>();
+        if(breederUnitLogic == null || breederUnitLogic.InfluencingTeamUnits.Length == 0)
+        {
+            return;
+        }
+
+        float baseExchangeRate = FeedGainPerSec * deltaTime;
+
+        foreach (UnitLogic droneUnitLogic in breederUnitLogic.InfluencingTeamUnits)
+        {
+            if (TeamInFeedBreederFoodMode)
+            {
+                float minFoodResourceValue = Math.Min(baseExchangeRate, droneUnitLogic.FoodResourceCount);
+                minFoodResourceValue = Math.Min(minFoodResourceValue, GetBreederMaxFoodResource(TeamNumber) - breederUnitLogic.FoodResourceCount);
+
+                breederUnitLogic.FoodResourceCount += minFoodResourceValue;
+                droneUnitLogic.FoodResourceCount -= minFoodResourceValue;
+            }
+
+            if (TeamInFeedBreederTechMode)
+            {
+                float minTechResourceValue = Math.Min(baseExchangeRate, droneUnitLogic.TechResourceCount);
+                minTechResourceValue = Math.Min(minTechResourceValue, GetBreederMaxFoodResource(TeamNumber) - breederUnitLogic.TechResourceCount);
+
+                breederUnitLogic.TechResourceCount += minTechResourceValue;
+                droneUnitLogic.TechResourceCount -= minTechResourceValue;
+            }
         }
     }
 

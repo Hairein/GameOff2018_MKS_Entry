@@ -12,7 +12,8 @@ public class UnitLogic : MonoBehaviour
     public float FoodResourceCount = 0.0f;
     public float TechResourceCount = 0.0f;
 
-    public UnitLogic[] influencingOpponentUnits;
+    public UnitLogic[] InfluencingTeamUnits;
+    public UnitLogic[] InfluencingOpponentUnits;
 
     void Start()
     {
@@ -45,37 +46,76 @@ public class UnitLogic : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         UnitLogic unitLogicScript = other.gameObject.GetComponent<UnitLogic>();
-        if (unitLogicScript != null && TeamNumber != unitLogicScript.TeamNumber)
+        if (unitLogicScript != null)
         {
-            List<UnitLogic> listOfUnitsInfluencing = new List<UnitLogic>();
-            foreach (UnitLogic unit in influencingOpponentUnits)
+            if (TeamNumber == unitLogicScript.TeamNumber)
             {
-                listOfUnitsInfluencing.Add(unit);
+                List<UnitLogic> listOfUnitsInfluencing = new List<UnitLogic>();
+                foreach (UnitLogic unit in InfluencingTeamUnits)
+                {
+                    listOfUnitsInfluencing.Add(unit);
+                }
+
+                if(!listOfUnitsInfluencing.Contains(unitLogicScript))
+                {
+                    listOfUnitsInfluencing.Add(unitLogicScript);
+                }
+
+                InfluencingTeamUnits = listOfUnitsInfluencing.ToArray();
             }
+            else
+            {
+                List<UnitLogic> listOfUnitsInfluencing = new List<UnitLogic>();
+                foreach (UnitLogic unit in InfluencingOpponentUnits)
+                {
+                    listOfUnitsInfluencing.Add(unit);
+                }
 
-            listOfUnitsInfluencing.Add(unitLogicScript);
+                if(!listOfUnitsInfluencing.Contains(unitLogicScript))
+                {
+                    listOfUnitsInfluencing.Add(unitLogicScript);
+                }
 
-            influencingOpponentUnits = listOfUnitsInfluencing.ToArray();
+                InfluencingOpponentUnits = listOfUnitsInfluencing.ToArray();
+            }
         }
     }
 
     void OnTriggerExit(Collider other)
     {
         UnitLogic unitLogicScript = other.gameObject.GetComponent<UnitLogic>();
-        if (unitLogicScript != null && TeamNumber != unitLogicScript.TeamNumber)
+        if (unitLogicScript != null)
         {
-            List<UnitLogic> listOfUnitsInfluencing = new List<UnitLogic>();
-            foreach (UnitLogic unit in influencingOpponentUnits)
+            if (TeamNumber == unitLogicScript.TeamNumber)
             {
-                if (unitLogicScript == unit)
+                List<UnitLogic> listOfUnitsInfluencing = new List<UnitLogic>();
+                foreach (UnitLogic unit in InfluencingTeamUnits)
                 {
-                    continue;
+                    if (unitLogicScript == unit)
+                    {
+                        continue;
+                    }
+
+                    listOfUnitsInfluencing.Add(unit);
                 }
 
-                listOfUnitsInfluencing.Add(unit);
+                InfluencingTeamUnits = listOfUnitsInfluencing.ToArray();
             }
+            else
+            {
+                List<UnitLogic> listOfUnitsInfluencing = new List<UnitLogic>();
+                foreach (UnitLogic unit in InfluencingOpponentUnits)
+                {
+                    if (unitLogicScript == unit)
+                    {
+                        continue;
+                    }
 
-            influencingOpponentUnits = listOfUnitsInfluencing.ToArray();
+                    listOfUnitsInfluencing.Add(unit);
+                }
+
+                InfluencingOpponentUnits = listOfUnitsInfluencing.ToArray();
+            }
         }
     }
 }

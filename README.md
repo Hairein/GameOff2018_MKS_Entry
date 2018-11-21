@@ -37,13 +37,13 @@ Open Game Features
 - Replace placeholder art!
 - End round when timer runs out
 - Actions (Hold Key to enable mode actioning on next click):
-    ESC - (toggle) Show/hide menu ingame
-    S - (press) Stop navigation immediately 
-    P - (hold) Build barricade mode [Breeder Resource Cost per Barricade placed: F: 250 T: 250]
-    B - (hold) Destroy barricade mode
+    *ESC - (toggle) Show/hide menu ingame
+    *S - (press) Stop navigation immediately 
+    *P - (hold) Build barricade mode [Breeder Resource Cost per Barricade placed: F: 250 T: 250]
+    *B - (hold) Destroy barricade mode
     F - (hold) Feed the Breeder Food from all nearby drones 
     T - (hold) Feed the Breeder Tech from all nearby drones
-    D - (hold) Drone spawn mode [Breeder Resource Cost per Barricade placed: F: 750 T: 500]
+    *D - (hold) Drone spawn mode [Breeder Resource Cost per Barricade placed: F: 750 T: 500]
 
 Development TODOs
 =================
@@ -58,3 +58,5 @@ Development TODOs
     *Barricade spawns
     *Barricade level changes
     *Calculate server-side scores and transmit to both clients with update message.
+- *Breeder and Drone food usage 
+- *Test food and tech feeding
