@@ -48,7 +48,7 @@ Open Game Features
 Development TODOs
 =================
 - *Implement synched time coutdown from server
-- Implement session end on timeout
+- *Implement session end on timeout
 - *Implement session win/loss display with return to create or join screen as last chosen
 - Implement network player navigation and actions cross communication during session
     *Unit navigation commands
@@ -60,3 +60,11 @@ Development TODOs
     *Calculate server-side scores and transmit to both clients with update message.
 - *Breeder and Drone food usage 
 - *Test food and tech feeding
+- *Game session end on breeder death by hunger
+- Make breeder and drone animation for idle, walk
+- Make title image for "Scamper Fields"
+- Make delays at session ingame end and while transition to ending
+- Show end scores in win/loss screen 
+- Music and SFX
+- Redo maps terrain and placements
+

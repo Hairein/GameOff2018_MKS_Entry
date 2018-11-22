@@ -289,6 +289,18 @@ public class IngameSceneLogicScript : MonoBehaviour
                         return;
                     }
 
+                    // Lose if breeder dies of hunger
+                    UnitLogic teamBreederUnitLogic = TeamBreeder.GetComponent<UnitLogic>();
+                    if (teamBreederUnitLogic != null)
+                    {
+                        if (teamBreederUnitLogic.FoodResourceCount < HungerDeathFoodLevel)
+                        {
+                            LostPlayerSession();
+
+                            return;
+                        }
+                    }
+
                     if (gameLogicScriptComponent.endSessionAnswerMessage != null)
                     {
                         if(PlayerScore > OpponentScore)
@@ -302,7 +314,6 @@ public class IngameSceneLogicScript : MonoBehaviour
 
                         return;
                     }
-
 
                     if(gameLogicScriptComponent.sessionUpdateAnswerMessage != null)
                     {
@@ -2091,6 +2102,11 @@ public class IngameSceneLogicScript : MonoBehaviour
         OpponentScoreTextShadow.text = opponentScoreText;
     }
 
+    public void LostPlayerSession()
+    {
+        gameLogicScriptComponent.SetSessionSurrender();
+    }
+
     public void LostOpponentSession()
     {
         gameLogicScriptComponent.SetSessionWon();
@@ -2233,7 +2249,7 @@ public class IngameSceneLogicScript : MonoBehaviour
     // UI Handlers
     public void OnClickSurrenderButton()
     {
-        gameLogicScriptComponent.SetSessionSurrender();
+        LostPlayerSession();
     }
 
     public void OnClickContinueButton()

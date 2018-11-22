@@ -276,7 +276,7 @@ public class GameLogicScript : MonoBehaviour
         endSessionAnswerMessage = null;
     }
 
-public void SetSessionReady()
+    public void SetSessionReady()
     {
         SessionState = SessionState.waiting;
         SessionResult = SessionResult.pending;
