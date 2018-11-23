@@ -8,7 +8,9 @@ TODO: Version Info
 
 TODO: Introduce game play
 
-TODO: Credits
+Credits
+=======
+Original mouse and keyboard icon - http://chittagongit.com/icon/mouse-and-keyboard-icon-12.html
 
 TODO: Write documentation to handle custom server install, setup and configuration
 
@@ -41,8 +43,8 @@ Open Game Features
     *S - (press) Stop navigation immediately 
     *P - (hold) Build barricade mode [Breeder Resource Cost per Barricade placed: F: 250 T: 250]
     *B - (hold) Destroy barricade mode
-    F - (hold) Feed the Breeder Food from all nearby drones 
-    T - (hold) Feed the Breeder Tech from all nearby drones
+    *F - (hold) Feed the Breeder Food from all nearby drones 
+    *T - (hold) Feed the Breeder Tech from all nearby drones
     *D - (hold) Drone spawn mode [Breeder Resource Cost per Barricade placed: F: 750 T: 500]
 
 Development TODOs
@@ -62,9 +64,13 @@ Development TODOs
 - *Test food and tech feeding
 - *Game session end on breeder death by hunger
 - Make breeder and drone animation for idle, walk
-- Make title image for "Scamper Fields"
+- *Make title image for "Scamper Fields"
 - Make delays at session ingame end and while transition to ending
-- Show end scores in win/loss screen 
+- *Show end scores in win/loss screen 
 - Music and SFX
 - Redo maps terrain and placements
-
+- Make documentation, readme, credits for external assets
+- *Indicate mouse and keyboard required
+- Particles for most acitvities
+- *Adjust UI for screen safe zones
+- *Add map display of units, resources and barricades

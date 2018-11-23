@@ -329,7 +329,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &316473758
 RectTransform:
   m_ObjectHideFlags: 0
@@ -563,10 +563,11 @@ MonoBehaviour:
     Click and drag to rectangle select.\n In barricade placement mode, the barricade
     is built at click location if  \n resources are sufficient\n MIDDLE - Pan the
     map\n RIGHT - Set navigation target for selected units.\n\nKEY COMMANDS\n===========\n
-    F - Feed the Breeder with Food resources gathered by drones nearby\n T - Feed
-    the Breeder with Tech resources gathered by drones nearby\n P - Start barricade
-    [Cost: F:100 T:250] placement mode\n ESCAPE - Cancel barricade placement mode\n
-    S - Stop current Breeder or Drone movement command\n M - Toggle menu ingame\n\n"
+    F - Feed the Breeder with Food resources gathered by drones\n T - Feed the Breeder
+    with Tech resources gathered by drones\n P - Start barricade [Cost: F:100 T:250]
+    placement mode\n ESCAPE - Cancel barricade placement mode\n S - Stop current Breeder
+    or Drone movement command\n M - Toggle menu ingame\n D - Spawn new drone near
+    Breeder [Cost: F:750 T:500, max. 8 total]\n"
 --- !u!222 &1118550035
 CanvasRenderer:
   m_ObjectHideFlags: 0
