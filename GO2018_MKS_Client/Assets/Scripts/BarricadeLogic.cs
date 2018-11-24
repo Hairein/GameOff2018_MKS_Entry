@@ -15,6 +15,8 @@ public class BarricadeLogic : MonoBehaviour
 
     public float tapRatePerSec = 25.0f;
 
+    public GameObject breakParticleSystem;
+
     void Start()
     {
         GameObject ingameLogic = GameObject.Find("IngameLogic");
@@ -38,6 +40,11 @@ public class BarricadeLogic : MonoBehaviour
 
         if(influencingUnits.Length == 0 || LifeCount <= 0.0f || LifeCount > MaxLifeCount)
         {
+            if (breakParticleSystem.activeSelf)
+            {
+                breakParticleSystem.SetActive(false);
+            }
+
             return;
         }
 
@@ -100,6 +107,19 @@ public class BarricadeLogic : MonoBehaviour
         {
             float totalBreakValue = nosDestroyers * baseTapRateThisFrame;
             LifeCount -= totalBreakValue;
+
+        }
+
+        if (breakParticleSystem != null)
+        {
+            if(nosDestroyers > 0 && !breakParticleSystem.activeSelf)
+            {
+                breakParticleSystem.SetActive(true);
+            }
+            else if (nosDestroyers == 0 && breakParticleSystem.activeSelf)
+            {
+                breakParticleSystem.SetActive(false);
+            }
         }
     }
 

@@ -15,6 +15,8 @@ public class FoodSourceLogic : MonoBehaviour
 
     public float tapRatePerSec = 25.0f;
 
+    public GameObject foodParticleSystem;
+
     void Start()
     {
         GameObject ingameLogic = GameObject.Find("IngameLogic");
@@ -28,6 +30,8 @@ public class FoodSourceLogic : MonoBehaviour
 
     void Update()
     {
+        bool didReduceResources = false;
+
         if (ResourceUnitsText != null)
         {
             int flatResourceCount = (int)ResourceCount;
@@ -38,6 +42,11 @@ public class FoodSourceLogic : MonoBehaviour
 
         if(influencingUnits.Length == 0 || ResourceCount <= 0.0f)
         {
+            if (!didReduceResources && foodParticleSystem.activeSelf)
+            {
+                foodParticleSystem.SetActive(false);
+            }
+
             return;
         }
 
@@ -84,7 +93,17 @@ public class FoodSourceLogic : MonoBehaviour
                 }
 
                 ResourceCount -= newFoodValue;
+                didReduceResources = true;
             }
+        }
+
+        if (didReduceResources && !foodParticleSystem.activeSelf)
+        {
+            foodParticleSystem.SetActive(true);
+        }
+        else if (!didReduceResources && foodParticleSystem.activeSelf)
+        {
+            foodParticleSystem.SetActive(false);
         }
     }
 

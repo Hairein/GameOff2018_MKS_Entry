@@ -1,76 +1,95 @@
-# GameOff2018_MKS_Entry
-This is the Game Off 2018 Entry from Micah Koleoso Software
+# GameOff2018 MKS Entry - "Scamper Fields"
+This is the Game Off 2018 Entry from Micah Koleoso Software (http://www.micahkoleoso.de)
 Running from the 1st November to 1st December, 2018.
 
 The entry consists of a client (Unity: GO2018_MKS_Client) and server (C# .NET: GO2018_MKS_Server) application.
+Game page: http://www.micahkoleoso.de/?page_id=724
 
-TODO: Version Info
+Version Info
+============
 
-TODO: Introduce game play
+v1.0preAlpha - Initial Jam release.
+
+
+Introduction To Gameplay
+===================
+GOAL
+----
+ Collect as much Food and Tech resources as possible before the timer runs 
+ out, more than your opponent.
+ Most actions are automatically initiated when the Breeder or Drone is  
+ near enough to the target.
+ Food is constantly required by all units to survive. The Breeder must not  
+ die of hunger or the round will be lost immediately!
+
+4 UPGRADE LEVELS
+----------------
+ A) Faster Drone speed or reduce unit Food usage [Cost: F:1000 T:1125]
+ B) Increase max collection volume for Food or Tech [Cost: F:1200 T:1125]
+ C) Barricade build or break capability [Cost: F:2000 T:1125]
+ D) Absorb opponent Food or Tech when stationary [Cost: F:2500 T:1125]
+
+MOUSE COMMANDS
+--------------
+ LEFT - Select Breeder or Drone. Click and drag to rectangle-select.
+ In barricade placement mode, the barricade is built at click location if  
+ resources are sufficient
+ MIDDLE - Pan the map
+ RIGHT - Set navigation target for selected units.
+
+KEY COMMANDS
+------------
+ESC - (toggle) Show/hide menu ingame
+S - (press) Stop unit navigation immediately 
+P - (hold) Build barricade mode [Breeder Resource Cost per Barricade placed: F: 250 T: 250]
+B - (hold) Destroy barricade mode
+F - (hold) Feed the Breeder Food from all nearby drones 
+T - (hold) Feed the Breeder Tech from all nearby drones
+D - (hold) Drone spawn mode [Breeder Resource Cost per Drone placed: F: 750 T: 500]
+
 
 Credits
 =======
 Original mouse and keyboard icon - http://chittagongit.com/icon/mouse-and-keyboard-icon-12.html
 
-TODO: Write documentation to handle custom server install, setup and configuration
 
-Open Game Features
+Installation
+============
+TODO
+    custom server install
+    setup
+    configuration
+
+
+Game Features And Infos
 =======================
-- Enable drone upgrade path (food, tech):    
-    * 4 Upgrade optional/choice levels 
-    * Food upgrade costs: 1000, 1500, 2000, 2500
-    * Tech upgrade costs: 1125, 1125, 1125, 1125
-    A - Faster drone speed:                 
-    A - Reduce unit food usage:             
-    B - More food collection max volume:    
-    B - More tech collection max volume:    
-    C - Barricade build and breaker:        
-    C - Barricade build and breaker:        
-    D - Opponent unit food resource stealer:   
-    D - Opponent unit tech resource stealer:   
-- Breed new drones, max. 8. Keep upgrades for old and new drones
-- Death of Breeder causes game loss
-- Make 3 maps (48x48) initially for jam release
+4 Upgrade optional/choice levels 
+Food upgrade costs: 1000, 1500, 2000, 2500
+Tech upgrade costs: 1125, 1125, 1125, 1125
+    A - Faster drone speed                
+    A - Reduce unit food usage             
+    B - More food collection max volume    
+    B - More tech collection max volume    
+    C - Barricade build and breaker        
+    C - Barricade build and breaker        
+    D - Opponent unit food resource stealer   
+    D - Opponent unit tech resource stealer   
+- Breed new drones, max. 8
 - Configuration Options:
-    Fog of War [on/off]
     Timed game session [on/off] 2:50, 5:00, 7:50, 10:00 minutes per Session
     Music [on/off/Volume]
     Sound FX [on/off/Volume]
-- Replace placeholder art!
-- End round when timer runs out
-- Actions (Hold Key to enable mode actioning on next click):
-    *ESC - (toggle) Show/hide menu ingame
-    *S - (press) Stop navigation immediately 
-    *P - (hold) Build barricade mode [Breeder Resource Cost per Barricade placed: F: 250 T: 250]
-    *B - (hold) Destroy barricade mode
-    *F - (hold) Feed the Breeder Food from all nearby drones 
-    *T - (hold) Feed the Breeder Tech from all nearby drones
-    *D - (hold) Drone spawn mode [Breeder Resource Cost per Barricade placed: F: 750 T: 500]
+- 3 maps (Morpholite, Sunset and Overlord)
 
-Development TODOs
-=================
-- *Implement synched time coutdown from server
-- *Implement session end on timeout
-- *Implement session win/loss display with return to create or join screen as last chosen
-- Implement network player navigation and actions cross communication during session
-    *Unit navigation commands
-    *Unit Food/Tech level changes
-    *Unit drone spawns (only near Breeder)
-    *Resource food/tech level changes
-    *Barricade spawns
-    *Barricade level changes
-    *Calculate server-side scores and transmit to both clients with update message.
-- *Breeder and Drone food usage 
-- *Test food and tech feeding
-- *Game session end on breeder death by hunger
+
+Development TODOs (Jam)
+=======================
 - Make breeder and drone animation for idle, walk
-- *Make title image for "Scamper Fields"
-- Make delays at session ingame end and while transition to ending
-- *Show end scores in win/loss screen 
 - Music and SFX
 - Redo maps terrain and placements
 - Make documentation, readme, credits for external assets
-- *Indicate mouse and keyboard required
 - Particles for most acitvities
-- *Adjust UI for screen safe zones
-- *Add map display of units, resources and barricades
+
+Known Issues
+============
+- Clicking on the map above terrain sets the navigation target to the terrain point if underneath

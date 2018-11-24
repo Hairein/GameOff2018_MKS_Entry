@@ -15,6 +15,8 @@ public class TechSourceLogic : MonoBehaviour
 
     public float tapRatePerSec = 20.0f;
 
+    public GameObject techParticleSystem;
+
     void Start()
     {
         GameObject ingameLogic = GameObject.Find("IngameLogic");
@@ -28,6 +30,8 @@ public class TechSourceLogic : MonoBehaviour
 
     void Update()
     {
+        bool didReduceResources = false;
+
         if (ResourceUnitsText != null)
         {
             int flatResourceCount = (int)ResourceCount;
@@ -38,6 +42,11 @@ public class TechSourceLogic : MonoBehaviour
 
         if (influencingUnits.Length == 0 || ResourceCount <= 0.0f)
         {
+            if (!didReduceResources && techParticleSystem.activeSelf)
+            {
+                techParticleSystem.SetActive(false);
+            }
+
             return;
         }
 
@@ -83,7 +92,17 @@ public class TechSourceLogic : MonoBehaviour
                 }
 
                 ResourceCount -= newTechValue;
+                didReduceResources = true;
             }
+        }
+
+        if (didReduceResources && !techParticleSystem.activeSelf)
+        {
+            techParticleSystem.SetActive(true);
+        }
+        else if (!didReduceResources && techParticleSystem.activeSelf)
+        {
+            techParticleSystem.SetActive(false);
         }
     }
 

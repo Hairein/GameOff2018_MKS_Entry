@@ -164,6 +164,8 @@ public class IngameSceneLogicScript : MonoBehaviour
 
     public SessionState PreviousSessionState = SessionState.none;
 
+    public bool RedrawMap = false;
+
     void Start()
     {
         GameObject gameLogic = GameObject.Find("GameLogic");
@@ -530,6 +532,8 @@ public class IngameSceneLogicScript : MonoBehaviour
                                 foodSourceLogic.gameObject.SetActive(false);
                                 Destroy(foodSourceLogic.gameObject);
                                 rebuild |= true;
+
+                                RedrawMap |= true;
                                 continue;
                             }
                         }
@@ -554,6 +558,8 @@ public class IngameSceneLogicScript : MonoBehaviour
                                 techSourceLogic.gameObject.SetActive(false);
                                 Destroy(techSourceLogic.gameObject);
                                 rebuild |= true;
+
+                                RedrawMap |= true;
                                 continue;
                             }
                         }
@@ -596,6 +602,8 @@ public class IngameSceneLogicScript : MonoBehaviour
                             barricadeLogic.gameObject.SetActive(false);
                             Destroy(barricadeLogic.gameObject);
                             rebuild |= true;
+
+                            RedrawMap |= true;
                             continue;
                         }
 
