@@ -4,25 +4,29 @@ using UnityEngine.UI;
 
 public class SettingsSceneLogicScript : MonoBehaviour
 {
-    public float SfxLevel = 0.0f;
-    public float MusicLevel = 0.0f;
+    private GameLogicScript gameLogicScriptComponent = null;
 
     public Slider SfxSlider;
     public Slider MusicSlider;
 
     void Start()
     {
-        // Read persistent data
-        SfxLevel = PlayerPrefs.GetFloat("sfxLevel", 1.0f);
-        if(SfxSlider != null)
+        GameObject gameLogic = GameObject.Find("GameLogic");
+        if (gameLogic == null)
         {
-            SfxSlider.value = SfxLevel;
+            SceneManager.LoadScene("BootScene", LoadSceneMode.Single);
+            return;
+        }
+        gameLogicScriptComponent = gameLogic.GetComponent<GameLogicScript>();
+
+        if (SfxSlider != null)
+        {
+            SfxSlider.value = gameLogicScriptComponent.SfxLevel;
         }
 
-        MusicLevel = PlayerPrefs.GetFloat("musicLevel", 0.25f);
         if (MusicSlider != null)
         {
-            MusicSlider.value = MusicLevel;
+            MusicSlider.value = gameLogicScriptComponent.MusicLevel;
         }
     }
 
@@ -40,9 +44,9 @@ public class SettingsSceneLogicScript : MonoBehaviour
     {
         if (SfxSlider != null)
         {
-            SfxLevel = SfxSlider.value;
+            gameLogicScriptComponent.SfxLevel = SfxSlider.value;
 
-            PlayerPrefs.SetFloat("sfxLevel", SfxLevel);
+            PlayerPrefs.SetFloat("sfxLevel", gameLogicScriptComponent.SfxLevel);
             PlayerPrefs.Save();
         }
     }
@@ -51,9 +55,9 @@ public class SettingsSceneLogicScript : MonoBehaviour
     {
         if (MusicSlider != null)
         {
-            MusicLevel = MusicSlider.value;
+            gameLogicScriptComponent.MusicLevel = MusicSlider.value;
 
-            PlayerPrefs.SetFloat("musicLevel", MusicLevel);
+            PlayerPrefs.SetFloat("musicLevel", gameLogicScriptComponent.MusicLevel);
             PlayerPrefs.Save();
         }
     }

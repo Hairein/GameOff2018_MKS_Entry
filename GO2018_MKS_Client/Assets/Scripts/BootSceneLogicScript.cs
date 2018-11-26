@@ -213,7 +213,7 @@ public class BootSceneLogicScript : MonoBehaviour
     {
         string portText = PortInputField.text;
 
-        port = 8080;
+        port = 13000;
         if (gameLogicScriptComponent != null)
         {
             port = gameLogicScriptComponent.DefaultPort;

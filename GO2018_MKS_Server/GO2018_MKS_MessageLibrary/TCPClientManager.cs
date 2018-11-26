@@ -10,7 +10,7 @@ namespace GO2018_MKS_MessageLibrary
 {
     public class TCPClientManager
     {
-        private string tcpServerAddress = "localhost";
+        private string tcpServerAddress = "5.175.24.40";
         private int tcpServerPort = 13000;
         public TcpClient tcpClient = null;
 

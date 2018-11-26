@@ -107,7 +107,6 @@ public class BarricadeLogic : MonoBehaviour
         {
             float totalBreakValue = nosDestroyers * baseTapRateThisFrame;
             LifeCount -= totalBreakValue;
-
         }
 
         if (breakParticleSystem != null)
@@ -134,7 +133,10 @@ public class BarricadeLogic : MonoBehaviour
                 listOfUnitsInfluencing.Add(unit);
             }
 
-            listOfUnitsInfluencing.Add(unitLogicScript);
+            if (!listOfUnitsInfluencing.Contains(unitLogicScript))
+            {
+                listOfUnitsInfluencing.Add(unitLogicScript);
+            }
 
             influencingUnits = listOfUnitsInfluencing.ToArray();
        }

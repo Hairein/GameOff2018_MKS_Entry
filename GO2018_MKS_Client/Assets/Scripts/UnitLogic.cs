@@ -96,7 +96,10 @@ public class UnitLogic : MonoBehaviour
                         continue;
                     }
 
-                    listOfUnitsInfluencing.Add(unit);
+                    if (!listOfUnitsInfluencing.Contains(unit))
+                    {
+                        listOfUnitsInfluencing.Add(unit);
+                    }
                 }
 
                 InfluencingTeamUnits = listOfUnitsInfluencing.ToArray();

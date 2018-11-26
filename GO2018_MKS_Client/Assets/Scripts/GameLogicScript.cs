@@ -6,10 +6,10 @@ using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
 using static GO2018_MKS_MessageLibrary.MessageLibraryUtitlity;
+using UnityEngine.Audio;
 
 public class GameLogicScript : MonoBehaviour
 {
-
     private TCPClientManager tcpClientManager = new TCPClientManager();
     public bool DidLogin = false;
 
@@ -45,6 +45,16 @@ public class GameLogicScript : MonoBehaviour
 
     public EndSessionAnswerMessage endSessionAnswerMessage = null;
 
+    private AudioSource musicAudioSource;
+    private AudioSource sfxAudioSource;
+    public float SfxLevel = 0.0f;
+    public float MusicLevel = 0.0f;
+
+    public AudioClip ClickAudioClip;
+    public AudioClip[] UnitVoicesAudioClips;
+
+    public int RandomSeed = 1337;
+
     void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
@@ -64,11 +74,45 @@ public class GameLogicScript : MonoBehaviour
 
     void Start()
     {
+        UnityEngine.Random.InitState(RandomSeed);
+
+        // Read persistent data
+        SfxLevel = PlayerPrefs.GetFloat("sfxLevel", 1.0f);
+        MusicLevel = PlayerPrefs.GetFloat("musicLevel", 0.25f);
+
+        musicAudioSource = GetComponent<AudioSource>();
+
+        GameObject SfxGameObject = GameObject.Find("SfxGameObject");
+        if (SfxGameObject != null)
+        {
+            sfxAudioSource = SfxGameObject.GetComponent<AudioSource>();
+        }
     }
 
     void Update()
     {
-        while(true)
+        if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(2))
+        {
+            PlayClickSoundEffect();
+        }
+
+        if (musicAudioSource != null)
+        {
+            if (musicAudioSource.volume != MusicLevel)
+            {
+                musicAudioSource.volume = MusicLevel;
+            }
+        }
+
+        if (sfxAudioSource != null)
+        {
+            if (sfxAudioSource.volume != SfxLevel)
+            {
+                sfxAudioSource.volume = SfxLevel;
+            }
+        }
+
+        while (true)
         {
             string tcpMessage = tcpClientManager.ReceiveMessage();
             if(string.IsNullOrEmpty(tcpMessage))
@@ -435,5 +479,26 @@ public class GameLogicScript : MonoBehaviour
             BarricadesUpdateMessage barricadesUpdateMessage = new BarricadesUpdateMessage(states.ToArray());
             tcpClientManager.SendMessageObject(barricadesUpdateMessage);
         }
+    }
+
+    public void PlaySoundEffect(AudioClip audioClip)
+    {
+        if(sfxAudioSource == null)
+        {
+            return;
+        }
+
+        sfxAudioSource.PlayOneShot(audioClip);
+    }
+
+    public void PlayClickSoundEffect()
+    {
+        PlaySoundEffect(ClickAudioClip);
+    }
+
+    public void PlayRandomVoice()
+    {
+        int randomChoice = (int)(UnityEngine.Random.value * (UnitVoicesAudioClips.Length - 1));
+        PlaySoundEffect(UnitVoicesAudioClips[randomChoice]);
     }
 }

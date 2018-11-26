@@ -117,7 +117,10 @@ public class TechSourceLogic : MonoBehaviour
                 listOfUnitsInfluencing.Add(unit);
             }
 
-            listOfUnitsInfluencing.Add(unitLogicScript);
+            if (!listOfUnitsInfluencing.Contains(unitLogicScript))
+            {
+                listOfUnitsInfluencing.Add(unitLogicScript);
+            }
 
             influencingUnits = listOfUnitsInfluencing.ToArray();
         }

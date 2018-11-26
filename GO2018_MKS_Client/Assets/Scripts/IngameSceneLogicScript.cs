@@ -709,6 +709,8 @@ public class IngameSceneLogicScript : MonoBehaviour
                 Vector3 clickHitPosition = Vector3.zero;
                 if (GetScreenHitPositionInWorld(mousePosition, out clickHitPosition))
                 {
+                    gameLogicScriptComponent.PlayRandomVoice();
+
                     SetNavigationTarget(clickHitPosition);
                 }
             }
