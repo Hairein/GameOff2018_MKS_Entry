@@ -2261,7 +2261,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DidLogin: 0
   ClientVersion: v1.0preAlpha
-  DefaultHost: localhost
+  DefaultHost: 5.175.24.40
   DefaultPort: 13000
   SessionState: 0
   SessionResult: 0
