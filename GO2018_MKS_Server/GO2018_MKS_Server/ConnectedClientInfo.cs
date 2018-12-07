@@ -39,6 +39,8 @@ namespace GO2018_MKS_Server
         public bool IsInActiveSession = false;
         public ActiveSessionInfo ActiveSession = null;
 
+        public DateTime LastMessageTimestamp = DateTime.UtcNow;
+
         public ConnectedClientInfo(TcpClient newTcpClient)
         {
             tcpClient = newTcpClient;

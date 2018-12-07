@@ -13,7 +13,7 @@ namespace GO2018_MKS_Server
 {
     class Program
     {
-        string serverVersion = "v1.0preAlpha";
+        string serverVersion = "v1.0preAlpha1";
 
         bool runFlag = true;
 
@@ -195,6 +195,9 @@ namespace GO2018_MKS_Server
                     {
                         break;
                     }
+
+                    // Update client timestamp
+                    client.LastMessageTimestamp = DateTime.UtcNow;
 
                     HandleIncomingMessage(client, inputMessage);                                        
                 }            
@@ -627,7 +630,11 @@ namespace GO2018_MKS_Server
             for (int index = 0; index < connectedClientsArray.Length; index++)
             {
                 ConnectedClientInfo client = connectedClientsArray[index];
-                if(client.IsConnected)
+
+                DateTime compareTimestamp = DateTime.UtcNow;
+                TimeSpan compareTimeSpan = compareTimestamp - client.LastMessageTimestamp;
+
+                if (client.IsConnected && compareTimeSpan.TotalMinutes <= 15.0)
                 {
                     connectedClients.Add(client);
                     continue;

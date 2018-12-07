@@ -100,7 +100,7 @@ NavMeshSettings:
     agentTypeID: 0
     agentRadius: 0.25
     agentHeight: 1
-    agentSlope: 45
+    agentSlope: 55
     agentClimb: 0.5
     ledgeDropHeight: 0.5
     maxJumpAcrossDistance: 0.5
@@ -888,11 +888,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4554334751692110, guid: 55a70e356ca958d4ea666b43d987dc36, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 20.15
+      value: 21.01
       objectReference: {fileID: 0}
     - target: {fileID: 4554334751692110, guid: 55a70e356ca958d4ea666b43d987dc36, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 8.27
+      value: 4.06
       objectReference: {fileID: 0}
     - target: {fileID: 1966962822554746, guid: 55a70e356ca958d4ea666b43d987dc36, type: 2}
       propertyPath: m_Name
