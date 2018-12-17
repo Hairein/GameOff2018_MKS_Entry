@@ -39,6 +39,7 @@ namespace GO2018_MKS_Server
         public bool IsInActiveSession = false;
         public ActiveSessionInfo ActiveSession = null;
 
+        public DateTime FirstMessageTimestamp = DateTime.UtcNow;
         public DateTime LastMessageTimestamp = DateTime.UtcNow;
 
         public ConnectedClientInfo(TcpClient newTcpClient)
@@ -207,6 +208,11 @@ namespace GO2018_MKS_Server
         {
             IsInActiveSession = false;
             ActiveSession = null;
+        }
+
+        public TimeSpan GetClientConnectionDuration()
+        {
+            return LastMessageTimestamp - FirstMessageTimestamp;
         }
     }
 }

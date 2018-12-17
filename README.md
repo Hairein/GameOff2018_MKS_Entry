@@ -1,20 +1,27 @@
-#GameOff2018 MKS Entry - "Scamper Fields"
+GameOff2018 MKS Entry - "Scamper Fields"
+========================================
+
 This is the Game Off 2018 Entry from Micah Koleoso Software (http://www.micahkoleoso.de)
 Running from the 1st November to 1st December, 2018.
 
 The entry consists of a client (Unity: GO2018_MKS_Client) and server (C# .NET: GO2018_MKS_Server) application.
 Game page: http://www.micahkoleoso.de/?page_id=724
 
-#Version Info
+Version Info
 ============
-v1.0preAlpha1 - 07th December, 2018
+v1.0preAlpha2 - TBD
+- (Client) Redesign of maps: Morpholite, Sunset and Overlord
+- (Server) Added client network login duration information.
+
+v1.0preAlpha1 - 7th December, 2018
 - (Client) Corrections to the Morpholite map navigation mesh to enable easier navigation for Drones and Breeders.
 - (Server) Remove inactive players from server after 15 mins without communications.
 
-v1.0preAlpha - Initial Jam release.
+v1.0preAlpha - 28th November, 2018 
+    Initial Jam release.
 
 
-#Introduction To Gameplay
+Introduction To Gameplay
 ===================
 GOAL
 ----
@@ -51,7 +58,7 @@ T - (hold) Feed the Breeder Tech from all nearby drones
 D - (hold) Drone spawn mode [Breeder Resource Cost per Drone placed: F: 750 T: 500]
 
 
-#Credits
+Credits
 =======
 Gfx And Textures:
 Original mouse and keyboard icon - http://chittagongit.com/icon/mouse-and-keyboard-icon-12.html
@@ -69,7 +76,7 @@ Original SFX "Warrior Battle Chants and Shouts" Copyright 2012 Iwan Gabovitch [h
 22952__acclivity__cheer.wav https://freesound.org/people/acclivity/sounds/22952/ by https://freesound.org/people/acclivity/
 51269__rutgermuller__electric-noise-2.wav https://freesound.org/people/RutgerMuller/sounds/51269/ by https://freesound.org/people/RutgerMuller/
 
-#Installation
+Installation
 ============
 TODO
     custom server install
@@ -77,7 +84,7 @@ TODO
     configuration
 
 
-#Game Features And Infos
+Game Features And Infos
 =======================
 4 Upgrade optional/choice levels 
 Food upgrade costs: 1000, 1500, 2000, 2500
@@ -98,16 +105,22 @@ Tech upgrade costs: 1125, 1125, 1125, 1125
 - 3 maps (Morpholite, Sunset and Overlord)
 
 
-#Development MAYBES and TODOs (Jam)
-=======================
-- Make breeder and drone animation for idle, walk
+Development MAYBES and TODOs
+=============================
+Client:
+- Redo breeder and drone units
+- Make breeder and drone animation for idle, walk, actions
 - Music and SFX
 - Redo maps terrain and placements
-- Make documentation, readme, credits for external assets
-- Particles for most acitvities
+- Improve particle effects
+- Player chat ingame
+- Single player mode vs AI
+
+Server:
+- Player chat handling
 
 
-#Bugs/Known Issues
+Bugs/Known Issues
 =================
 - Clicking on the map above terrain sets the navigation target to the terrain point if underneath
 - Barricades can be placed anywhere on terrain and elements, restrict to floor

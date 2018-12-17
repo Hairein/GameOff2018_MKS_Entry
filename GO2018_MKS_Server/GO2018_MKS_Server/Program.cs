@@ -13,7 +13,7 @@ namespace GO2018_MKS_Server
 {
     class Program
     {
-        string serverVersion = "v1.0preAlpha1";
+        string serverVersion = "v1.0preAlpha2";
 
         bool runFlag = true;
 
@@ -642,7 +642,14 @@ namespace GO2018_MKS_Server
 
                 TcpClient tcpClient = client.GetTcpClient();
 
-                Console.WriteLine("Client lost, clearing: " + tcpClient.Client.Handle.ToString());
+                if (compareTimeSpan.TotalMinutes <= 15.0)
+                {
+                    Console.WriteLine("Client disconnect lost, clearing: " + tcpClient.Client.Handle.ToString() + ", joined duration: " + client.GetClientConnectionDuration().ToString());
+                }
+                else
+                {
+                    Console.WriteLine("Client timeout lost, clearing: " + tcpClient.Client.Handle.ToString() + ", joined duration: " + client.GetClientConnectionDuration().ToString());
+                }
 
                 StorePlayerResults(client);
 
