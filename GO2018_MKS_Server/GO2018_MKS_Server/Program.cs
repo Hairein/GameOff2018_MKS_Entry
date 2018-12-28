@@ -3,9 +3,9 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using static GO2018_MKS_MessageLibrary.MessageLibraryUtitlity;
 
@@ -23,11 +23,15 @@ namespace GO2018_MKS_Server
         List<ActiveSessionInfo> sessions = new List<ActiveSessionInfo>();
         int maxActiveSessionsAllowed = 64;
 
+        int maxPlayersConcurrently = 0;
+
+        string[] sanitizerWordList = null;
+
         static void Main(string[] args)
         {
             int serverListenPort = 13000;
 
-            if(args.Length == 1)
+            if (args.Length == 1)
             {
                 string portText = args[0];
                 int cmdPort = 0;
@@ -45,11 +49,16 @@ namespace GO2018_MKS_Server
         {
             Console.WriteLine("GO2018 MKS Server [" + serverVersion + "]");
             Console.WriteLine("Listening on port: " + port.ToString());
+            Console.WriteLine();
+
+            PrepareMessageSanitizer();
+            Console.WriteLine();
+
+            PrintHelpMessage();
+            Console.WriteLine();
 
             Thread tcpListenerThread = new Thread(() => TcpHandlerThreadProc(port));
             tcpListenerThread.Start();
-
-            PrintHelpMessage();
 
             while (runFlag)
             {
@@ -77,6 +86,11 @@ namespace GO2018_MKS_Server
                             PrintSessions();
                         }
                         break;
+                    case "reset_stats":
+                        {
+                            maxPlayersConcurrently = 0;
+                        }
+                        break;
                     default:
                         Console.WriteLine("Unknown command: " + inputLine);
                         break;
@@ -88,12 +102,12 @@ namespace GO2018_MKS_Server
 
         void PrintHelpMessage()
         {
-            Console.WriteLine("Commands (help, quit, exit, players, sessions)");
+            Console.WriteLine("Commands (help, quit, exit, players, sessions, reset_stats)");
         }
 
         void PrintPlayers()
         {
-            Console.WriteLine(string.Format("Players: {0}/{1}", connectedClients.Count, maxPlayersAllowed));
+            Console.WriteLine(string.Format("Players: {0}/{1} [Max. concurrent: {2}]", connectedClients.Count, maxPlayersAllowed, maxPlayersConcurrently));
         }
 
         void PrintSessions()
@@ -145,7 +159,7 @@ namespace GO2018_MKS_Server
                 }
             }
 
-            if(stopwatch.IsRunning)
+            if (stopwatch.IsRunning)
             {
                 stopwatch.Stop();
             }
@@ -175,6 +189,8 @@ namespace GO2018_MKS_Server
 
                 WelcomeMessage welcomeMessage = new WelcomeMessage();
                 newClient.AddMessage(welcomeMessage);
+
+                maxPlayersConcurrently = Math.Max(maxPlayersConcurrently, connectedClients.Count);
             }
         }
 
@@ -199,8 +215,8 @@ namespace GO2018_MKS_Server
                     // Update client timestamp
                     client.LastMessageTimestamp = DateTime.UtcNow;
 
-                    HandleIncomingMessage(client, inputMessage);                                        
-                }            
+                    HandleIncomingMessage(client, inputMessage);
+                }
             }
         }
 
@@ -225,7 +241,7 @@ namespace GO2018_MKS_Server
 
                         LoginAnswerMessage loginAnswer;
 
-                        if(loginMessage.ClientVersion != serverVersion)
+                        if (loginMessage.ClientVersion != serverVersion)
                         {
                             string mismatch = string.Format("Client [{0}] / Server [{1}] version mismatch. Unable to login.", loginMessage.ClientVersion, serverVersion);
 
@@ -289,14 +305,14 @@ namespace GO2018_MKS_Server
                         CreateSessionMessage createSessionMessage = JsonConvert.DeserializeObject<CreateSessionMessage>(nextMessageText);
 
                         CreateSessionAnswerMessage createSessionAnswer;
-                        if(sessions.Count >= maxActiveSessionsAllowed)
+                        if (sessions.Count >= maxActiveSessionsAllowed)
                         {
                             createSessionAnswer = new CreateSessionAnswerMessage(false, "Maximum number of sessions reached. Please create a session again later");
                             client.AddMessage(createSessionAnswer);
                             break;
                         }
 
-                        if(client.IsInActiveSession)
+                        if (client.IsInActiveSession)
                         {
                             createSessionAnswer = new CreateSessionAnswerMessage(false, "Player is busy in an existing active session");
                             client.AddMessage(createSessionAnswer);
@@ -327,21 +343,21 @@ namespace GO2018_MKS_Server
                 case MessageType.listSessions:
                     {
                         List<SessionInfo> listOfSessions = new List<SessionInfo>();
-                        foreach(ConnectedClientInfo connectedClient in connectedClients)
+                        foreach (ConnectedClientInfo connectedClient in connectedClients)
                         {
-                            if(client == connectedClient)
+                            if (client == connectedClient)
                             {
                                 continue;
                             }
 
-                            if(connectedClient.IsCreatingSession)
+                            if (connectedClient.IsCreatingSession)
                             {
                                 string platformId;
                                 string playerHandle;
                                 connectedClient.GetPlayerCredentials(out platformId, out playerHandle);
 
-                                SessionInfo newSessionInfo = new SessionInfo(connectedClient.CreateSessionMessage.MapName, 
-                                    playerHandle, 
+                                SessionInfo newSessionInfo = new SessionInfo(connectedClient.CreateSessionMessage.MapName,
+                                    playerHandle,
                                     connectedClient.CreateSessionMessage.OwnTeam == MessageLibraryUtitlity.SessionTeam.blue ? MessageLibraryUtitlity.SessionTeam.orange : MessageLibraryUtitlity.SessionTeam.blue,
                                     connectedClient.CreateSessionMessage.SessionSeconds);
 
@@ -433,13 +449,13 @@ namespace GO2018_MKS_Server
                     break;
                 case MessageType.readySessionStart:
                     {
-                        foreach(ActiveSessionInfo session in sessions)
+                        foreach (ActiveSessionInfo session in sessions)
                         {
-                            if(client == session.player1 || client == session.player2)
+                            if (client == session.player1 || client == session.player2)
                             {
                                 session.ReadyStateCounter++;
 
-                                if(session.ReadyStateCounter == 2)
+                                if (session.ReadyStateCounter == 2)
                                 {
                                     ReadySessionStartAnswerMessage readySessionStartAnswerMessage = new ReadySessionStartAnswerMessage(true, "OK");
                                     session.player1.AddMessage(readySessionStartAnswerMessage);
@@ -461,7 +477,7 @@ namespace GO2018_MKS_Server
                         PlayerUnitsNavigationMessage playerUnitsNavigationMessage = JsonConvert.DeserializeObject<PlayerUnitsNavigationMessage>(nextMessageText);
 
                         ActiveSessionInfo activeSession = FindActiveSessionFromClient(client);
-                        if(activeSession != null)
+                        if (activeSession != null)
                         {
                             if (client == activeSession.player1)
                             {
@@ -470,7 +486,7 @@ namespace GO2018_MKS_Server
                                     activeSession.CollectSessionUpdateAnswers.AddPlayer1UnitNavigationCommand(command);
                                 }
                             }
-                            else 
+                            else
                             {
                                 foreach (UnitNavigationCommand command in playerUnitsNavigationMessage.NavigationCommands)
                                 {
@@ -480,7 +496,7 @@ namespace GO2018_MKS_Server
                         }
                     }
                     break;
-                case MessageType.playerUnitsUpdate: 
+                case MessageType.playerUnitsUpdate:
                     {
                         PlayerUnitsUpdateMessage playerUnitsUpdateMessage = JsonConvert.DeserializeObject<PlayerUnitsUpdateMessage>(nextMessageText);
 
@@ -494,7 +510,7 @@ namespace GO2018_MKS_Server
                                     bool isHandled = false;
                                     foreach (UnitResourceState existingState in activeSession.CollectSessionUpdateAnswers.Player1UnitResourceStates)
                                     {
-                                        if(newState.Name == existingState.Name)
+                                        if (newState.Name == existingState.Name)
                                         {
                                             isHandled = true;
 
@@ -507,13 +523,13 @@ namespace GO2018_MKS_Server
                                         }
                                     }
 
-                                    if(!isHandled)
+                                    if (!isHandled)
                                     {
                                         activeSession.CollectSessionUpdateAnswers.AddPlayer1UnitResourceStates(newState);
                                     }
                                 }
                             }
-                            else 
+                            else
                             {
                                 foreach (UnitResourceState newState in playerUnitsUpdateMessage.UnitResourceStates)
                                 {
@@ -540,7 +556,7 @@ namespace GO2018_MKS_Server
                                 }
                             }
                         }
-                     }
+                    }
                     break;
                 case MessageType.mineResourcesUpdate:
                     {
@@ -596,6 +612,34 @@ namespace GO2018_MKS_Server
                                 {
                                     activeSession.CollectSessionUpdateAnswers.AddBarricadeResourceState(newState);
                                 }
+                            }
+                        }
+                    }
+                    break;
+                case MessageType.sessionChat:
+                    {
+                        for (int index = 0; index < sessions.Count; index++)
+                        {
+                            ActiveSessionInfo activeSession = sessions[index];
+                            if (client == activeSession.player1)
+                            {
+                                SessionChatMessage sessionchatMessage = JsonConvert.DeserializeObject<SessionChatMessage>(nextMessageText);
+                                string message = SanitizeChatMessage(sessionchatMessage.Message);
+
+                                SessionChatAnswerMessage sessionChatAnswerMessage = new SessionChatAnswerMessage(message);
+                                activeSession.player2.AddMessage(sessionChatAnswerMessage);
+
+                                break;
+                            }
+                            else if (client == activeSession.player2)
+                            {
+                                SessionChatMessage sessionchatMessage = JsonConvert.DeserializeObject<SessionChatMessage>(nextMessageText);
+                                string message = SanitizeChatMessage(sessionchatMessage.Message);
+
+                                SessionChatAnswerMessage sessionChatAnswerMessage = new SessionChatAnswerMessage(message);
+                                activeSession.player1.AddMessage(sessionChatAnswerMessage);
+
+                                break;
                             }
                         }
                     }
@@ -680,7 +724,7 @@ namespace GO2018_MKS_Server
             {
                 ActiveSessionInfo activeSession = sessions[index];
 
-                switch(activeSession.State)
+                switch (activeSession.State)
                 {
                     case SessionState.waiting:
                         {
@@ -691,7 +735,7 @@ namespace GO2018_MKS_Server
                         {
                             activeSession.Update(deltaTime);
 
-                            if(activeSession.CollectSessionUpdateAnswers.SessionTimeLeft <= 0.0f)
+                            if (activeSession.CollectSessionUpdateAnswers.SessionTimeLeft <= 0.0f)
                             {
                                 EndSessionAnswerMessage endSessionAnswerMessage = new EndSessionAnswerMessage();
                                 activeSession.player1.AddMessage(endSessionAnswerMessage);
@@ -785,6 +829,45 @@ namespace GO2018_MKS_Server
 
                 sessions.Add(checkSession);
             }
+        }
+
+        private void PrepareMessageSanitizer()
+        {
+            Console.WriteLine("Loading in sanitzer word list from file");
+
+            List<string> wordList = new List<string>();
+
+            string line = string.Empty;
+
+            StreamReader file = new StreamReader(@"full-list-of-bad-words_text-file_2018_07_30.txt");
+            while ((line = file.ReadLine()) != null)
+            {
+                wordList.Add(line);
+            }
+
+            file.Close();
+
+            sanitizerWordList = wordList.ToArray();
+
+            Console.WriteLine("Message sanitizer read {0} lines.", sanitizerWordList.Length);
+        }
+
+        private string SanitizeChatMessage(string message)
+        {
+            if(sanitizerWordList == null || sanitizerWordList.Length == 0)
+            {
+                return message;
+            }
+
+            string cleanMessage = message;
+            for(int index = 0; index < sanitizerWordList.Length; index++)
+            {
+                string dirtyWord = sanitizerWordList[index];
+
+                cleanMessage = cleanMessage.Replace(dirtyWord, "*");
+            }
+
+            return cleanMessage;
         }
     }
 }

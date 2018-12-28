@@ -45,6 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BarricadeResourceState.cs" />
+    <Compile Include="SessionChatAnswerMessage.cs" />
+    <Compile Include="SessionChatMessage.cs" />
     <Compile Include="MineResourceState.cs" />
     <Compile Include="BarricadesUpdateMessage.cs" />
     <Compile Include="MinesUpdateMessage.cs" />

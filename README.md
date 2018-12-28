@@ -9,9 +9,13 @@ Game page: http://www.micahkoleoso.de/?page_id=724
 
 Version Info
 ============
-v1.0preAlpha2 - TBD
-- (Client) Redesign of maps: Morpholite, Sunset and Overlord
+v1.0preAlpha2 - 28th December 2018
+- (Client) First-pass redesign of maps: Morpholite, Sunset and Overlord
+- (Client) Added ingame chat
+- (Client) First-pass UI enhancements
 - (Server) Added client network login duration information.
+- (Server) Added further client and connection statistics.
+- (Server) Handle ingame chat with profanity filtering
 
 v1.0preAlpha1 - 7th December, 2018
 - (Client) Corrections to the Morpholite map navigation mesh to enable easier navigation for Drones and Breeders.
@@ -110,14 +114,13 @@ Development MAYBES and TODOs
 Client:
 - Redo breeder and drone units
 - Make breeder and drone animation for idle, walk, actions
-- Music and SFX
-- Redo maps terrain and placements
+- SFX for activities
+- Redo maps terrain and placements, enhance visually
 - Improve particle effects
-- Player chat ingame
 - Single player mode vs AI
 
 Server:
-- Player chat handling
+- TBD
 
 
 Bugs/Known Issues

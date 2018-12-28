@@ -53,6 +53,7 @@ public class IngameSceneLogicScript : MonoBehaviour
     public bool TeamInFeedBreederTechMode = false;
 
     public bool IgnoreIngamePointerInput = false;
+    public bool IgnoreIngameKeyInput = false;
 
     public Vector2 MapDimensions = new Vector2(48.0f, 48.0f);
 
@@ -716,104 +717,144 @@ public class IngameSceneLogicScript : MonoBehaviour
             }
 
             // Check special keys for actions
-            if (Input.GetKeyUp(KeyCode.Escape))
+            if (!IgnoreIngameKeyInput)
             {
-                MenuPanel.gameObject.SetActive(!MenuPanel.gameObject.activeSelf);
-            }
-
-            if (Input.GetKeyUp(KeyCode.S))
-            {
-                CancelNavigation();
-            }
-
-            if (Input.GetKeyDown(KeyCode.D))
-            {
-                if (!TeamInDroneSpawnMode)
+                if (Input.GetKeyUp(KeyCode.Escape))
                 {
-                    StartDroneSpawnMode();
+                    MenuPanel.gameObject.SetActive(!MenuPanel.gameObject.activeSelf);
+                }
 
-                    Debug.Log("Starting drone spawn mode");
+                if (Input.GetKeyUp(KeyCode.S))
+                {
+                    CancelNavigation();
+                }
+
+                if (Input.GetKeyDown(KeyCode.D))
+                {
+                    if (!TeamInDroneSpawnMode)
+                    {
+                        StartDroneSpawnMode();
+
+                        Debug.Log("Try starting drone spawn mode");
+                    }
+                }
+                else if (Input.GetKeyUp(KeyCode.D))
+                {
+                    if (TeamInDroneSpawnMode)
+                    {
+                        StopDroneSpawnMode();
+
+                        Debug.Log("Ending drone spawn mode");
+                    }
+                }
+
+                if (Input.GetKeyDown(KeyCode.P))
+                {
+                    if (!TeamInBarricadeBuildMode)
+                    {
+                        StartBuildingBarricadeMode();
+
+                        Debug.Log("Try starting barricade build mode");
+                    }
+                }
+                else if (Input.GetKeyUp(KeyCode.P))
+                {
+                    if (TeamInBarricadeBuildMode)
+                    {
+                        StopBuildingBarricadeMode();
+
+                        Debug.Log("Ending barricade build mode");
+                    }
+                }
+
+                if (Input.GetKeyDown(KeyCode.B))
+                {
+                    if (!TeamInBarricadeBreakMode)
+                    {
+                        StartBreakingBarricadeMode();
+
+                        Debug.Log("Try starting barricade break mode");
+                    }
+                }
+                else if (Input.GetKeyUp(KeyCode.B))
+                {
+                    if (TeamInBarricadeBreakMode)
+                    {
+                        StopBreakingBarricadeMode();
+
+                        Debug.Log("Ending barricade break mode");
+                    }
+                }
+
+                if (Input.GetKeyDown(KeyCode.F))
+                {
+                    if (!TeamInFeedBreederFoodMode)
+                    {
+                        StartBreederFeedingFoodMode();
+
+                        Debug.Log("Try starting Breeder Food feeding mode");
+                    }
+                }
+                else if (Input.GetKeyUp(KeyCode.F))
+                {
+                    if (TeamInFeedBreederFoodMode)
+                    {
+                        StopBreederFeedingFoodMode();
+
+                        Debug.Log("Ending Breeder Food feeding mode");
+                    }
+                }
+
+                if (Input.GetKeyDown(KeyCode.T))
+                {
+                    if (!TeamInFeedBreederTechMode)
+                    {
+                        StartBreederFeedingTechMode();
+
+                        Debug.Log("Try starting Breeder Tech feeding mode");
+                    }
+                }
+                else if (Input.GetKeyUp(KeyCode.T))
+                {
+                    if (TeamInFeedBreederTechMode)
+                    {
+                        StopBreederFeedingTechMode();
+
+                        Debug.Log("Ending Breeder Tech feeding mode");
+                    }
                 }
             }
-            else if (Input.GetKeyUp(KeyCode.D))
+            else
             {
+                // End all key modes
                 if (TeamInDroneSpawnMode)
                 {
                     StopDroneSpawnMode();
 
                     Debug.Log("Ending drone spawn mode");
                 }
-            }
 
-            if (Input.GetKeyDown(KeyCode.P))
-            {
-                if (!TeamInBarricadeBuildMode)
-                {
-                    StartBuildingBarricadeMode();
-
-                    Debug.Log("Starting barricade build mode");
-                }
-            }
-
-            if (Input.GetKeyUp(KeyCode.P))
-            {
                 if (TeamInBarricadeBuildMode)
                 {
                     StopBuildingBarricadeMode();
 
                     Debug.Log("Ending barricade build mode");
                 }
-            }
 
-            if (Input.GetKeyDown(KeyCode.B))
-            {
-                if (!TeamInBarricadeBreakMode)
-                {
-                    StartBreakingBarricadeMode();
-
-                    Debug.Log("Starting barricade break mode");
-                }
-            }
-            else if (Input.GetKeyUp(KeyCode.B))
-            {
                 if (TeamInBarricadeBreakMode)
                 {
                     StopBreakingBarricadeMode();
 
                     Debug.Log("Ending barricade break mode");
                 }
-            }
 
-            if (Input.GetKeyDown(KeyCode.F))
-            {
-                if (!TeamInFeedBreederFoodMode)
-                {
-                    StartBreederFeedingFoodMode();
-
-                    Debug.Log("Starting Breeder Food feeding mode");
-                }
-            }
-            else if (Input.GetKeyUp(KeyCode.F))
-            {
                 if (TeamInFeedBreederFoodMode)
                 {
                     StopBreederFeedingFoodMode();
 
                     Debug.Log("Ending Breeder Food feeding mode");
                 }
-            }
 
-            if (Input.GetKeyDown(KeyCode.T))
-            {
-                if (!TeamInFeedBreederTechMode)
-                {
-                    StartBreederFeedingTechMode();
-
-                    Debug.Log("Starting Breeder Tech feeding mode");
-                }
-            }
-            else if (Input.GetKeyUp(KeyCode.T))
-            {
                 if (TeamInFeedBreederTechMode)
                 {
                     StopBreederFeedingTechMode();
@@ -1443,7 +1484,7 @@ public class IngameSceneLogicScript : MonoBehaviour
 
     private void HandleTeamUpgradingCapability()
     {
-        if (Team1UpgradeLevel > maxTeamUpgradeLevel)
+        if (Team1UpgradeLevel > maxTeamUpgradeLevel || Team2UpgradeLevel > maxTeamUpgradeLevel)
         {
             return;
         }

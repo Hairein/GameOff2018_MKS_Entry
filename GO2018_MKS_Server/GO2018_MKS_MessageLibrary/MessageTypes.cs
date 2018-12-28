@@ -36,7 +36,10 @@
         playerUnitsNavigation, // 22
         playerUnitsUpdate, // 23
         mineResourcesUpdate, // 24
-        barricadesUpdate // 25
+        barricadesUpdate, // 25
+
+        sessionChat, // 26
+        sessionChatAnswer // 27
     }
 
     public static class MessageTypeTexts

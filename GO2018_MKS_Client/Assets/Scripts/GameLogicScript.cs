@@ -45,6 +45,9 @@ public class GameLogicScript : MonoBehaviour
 
     public EndSessionAnswerMessage endSessionAnswerMessage = null;
 
+    List<SessionChatAnswerMessage> sessionChatMessages = new List<SessionChatAnswerMessage>();
+
+
     private AudioSource musicAudioSource;
     private AudioSource sfxAudioSource;
     public float SfxLevel = 0.0f;
@@ -234,12 +237,18 @@ public class GameLogicScript : MonoBehaviour
                     sessionUpdateAnswerMessage = JsonConvert.DeserializeObject<SessionUpdateAnswerMessage>(message);
                 }
                 break;
-              case MessageType.endSessionAnswer:
+            case MessageType.endSessionAnswer:
                 {
                     endSessionAnswerMessage = JsonConvert.DeserializeObject<EndSessionAnswerMessage>(message);
                 }
                 break;
-          default:
+            case MessageType.sessionChatAnswer:
+                {
+                    SessionChatAnswerMessage sessionChatAnswerMessage = JsonConvert.DeserializeObject<SessionChatAnswerMessage>(message);
+                    sessionChatMessages.Add(sessionChatAnswerMessage);
+                }
+                break;
+            default:
                 {
                     Debug.Log("Generic/Unknown TCP message received.");
                 }
@@ -500,5 +509,28 @@ public class GameLogicScript : MonoBehaviour
     {
         int randomChoice = (int)(UnityEngine.Random.value * (UnitVoicesAudioClips.Length - 1));
         PlaySoundEffect(UnitVoicesAudioClips[randomChoice]);
+    }
+
+    public void SendChatMessage(string message)
+    {
+        SessionChatMessage sessionChatMessage = new SessionChatMessage(message);
+        tcpClientManager.SendMessageObject(sessionChatMessage);
+    }
+
+    public SessionChatAnswerMessage[] ReadPendingSessionChatMessages(bool clearAfterReading = true)
+    {
+        if(sessionChatMessages.Count == 0)
+        {
+            return null;
+        }
+
+        SessionChatAnswerMessage[] pendingMessages = sessionChatMessages.ToArray();
+
+        if (clearAfterReading)
+        {
+            sessionChatMessages.Clear();
+        }
+
+        return pendingMessages;
     }
 }
