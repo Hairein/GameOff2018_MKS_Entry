@@ -49,22 +49,26 @@ public class IngameCameraScript : MonoBehaviour
         if (Input.GetMouseButtonUp(1))
         {
         }
-
-        if (Input.GetMouseButtonDown(2))
+        
+        if (Input.GetMouseButtonDown(2) || Input.GetKeyDown(KeyCode.Space))
         {
-            if (!IsDragging)
+            if (!IsDragging && ingameSceneLogicScript.IgnoreIngameKeyInput == false)
             {
                 IsDragging = true;
 
                 dragStartPoint = mousePosition;
                 dragStartCameraPosition = Camera.main.transform.position;
+
+                ingameSceneLogicScript.SetChatAccess(false);
             }
         }
-        else if (Input.GetMouseButtonUp(2))
+        else if (Input.GetMouseButtonUp(2) || Input.GetKeyUp(KeyCode.Space))
         {
             if (IsDragging)
             {
                 IsDragging = false;
+
+                ingameSceneLogicScript.SetChatAccess(true);
             }
         }
 

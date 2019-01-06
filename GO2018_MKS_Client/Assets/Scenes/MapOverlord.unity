@@ -4767,6 +4767,7 @@ MonoBehaviour:
   LostCoverPanel: {fileID: 649988146}
   PreviousSessionState: 0
   RedrawMap: 0
+  ChatInput: {fileID: 1667574610}
 --- !u!4 &1415268402
 Transform:
   m_ObjectHideFlags: 0
@@ -5835,6 +5836,11 @@ Prefab:
 --- !u!224 &1667574609 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 224488634665131678, guid: 501154c460038614e83c481007f59603,
+    type: 2}
+  m_PrefabInternal: {fileID: 1667574608}
+--- !u!1 &1667574610 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1379214417924142, guid: 501154c460038614e83c481007f59603,
     type: 2}
   m_PrefabInternal: {fileID: 1667574608}
 --- !u!1 &1670357488

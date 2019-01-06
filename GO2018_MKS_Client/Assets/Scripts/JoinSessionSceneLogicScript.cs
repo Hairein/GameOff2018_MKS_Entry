@@ -40,7 +40,7 @@ public class JoinSessionSceneLogicScript : MonoBehaviour
         PrepareSessionListRefresh();
     }
 
-    void Update()
+void Update()
     {
         if(gameLogicScriptComponent == null)
         {
@@ -143,7 +143,7 @@ public class JoinSessionSceneLogicScript : MonoBehaviour
 
             GameObject newEntry = GameObject.Instantiate(SessionEntryTemplate, SessionContent.transform); 
             newEntry.SetActive(true);
-
+            
             SessionEntryPanelScript newSessionEntryPanelScript = newEntry.GetComponent<SessionEntryPanelScript>();
             if (newSessionEntryPanelScript != null)
             {

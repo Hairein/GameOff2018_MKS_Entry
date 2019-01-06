@@ -167,6 +167,8 @@ public class IngameSceneLogicScript : MonoBehaviour
 
     public bool RedrawMap = false;
 
+    public GameObject ChatInput;
+
     void Start()
     {
         GameObject gameLogic = GameObject.Find("GameLogic");
@@ -2319,4 +2321,19 @@ public class IngameSceneLogicScript : MonoBehaviour
         }
     }
 
+    public void SetChatAccess(bool flag)
+    {
+        if(ChatInput == null)
+        {
+            return;
+        }
+
+        ChatInput.SetActive(flag);
+
+        ChatTextEntryManagerScript script = ChatInput.GetComponent<ChatTextEntryManagerScript>();
+        if(script != null)
+        {
+            script.ClearInput();
+        }
+    }
 }

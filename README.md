@@ -9,6 +9,10 @@ Game page: http://www.micahkoleoso.de/?page_id=724
 
 Version Info
 ============
+v1.0preAlpha3 - TBD
+- (Client) TBD
+- (Server) TBD
+
 v1.0preAlpha2 - 28th December 2018
 - (Client) First-pass redesign of maps: Morpholite, Sunset and Overlord
 - (Client) Added ingame chat
@@ -49,7 +53,7 @@ MOUSE COMMANDS
  In barricade placement mode, the barricade is built at click location if  
  resources are sufficient
  MIDDLE - Pan the map
- RIGHT - Set navigation target for selected units.
+ RIGHT - Set navigation target for selected units
 
 KEY COMMANDS
 ------------
@@ -60,6 +64,7 @@ B - (hold) Destroy barricade mode
 F - (hold) Feed the Breeder Food from all nearby drones 
 T - (hold) Feed the Breeder Tech from all nearby drones
 D - (hold) Drone spawn mode [Breeder Resource Cost per Drone placed: F: 750 T: 500]
+SPACE - Use mouse to pan the map while pressed
 
 
 Credits
@@ -117,7 +122,10 @@ Client:
 - SFX for activities
 - Redo maps terrain and placements, enhance visually
 - Improve particle effects
-- Single player mode vs AI
+- Single player mode vs AI (local)
+- Add terrain clutter and detail to maps
+- Release Linux x86 version
+- Release Macos x86_64 version 
 
 Server:
 - TBD

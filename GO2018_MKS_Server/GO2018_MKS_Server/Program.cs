@@ -13,7 +13,7 @@ namespace GO2018_MKS_Server
 {
     class Program
     {
-        string serverVersion = "v1.0preAlpha2";
+        string serverVersion = "v1.0preAlpha3";
 
         bool runFlag = true;
 

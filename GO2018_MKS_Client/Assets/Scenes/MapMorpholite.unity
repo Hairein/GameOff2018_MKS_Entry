@@ -160,6 +160,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &117154971 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1379214417924142, guid: 501154c460038614e83c481007f59603,
+    type: 2}
+  m_PrefabInternal: {fileID: 1519069478}
 --- !u!1001 &162232462
 Prefab:
   m_ObjectHideFlags: 0
@@ -4587,6 +4592,7 @@ MonoBehaviour:
   LostCoverPanel: {fileID: 649988146}
   PreviousSessionState: 0
   RedrawMap: 0
+  ChatInput: {fileID: 117154971}
 --- !u!4 &1415268402
 Transform:
   m_ObjectHideFlags: 0

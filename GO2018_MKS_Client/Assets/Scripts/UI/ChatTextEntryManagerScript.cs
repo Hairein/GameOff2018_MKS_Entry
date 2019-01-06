@@ -80,8 +80,9 @@ public class ChatTextEntryManagerScript : MonoBehaviour
         }
 
         string message = ChatInput.text.Trim();
-        if (string.IsNullOrEmpty(message))
+        if (string.IsNullOrWhiteSpace(message))
         {
+            ClearInput();
             return;
         }
 
@@ -89,7 +90,7 @@ public class ChatTextEntryManagerScript : MonoBehaviour
 
         AddEntry(message, true);
 
-        ChatInput.text = string.Empty;
+        ClearInput();
     }
 
     public void AddEntry(string newEntry, bool isOwnChat)
@@ -164,5 +165,12 @@ public class ChatTextEntryManagerScript : MonoBehaviour
             position.Set(StartPosition.x + (offsetIndex * LineOffset.x), StartPosition.y + (offsetIndex * LineOffset.y), 0.0f);
             transform.localPosition = position;
         }
+    }
+
+    public void ClearInput()
+    {
+        ChatInput.text = string.Empty;
+
+        // ChatInput.DeactivateInputField();
     }
 }

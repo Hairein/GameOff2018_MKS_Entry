@@ -1687,7 +1687,7 @@ RectTransform:
   - {fileID: 2035349108}
   - {fileID: 1272685632}
   m_Father: {fileID: 928209478}
-  m_RootOrder: 17
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -2095,7 +2095,7 @@ RectTransform:
   m_Children:
   - {fileID: 753801776}
   m_Father: {fileID: 928209478}
-  m_RootOrder: 15
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -2498,7 +2498,7 @@ RectTransform:
   - {fileID: 1459056188}
   - {fileID: 1368787500}
   m_Father: {fileID: 928209478}
-  m_RootOrder: 16
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -2708,11 +2708,11 @@ RectTransform:
   - {fileID: 1763610589}
   - {fileID: 2107705621}
   - {fileID: 1683950792}
-  - {fileID: 2106825935}
   - {fileID: 1461456974}
   - {fileID: 799807247}
   - {fileID: 916918493}
   - {fileID: 649988145}
+  - {fileID: 2106825935}
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4698,6 +4698,7 @@ MonoBehaviour:
   LostCoverPanel: {fileID: 649988146}
   PreviousSessionState: 0
   RedrawMap: 0
+  ChatInput: {fileID: 2106825936}
 --- !u!4 &1415268402
 Transform:
   m_ObjectHideFlags: 0
@@ -4940,7 +4941,7 @@ RectTransform:
   - {fileID: 510240166}
   - {fileID: 1682590449}
   m_Father: {fileID: 928209478}
-  m_RootOrder: 14
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -7239,7 +7240,7 @@ Prefab:
     - target: {fileID: 224488634665131678, guid: 501154c460038614e83c481007f59603,
         type: 2}
       propertyPath: m_RootOrder
-      value: 21
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 224488634665131678, guid: 501154c460038614e83c481007f59603,
         type: 2}
@@ -7297,6 +7298,11 @@ Prefab:
 --- !u!224 &2106825935 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 224488634665131678, guid: 501154c460038614e83c481007f59603,
+    type: 2}
+  m_PrefabInternal: {fileID: 2106825934}
+--- !u!1 &2106825936 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1379214417924142, guid: 501154c460038614e83c481007f59603,
     type: 2}
   m_PrefabInternal: {fileID: 2106825934}
 --- !u!1 &2107705620

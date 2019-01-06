@@ -562,12 +562,12 @@ MonoBehaviour:
     F:2500 T:1125]\n\nMOUSE COMMANDS\n=============\n LEFT - Select Breeder or Drone.
     Click and drag to rectangle select.\n In barricade placement mode, the barricade
     is built at click location if  \n resources are sufficient\n MIDDLE - Pan the
-    map\n RIGHT - Set navigation target for selected units.\n\nKEY COMMANDS\n===========\n
+    map\n RIGHT - Set navigation target for selected units\n\nKEY COMMANDS\n===========\n
     ESC - (toggle) Show/hide menu ingame\r\n S - (press) Stop navigation immediately
     \r\n P - (hold) Build barricade mode [Cost: F: 250 T: 250]\r\n B - (hold) Destroy
     barricade mode\r\n F - (hold) Feed the Breeder Food from all nearby drones \r\n
     T - (hold) Feed the Breeder Tech from all nearby drones\r\n D - (hold) Drone spawn
-    mode [Cost: F: 750 T: 500]\r\n"
+    mode [Cost: F: 750 T: 500]\r\n SPACE - Use mouse to pan map while pressed"
 --- !u!222 &1118550035
 CanvasRenderer:
   m_ObjectHideFlags: 0
