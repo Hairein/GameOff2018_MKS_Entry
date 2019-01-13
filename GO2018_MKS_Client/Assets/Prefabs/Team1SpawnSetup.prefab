@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4538498623844856}
   - component: {fileID: 33409712419865092}
   - component: {fileID: 23922697257084378}
+  - component: {fileID: 114943163629153010}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -74,6 +75,7 @@ GameObject:
   - component: {fileID: 4275399362226932}
   - component: {fileID: 33791715396662382}
   - component: {fileID: 23409141428731942}
+  - component: {fileID: 114682742854706054}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -98,7 +100,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1424592860407894
 GameObject:
   m_ObjectHideFlags: 1
@@ -109,6 +111,7 @@ GameObject:
   - component: {fileID: 4797668791790486}
   - component: {fileID: 33065623455305068}
   - component: {fileID: 23966088178839548}
+  - component: {fileID: 114384451542577704}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -188,7 +191,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1507573152285852
 GameObject:
   m_ObjectHideFlags: 0
@@ -244,7 +247,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1569679983187726
 GameObject:
   m_ObjectHideFlags: 0
@@ -283,7 +286,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1763697822422924
 GameObject:
   m_ObjectHideFlags: 0
@@ -322,7 +325,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1792872973679714
 GameObject:
   m_ObjectHideFlags: 1
@@ -333,6 +336,7 @@ GameObject:
   - component: {fileID: 4653749692609490}
   - component: {fileID: 33068695221134548}
   - component: {fileID: 23721678009090844}
+  - component: {fileID: 114071422153221044}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -350,6 +354,7 @@ GameObject:
   - component: {fileID: 4479573937396998}
   - component: {fileID: 33595802595446196}
   - component: {fileID: 23090076706905232}
+  - component: {fileID: 114736946181118324}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -553,7 +558,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1240919971938782}
   m_LocalRotation: {x: -0, y: 0.3826828, z: -0, w: 0.92387986}
-  m_LocalPosition: {x: -19.36, y: 2, z: -19.33}
+  m_LocalPosition: {x: -16.63, y: 0.66, z: -14.66}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4070654490476314}
@@ -1389,6 +1394,21 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &114071422153221044
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1792872973679714}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbf3575480402db40813e763382412fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: 0
+  eraseRenderer: 0
+  originalLayer: 0
+  originalMaterials: []
 --- !u!114 &114127205979948772
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1413,7 +1433,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TeamNumber: 1
   IsSelected: 0
-  SelectionEffect: {fileID: 1504553327506088}
+  SelectionEffect: {fileID: 114071422153221044}
   FoodResourceCount: 300
   TechResourceCount: 0
   InfluencingTeamUnits: []
@@ -1440,6 +1460,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c709df16962d6f448f6c63740f613a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114384451542577704
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1424592860407894}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbf3575480402db40813e763382412fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: 0
+  eraseRenderer: 0
+  originalLayer: 0
+  originalMaterials: []
 --- !u!114 &114414233375144554
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1464,7 +1499,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TeamNumber: 1
   IsSelected: 0
-  SelectionEffect: {fileID: 1635008323971704}
+  SelectionEffect: {fileID: 114736946181118324}
   FoodResourceCount: 100
   TechResourceCount: 0
   InfluencingTeamUnits: []
@@ -1482,11 +1517,41 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TeamNumber: 1
   IsSelected: 0
-  SelectionEffect: {fileID: 1391738631314824}
+  SelectionEffect: {fileID: 114384451542577704}
   FoodResourceCount: 100
   TechResourceCount: 0
   InfluencingTeamUnits: []
   InfluencingOpponentUnits: []
+--- !u!114 &114682742854706054
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1298756702425446}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbf3575480402db40813e763382412fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: 0
+  eraseRenderer: 0
+  originalLayer: 0
+  originalMaterials: []
+--- !u!114 &114736946181118324
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1821454271860884}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbf3575480402db40813e763382412fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: 0
+  eraseRenderer: 0
+  originalLayer: 0
+  originalMaterials: []
 --- !u!114 &114809196965239564
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1511,7 +1576,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TeamNumber: 1
   IsSelected: 0
-  SelectionEffect: {fileID: 1768109553592176}
+  SelectionEffect: {fileID: 114682742854706054}
   FoodResourceCount: 100
   TechResourceCount: 0
   InfluencingTeamUnits: []
@@ -1529,11 +1594,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TeamNumber: 1
   IsSelected: 0
-  SelectionEffect: {fileID: 1548594287789094}
+  SelectionEffect: {fileID: 114943163629153010}
   FoodResourceCount: 100
   TechResourceCount: 0
   InfluencingTeamUnits: []
   InfluencingOpponentUnits: []
+--- !u!114 &114943163629153010
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1160181233587544}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbf3575480402db40813e763382412fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: 0
+  eraseRenderer: 0
+  originalLayer: 0
+  originalMaterials: []
 --- !u!135 &135012353320727602
 SphereCollider:
   m_ObjectHideFlags: 1

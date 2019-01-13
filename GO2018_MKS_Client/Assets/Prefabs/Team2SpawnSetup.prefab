@@ -49,7 +49,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1134201277639374
 GameObject:
   m_ObjectHideFlags: 1
@@ -67,7 +67,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1216211884977414
 GameObject:
   m_ObjectHideFlags: 1
@@ -78,6 +78,7 @@ GameObject:
   - component: {fileID: 4891532612633104}
   - component: {fileID: 33002938746546734}
   - component: {fileID: 23406765772137156}
+  - component: {fileID: 114546415489315620}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -95,6 +96,7 @@ GameObject:
   - component: {fileID: 4212396331846066}
   - component: {fileID: 33577526133744646}
   - component: {fileID: 23537478267640122}
+  - component: {fileID: 114479994024582256}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -195,7 +197,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1541671085265738
 GameObject:
   m_ObjectHideFlags: 0
@@ -285,7 +287,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1879159135970484
 GameObject:
   m_ObjectHideFlags: 1
@@ -296,6 +298,7 @@ GameObject:
   - component: {fileID: 4245192655225348}
   - component: {fileID: 33086547110636100}
   - component: {fileID: 23122386892900524}
+  - component: {fileID: 114093291019055000}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -313,6 +316,7 @@ GameObject:
   - component: {fileID: 4246190377027218}
   - component: {fileID: 33549715697666198}
   - component: {fileID: 23787831207296994}
+  - component: {fileID: 114862786463475716}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -345,6 +349,7 @@ GameObject:
   - component: {fileID: 4346528375996576}
   - component: {fileID: 33649364499269556}
   - component: {fileID: 23845786737518286}
+  - component: {fileID: 114718097231085746}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -390,7 +395,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4007045472138698
 Transform:
   m_ObjectHideFlags: 1
@@ -518,7 +523,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1915291549581854}
   m_LocalRotation: {x: -0, y: 0.9238807, z: -0, w: -0.38268065}
-  m_LocalPosition: {x: 19.64, y: 2, z: 18.69}
+  m_LocalPosition: {x: 16.43, y: -0.39, z: 13.61}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4959342955935116}
@@ -1402,7 +1407,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TeamNumber: 2
   IsSelected: 0
-  SelectionEffect: {fileID: 1415252600750754}
+  SelectionEffect: {fileID: 114093291019055000}
   FoodResourceCount: 100
   TechResourceCount: 0
   InfluencingTeamUnits: []
@@ -1420,7 +1425,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TeamNumber: 2
   IsSelected: 0
-  SelectionEffect: {fileID: 1955897921613668}
+  SelectionEffect: {fileID: 114862786463475716}
   FoodResourceCount: 100
   TechResourceCount: 0
   InfluencingTeamUnits: []
@@ -1438,7 +1443,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TeamNumber: 2
   IsSelected: 0
-  SelectionEffect: {fileID: 1865786805641522}
+  SelectionEffect: {fileID: 114479994024582256}
   FoodResourceCount: 100
   TechResourceCount: 0
   InfluencingTeamUnits: []
@@ -1456,11 +1461,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TeamNumber: 2
   IsSelected: 0
-  SelectionEffect: {fileID: 1081043753591256}
+  SelectionEffect: {fileID: 114546415489315620}
   FoodResourceCount: 100
   TechResourceCount: 0
   InfluencingTeamUnits: []
   InfluencingOpponentUnits: []
+--- !u!114 &114093291019055000
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1879159135970484}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbf3575480402db40813e763382412fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: 0
+  eraseRenderer: 0
+  originalLayer: 0
+  originalMaterials: []
 --- !u!114 &114094078952289116
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1494,6 +1514,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7432cc057d48d24ba18560930b959ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114479994024582256
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1230975690194822}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbf3575480402db40813e763382412fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: 0
+  eraseRenderer: 0
+  originalLayer: 0
+  originalMaterials: []
+--- !u!114 &114546415489315620
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1216211884977414}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbf3575480402db40813e763382412fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: 0
+  eraseRenderer: 0
+  originalLayer: 0
+  originalMaterials: []
 --- !u!114 &114587782836593398
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1507,11 +1557,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TeamNumber: 1
   IsSelected: 0
-  SelectionEffect: {fileID: 1134201277639374}
+  SelectionEffect: {fileID: 114718097231085746}
   FoodResourceCount: 300
   TechResourceCount: 0
   InfluencingTeamUnits: []
   InfluencingOpponentUnits: []
+--- !u!114 &114718097231085746
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1925171072497560}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbf3575480402db40813e763382412fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: 0
+  eraseRenderer: 0
+  originalLayer: 0
+  originalMaterials: []
 --- !u!114 &114740362000534976
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1534,6 +1599,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c709df16962d6f448f6c63740f613a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114862786463475716
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1886628144237054}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbf3575480402db40813e763382412fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: 0
+  eraseRenderer: 0
+  originalLayer: 0
+  originalMaterials: []
 --- !u!135 &135048774681893332
 SphereCollider:
   m_ObjectHideFlags: 1

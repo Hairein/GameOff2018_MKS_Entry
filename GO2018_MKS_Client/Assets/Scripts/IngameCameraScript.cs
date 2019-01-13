@@ -35,6 +35,7 @@ public class IngameCameraScript : MonoBehaviour
         if(initialCameraSetup)
         {
             Camera.main.transform.position = ingameSceneLogicScript.GetCameraStartPosition() + ViewOffset;
+            Camera.main.transform.rotation = Quaternion.Euler(60.0f, 0.0f, 0.0f);
 
             initialCameraSetup = false;
         }

@@ -10,23 +10,24 @@ Game page: http://www.micahkoleoso.de/?page_id=724
 Version Info
 ============
 v1.0preAlpha3 - TBD
-- (Client) TBD
+- (Client) Unit outlines when selected
+- (Client) Map navigation with space bar for 2-button mice (e.g. Macos) 
 - (Server) TBD
 
 v1.0preAlpha2 - 28th December 2018
 - (Client) First-pass redesign of maps: Morpholite, Sunset and Overlord
 - (Client) Added ingame chat
 - (Client) First-pass UI enhancements
-- (Server) Added client network login duration information.
-- (Server) Added further client and connection statistics.
+- (Server) Added client network login duration information
+- (Server) Added further client and connection statistics
 - (Server) Handle ingame chat with profanity filtering
 
 v1.0preAlpha1 - 7th December, 2018
-- (Client) Corrections to the Morpholite map navigation mesh to enable easier navigation for Drones and Breeders.
-- (Server) Remove inactive players from server after 15 mins without communications.
+- (Client) Corrections to the Morpholite map navigation mesh to enable easier navigation for Drones and Breeders
+- (Server) Remove inactive players from server after 15 mins without communications
 
 v1.0preAlpha - 28th November, 2018 
-    Initial Jam release.
+    Initial Jam release
 
 
 Introduction To Gameplay
@@ -125,10 +126,13 @@ Client:
 - Single player mode vs AI (local)
 - Add terrain clutter and detail to maps
 - Release Linux x86 version
-- Release Macos x86_64 version 
+- Release Macos x86_64 version
+- Unit with full resources should not provoke resource particles emissions if no resources are collected
+- Improve selected unit display (bordering, outlines)
+- Outline units and relevant placements
 
 Server:
-- TBD
+- TBD.
 
 
 Bugs/Known Issues
@@ -136,3 +140,4 @@ Bugs/Known Issues
 - Clicking on the map above terrain sets the navigation target to the terrain point if underneath
 - Barricades can be placed anywhere on terrain and elements, restrict to floor
 - Spawning drones can be placed anywhere on terrain and elements, restrict to floor
+- Loss of input capability after chat or window change?

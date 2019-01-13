@@ -76,6 +76,7 @@ GameObject:
   - component: {fileID: 4127912287567140}
   - component: {fileID: 33097685719374878}
   - component: {fileID: 23297230809896126}
+  - component: {fileID: 114611839325729216}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -264,6 +265,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1031020222502964}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &114611839325729216
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1990023890724256}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbf3575480402db40813e763382412fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: 0
+  eraseRenderer: 0
+  originalLayer: 0
+  originalMaterials: []
 --- !u!114 &114775355607189578
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -288,10 +304,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TeamNumber: 2
   IsSelected: 0
-  SelectionEffect: {fileID: 1031020222502964}
+  SelectionEffect: {fileID: 0}
   FoodResourceCount: 100
   TechResourceCount: 0
-  influencingOpponentUnits: []
+  InfluencingTeamUnits: []
+  InfluencingOpponentUnits: []
 --- !u!135 &135084189828380498
 SphereCollider:
   m_ObjectHideFlags: 1
