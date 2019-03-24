@@ -14,7 +14,7 @@ namespace GO2018_MKS_MessageLibrary
         {
             Type = MessageType.welcome;
 
-            Text = "Welcome to the GO2018 Game Server";
+            Text = "Welcome to the Scamper Fields Game Server";
         }
 
         public WelcomeMessage(string messageText)

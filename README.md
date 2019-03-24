@@ -118,7 +118,7 @@ Tech upgrade costs: 1125, 1125, 1125, 1125
 Development MAYBES and TODOs
 =============================
 Client:
-- Redo breeder and drone units
+- (In Progress) Redo breeder and drone units 
 - Make breeder and drone animation for idle, walk, actions
 - SFX for activities
 - Redo maps terrain and placements, enhance visually
@@ -128,12 +128,18 @@ Client:
 - Release Linux x86 version
 - Release Macos x86_64 version
 - Unit with full resources should not provoke resource particles emissions if no resources are collected
-- Improve selected unit display (bordering, outlines)
-- Outline units and relevant placements
+- (In Progress) Improve selected unit display (bordering, outlines)
+- (In Progress) Outline units and relevant placements
 
 Server:
 - TBD.
 
+Unit Animations List 
+    Common(Queen/Drone)
+    - idle x 3
+    - die
+    - mine food/tech
+    - move  
 
 Bugs/Known Issues
 =================
@@ -141,3 +147,5 @@ Bugs/Known Issues
 - Barricades can be placed anywhere on terrain and elements, restrict to floor
 - Spawning drones can be placed anywhere on terrain and elements, restrict to floor
 - Loss of input capability after chat or window change?
+- Drone feeding Queen sometimes doesn't work with key pressed
+- Selecting of upgrades is broken
