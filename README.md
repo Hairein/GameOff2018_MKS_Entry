@@ -13,7 +13,7 @@ v1.0preAlpha3 - TBD
 - (Client) Unit outlines when selected
 - (Client) Map navigation with space bar for 2-button mice (e.g. Macos) 
 - (Server) TBD
-- (Dev) Moved to Unity 2019.1.0f2
+- (Dev) Moved to Unity 2019.0.1f2
 - (Dev) Moved to .NET Framework 8.0
 - (Dev) Moved to Visual Studio 2019
 
