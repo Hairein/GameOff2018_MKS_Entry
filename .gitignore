@@ -2,11 +2,11 @@ _*/
 GO2018_MKS_Client_Build_Windowsx86/
 GO2018_MKS_Client_Build_Linux_x86/
 *.app
-GO2018_Modo/
-CustomPackages/
-Blender_Projects/
-Mudbox_Projects/
-SubstancePainter_Projects/
+GO2018_Modo/*
+CustomPackages/*
+Blender_Projects/*
+Mudbox_Projects/*
+SubstancePainter_Projects/*
 *.log
 
 
