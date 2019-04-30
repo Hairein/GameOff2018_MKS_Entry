@@ -399,7 +399,7 @@ public class IngameSceneLogicScript : MonoBehaviour
             OpponentScore = gameLogicScriptComponent.sessionUpdateAnswerMessage.Player1Score;
         }
 
-        // Must send resource state foirst in case of newly spawned drones, their initial positions are required
+        // Must send resource state first in case of newly spawned drones, their initial positions are required
         HandleOpponentResourceCommands();
         HandleOpponentCommands();
 
@@ -866,14 +866,7 @@ public class IngameSceneLogicScript : MonoBehaviour
             }
 
             // Handle cursor visibility in modes
-            if (TeamInDroneSpawnMode || TeamInBarricadeBuildMode)
-            {
-                ShowCursor(false);
-            }
-            else
-            {
-                ShowCursor(true);
-            }
+            ShowCursor(TeamInDroneSpawnMode || TeamInBarricadeBuildMode ? false : true);
         }
 
         // Check if need to show selection rectangle (4 px drag minimum)
@@ -1428,11 +1421,11 @@ public class IngameSceneLogicScript : MonoBehaviour
     {
         if (teamNumber == 1)
         {
-            return Team1BreederMaxFoodResourceCount;
+            return Team1BreederMaxTechResourceCount;
         }
         else
         {
-            return Team2BreederMaxFoodResourceCount;
+            return Team2BreederMaxTechResourceCount;
         }
     }
 
@@ -1452,11 +1445,11 @@ public class IngameSceneLogicScript : MonoBehaviour
     {
         if (teamNumber == 1)
         {
-            return Team1DroneMaxFoodResourceCount;
+            return Team1DroneMaxTechResourceCount;
         }
         else
         {
-            return Team2DroneMaxFoodResourceCount;
+            return Team2DroneMaxTechResourceCount;
         }
     }
 
@@ -2279,7 +2272,7 @@ public class IngameSceneLogicScript : MonoBehaviour
 
         foreach (UnitLogic droneUnitLogic in breederUnitLogic.InfluencingTeamUnits)
         {
-            if (TeamInFeedBreederFoodMode)
+            if (TeamInFeedBreederFoodMode && droneUnitLogic.IsSelected)
             {
                 float minFoodResourceValue = Math.Min(baseExchangeRate, droneUnitLogic.FoodResourceCount);
                 minFoodResourceValue = Math.Min(minFoodResourceValue, GetBreederMaxFoodResource(TeamNumber) - breederUnitLogic.FoodResourceCount);
@@ -2288,10 +2281,10 @@ public class IngameSceneLogicScript : MonoBehaviour
                 droneUnitLogic.FoodResourceCount -= minFoodResourceValue;
             }
 
-            if (TeamInFeedBreederTechMode)
+            if (TeamInFeedBreederTechMode && droneUnitLogic.IsSelected)
             {
                 float minTechResourceValue = Math.Min(baseExchangeRate, droneUnitLogic.TechResourceCount);
-                minTechResourceValue = Math.Min(minTechResourceValue, GetBreederMaxFoodResource(TeamNumber) - breederUnitLogic.TechResourceCount);
+                minTechResourceValue = Math.Min(minTechResourceValue, GetBreederMaxTechResource(TeamNumber) - breederUnitLogic.TechResourceCount);
 
                 breederUnitLogic.TechResourceCount += minTechResourceValue;
                 droneUnitLogic.TechResourceCount -= minTechResourceValue;
