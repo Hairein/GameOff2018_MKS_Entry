@@ -150,5 +150,4 @@ Bugs/Known Issues
 - Barricades can be placed anywhere on terrain and elements, restrict to floor
 - Spawning drones can be placed anywhere on terrain and elements, restrict to floor
 - Loss of input capability after chat or window change?
-- Drone feeding Queen sometimes doesn't work with key pressed
 - Selecting of upgrades is broken

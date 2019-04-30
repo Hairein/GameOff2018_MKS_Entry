@@ -843,7 +843,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e79253eb7b3a5d948bff4698f90e944c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TeamNumber: 1
+  TeamNumber: 2
   IsSelected: 0
   SelectionEffect: {fileID: 114528475938284792}
   FoodResourceCount: 300

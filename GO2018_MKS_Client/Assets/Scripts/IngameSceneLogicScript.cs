@@ -47,7 +47,7 @@ public class IngameSceneLogicScript : MonoBehaviour
     public bool EnableFoodDrain = true;
     public float FoodDrainPerSec = 2.0f;
     public float FeedGainPerSec = 5.0f;
-    public float HungerDeathFoodLevel = -10.0f;
+    public float HungerDeathFoodLevel = -1.0f;
 
     public bool TeamInFeedBreederFoodMode = false;
     public bool TeamInFeedBreederTechMode = false;

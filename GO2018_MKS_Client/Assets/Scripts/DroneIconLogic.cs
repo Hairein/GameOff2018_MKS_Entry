@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class DroneIconLogic : MonoBehaviour
@@ -85,7 +86,7 @@ public class DroneIconLogic : MonoBehaviour
                 }
             }
 
-            string foodValueText = ((int)foodValue).ToString();
+            string foodValueText = ((int)Math.Max(0.0f, foodValue)).ToString();
             FoodText.text = foodValueText;
             FoodShadowText.text = foodValueText;
 
@@ -115,7 +116,7 @@ public class DroneIconLogic : MonoBehaviour
                 }
             }
 
-            string techValueText = ((int)techValue).ToString();
+            string techValueText = ((int)Math.Max(0.0f, techValue)).ToString();
             TechText.text = techValueText;
             TechShadowText.text = techValueText;
 
