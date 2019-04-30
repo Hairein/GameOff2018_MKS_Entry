@@ -647,20 +647,21 @@ public class IngameSceneLogicScript : MonoBehaviour
                 if (TeamInBarricadeBuildMode)
                 {
                     // Finalize barricade placement if resources are sufficient
-                    UnitLogic breederUnitLogic = TeamBreeder.GetComponent<UnitLogic>();
-                    if (breederUnitLogic != null)
+                    RaycastHit clickHit;
+                    bool hitResult = GetScreenHitResultInWorld(mousePosition, out clickHit);
+                    if (hitResult && clickHit.transform.gameObject.tag == "Terrain")
                     {
-                        if (breederUnitLogic.FoodResourceCount >= BarricadeFoodCost && breederUnitLogic.TechResourceCount >= BarricadeTechCost)
+                        Vector3 griddedPosition = CalculateGridForSpawnedObjectPlacement(clickHit.point);
+                        if (IsPointNearTeamBreeder(griddedPosition))
                         {
-                            breederUnitLogic.FoodResourceCount -= BarricadeFoodCost;
-                            breederUnitLogic.TechResourceCount -= BarricadeTechCost;
-
-                            RaycastHit clickHit;
-                            if (GetScreenHitResultInWorld(mousePosition, out clickHit))
+                            UnitLogic breederUnitLogic = TeamBreeder.GetComponent<UnitLogic>();
+                            if (breederUnitLogic != null)
                             {
-                                Vector3 griddedPosition = CalculateGridForSpawnedObjectPlacement(clickHit.point);
-                                if (IsPointNearTeamBreeder(griddedPosition))
+                                if (breederUnitLogic.FoodResourceCount >= BarricadeFoodCost && breederUnitLogic.TechResourceCount >= BarricadeTechCost)
                                 {
+                                    breederUnitLogic.FoodResourceCount -= BarricadeFoodCost;
+                                    breederUnitLogic.TechResourceCount -= BarricadeTechCost;
+
                                     SpawnBarricade(griddedPosition);
                                 }
                             }
@@ -670,23 +671,24 @@ public class IngameSceneLogicScript : MonoBehaviour
                 else if (TeamInDroneSpawnMode)
                 {
                     // Finalize drone spawn placement if resources are sufficient
-                    UnitLogic breederUnitLogic = TeamBreeder.GetComponent<UnitLogic>();
-                    if (breederUnitLogic != null)
+                    RaycastHit clickHit;
+                    bool hitResult = GetScreenHitResultInWorld(mousePosition, out clickHit);
+                    if (hitResult && clickHit.transform.gameObject.tag == "Terrain")
                     {
-                        if (breederUnitLogic.FoodResourceCount >= DroneFoodCost && breederUnitLogic.TechResourceCount >= DroneTechCost)
+                        Vector3 griddedPosition = CalculateGridForSpawnedObjectPlacement(clickHit.point);
+                        if (IsPointNearTeamBreeder(griddedPosition))
                         {
-                            breederUnitLogic.FoodResourceCount -= DroneFoodCost;
-                            breederUnitLogic.TechResourceCount -= DroneTechCost;
-
-                            RaycastHit clickHit;
-                            if (GetScreenHitResultInWorld(mousePosition, out clickHit))
+                            UnitLogic breederUnitLogic = TeamBreeder.GetComponent<UnitLogic>();
+                            if (breederUnitLogic != null)
                             {
-                                Vector3 griddedPosition = CalculateGridForSpawnedObjectPlacement(clickHit.point);
-                                if (IsPointNearTeamBreeder(griddedPosition))
+                                if (breederUnitLogic.FoodResourceCount >= DroneFoodCost && breederUnitLogic.TechResourceCount >= DroneTechCost)
                                 {
+                                    breederUnitLogic.FoodResourceCount -= DroneFoodCost;
+                                    breederUnitLogic.TechResourceCount -= DroneTechCost;
+
                                     SpawnDrone(griddedPosition);
 
-                                    if(TeamDrones.Length >= maxDronesNos)
+                                    if (TeamDrones.Length >= maxDronesNos)
                                     {
                                         StopDroneSpawnMode();
                                     }
