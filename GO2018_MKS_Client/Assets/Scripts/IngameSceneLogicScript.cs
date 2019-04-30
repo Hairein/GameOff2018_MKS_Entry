@@ -889,7 +889,8 @@ public class IngameSceneLogicScript : MonoBehaviour
         if (TeamInBarricadeBuildMode)
         {
             RaycastHit clickHit;
-            if (GetScreenHitResultInWorld(mousePosition, out clickHit))
+            bool hitResult = GetScreenHitResultInWorld(mousePosition, out clickHit);
+            if (hitResult && clickHit.transform.gameObject.tag == "Terrain")
             {
                 Vector3 griddedPosition = CalculateGridForSpawnedObjectPlacement(clickHit.point);
                 barricadePreview.SetActive(IsPointNearTeamBreeder(griddedPosition));
@@ -900,7 +901,8 @@ public class IngameSceneLogicScript : MonoBehaviour
         if (TeamInDroneSpawnMode)
         {
             RaycastHit clickHit;
-            if (GetScreenHitResultInWorld(mousePosition, out clickHit))
+            bool hitResult = GetScreenHitResultInWorld(mousePosition, out clickHit);
+            if (hitResult && clickHit.transform.gameObject.tag == "Terrain")
             {
                 Vector3 griddedPosition = CalculateGridForSpawnedObjectPlacement(clickHit.point);
                 dronePreview.SetActive(IsPointNearTeamBreeder(griddedPosition));
