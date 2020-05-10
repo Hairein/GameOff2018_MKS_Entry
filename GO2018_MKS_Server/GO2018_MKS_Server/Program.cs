@@ -833,7 +833,7 @@ namespace GO2018_MKS_Server
 
         private void PrepareMessageSanitizer()
         {
-            Console.WriteLine("Loading in sanitzer word list from file");
+            Console.WriteLine("Loading in sanitizer word list from file");
 
             List<string> wordList = new List<string>();
 
