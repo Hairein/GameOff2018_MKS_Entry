@@ -1,11 +1,11 @@
 GameOff2018 MKS Entry - "Scamper Fields"
 ========================================
 
-This is the Game Off 2018 Entry from Micah Koleoso Software (http://www.micahkoleoso.de)
+This is the Game Off 2018 Entry from Micah Koleoso Software (http://www.micahkoleososoftware.com)
 Running from the 1st November to 1st December, 2018.
 
 The entry consists of a client (Unity: GO2018_MKS_Client) and server (C# .NET: GO2018_MKS_Server) application.
-Game page: http://www.micahkoleoso.de/?page_id=724
+The Game page is now offline as of 12/2024.
 
 Version Info
 ============
